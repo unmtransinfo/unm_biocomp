@@ -13,7 +13,7 @@
   </properties>
 
   <modules>
-  	<module>biocomp_war</module>
+  	<module>biocomp_apps</module>
   	<module>unm_biocomp_db</module>
   	<module>unm_biocomp_http</module>
   	<module>unm_biocomp_threads</module>

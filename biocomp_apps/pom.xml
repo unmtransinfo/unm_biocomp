@@ -5,10 +5,10 @@
     <artifactId>biocomp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>biocomp_war</artifactId>
+  <artifactId>biocomp_apps</artifactId>
   <packaging>war</packaging>
-  <name>BIOCOMP_WAR</name>
-  <description>Bundled servlets, libs and external dependencies ready for deployment.</description>
+  <name>BIOCOMP_APPS</name>
+  <description>Bundled apps, servlets, libs and external dependencies ready for deployment via WAR-file.</description>
   <dependencies>
   	<dependency>
   		<groupId>unmbiocomputing</groupId>
