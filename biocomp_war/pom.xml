@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>unmbiocomputing</groupId>
+    <artifactId>biocomp</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>biocomp_war</artifactId>
+  <packaging>war</packaging>
+  <name>BIOCOMP_WAR</name>
+  <description>Bundled servlets, libs and external dependencies ready for deployment.</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>unmbiocomputing</groupId>
+  		<artifactId>unm_biocomp_util</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>unmbiocomputing</groupId>
+  		<artifactId>unm_biocomp_http</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>unmbiocomputing</groupId>
+  		<artifactId>unm_biocomp_threads</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>unmbiocomputing</groupId>
+  		<artifactId>unm_biocomp_db</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
+  <build>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources/data</directory>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+          <includes>
+            <include>**/*.properties</include>
+          </includes>
+      </resource>
+    </resources>
+
+    <plugins>
+      <!-- https://maven.apache.org/plugins/maven-war-plugin/ -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>${project.parent.basedir}/src/main/resources</directory>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

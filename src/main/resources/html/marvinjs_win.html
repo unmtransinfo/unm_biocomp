@@ -1,0 +1,56 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Marvin4JS - Sketcher</title>
+  <script src="/marvin4js/js/lib/jquery-1.9.1.min.js"></script>
+  <script src="/marvin4js/js/util.js"></script>
+<script>
+function submitMolfile()
+{
+  var molfile = marvinController.sketcherInstance.exportAsMol();
+  if (molfile == "") {
+    alert("Nothing to submit");
+  }
+  else {
+    opener.fromMarvin4JS(molfile);
+    window.close();
+  }
+}
+var marvinController, inputController;
+
+$(document).ready(function handleDocumentReady (e) {
+  getMarvinPromise("#sketch").done(function (sketcherInstance) {
+      marvinController = new MarvinControllerClass(sketcherInstance);
+    }).fail(function () {
+      alert("Cannot retrieve sketcher instance from iframe");
+  });
+});
+
+var MarvinControllerClass = (function () {
+  function MarvinControllerClass (sketcherInstance)
+  {
+    this.sketcherInstance = sketcherInstance;
+    this.init();
+  }
+  MarvinControllerClass.prototype.init = function init () {
+    // maybe load molfile here...
+  };
+
+  return MarvinControllerClass;
+}());
+
+///////////////////////////////////////////////////////////////
+</script>
+</head>
+<body>
+  <iframe width="100%" height="90%" src="/marvin4js/editorws.html" id="sketch" class="sketcher-frame"></iframe>
+  <table width="100%">
+    <tr>
+      <td>
+        <input type="button" value=" Submit Molecule " onClick = "submitMolfile()">
+        <input type="button" value="  Close  " onClick = "window.close()">
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
