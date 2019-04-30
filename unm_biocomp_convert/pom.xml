@@ -10,24 +10,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
-  <!-- repositories>
-    <repository>
-      <id>project.local</id>
-      <name>maven2</name>
-      <url>http://localhost/.m2</url>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </snapshots>
-    </repository>
-  </repositories -->
-  
   <dependencies>
     <dependency>
       <groupId>unmbiocomputing</groupId>
@@ -60,8 +42,9 @@
     <dependency>
       <groupId>com.servlets</groupId>
       <artifactId>cos</artifactId>
-      <version>09May2002</version>
+      <version>05Nov2002</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
