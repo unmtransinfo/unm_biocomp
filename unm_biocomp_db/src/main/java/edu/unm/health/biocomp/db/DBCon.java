@@ -5,9 +5,9 @@ import java.util.*;
 import java.sql.*; //Connection,DriverManager,Driver
 
 
-/**	Class to support multiple db drivers: PostgreSQL, Oracle, MySql, Derby, Microsoft.
+/**	Class to support multiple db drivers: PostgreSQL, MySql, Derby, Microsoft.
 
-	Allowed values for database type: "postgres", "mysql", "derby", "oracle", or "microsoft".
+	Allowed values for database type: "postgres", "mysql", "derby" or "microsoft".
 	For Derby, several params are ignored: dbhost, dbport, dbusr, dbpw.
         Derby dbname is path comprised of dir and name, e.g. "/tmp/derby/mydb_1".
 	Derby local/embedded dbs only.
@@ -16,7 +16,6 @@ import java.sql.*; //Connection,DriverManager,Driver
 
 	@see org.postgresql.Driver
 	@see com.mysql.jdbc.Driver
-	@see oracle.jdbc.driver.OracleDriver
 	@see org.apache.derby.jdbc.EmbeddedDriver
 	@see net.sourceforge.jtds.jdbc.Driver
 
@@ -48,13 +47,6 @@ public class DBCon
       if (!this.isDriverRegistered(com.mysql.jdbc.Driver.class))
         DriverManager.registerDriver(new com.mysql.jdbc.Driver());
       Connection dbcon=DriverManager.getConnection("jdbc:mysql://"+dbhost+":"+dbport+"/"+dbname,dbusr,dbpw);
-      setConnection(dbcon);
-    }
-    else if (_dbtype.equalsIgnoreCase("oracle"))
-    {
-      if (!this.isDriverRegistered(oracle.jdbc.driver.OracleDriver.class))
-        DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-      Connection dbcon=DriverManager.getConnection("jdbc:oracle:thin:@"+dbhost+":"+dbport+":"+dbname,dbusr,dbpw);
       setConnection(dbcon);
     }
     else if (_dbtype.equalsIgnoreCase("microsoft"))
@@ -91,7 +83,6 @@ public class DBCon
   {
     if (this.getDBType().equalsIgnoreCase("postgres")) { return pg_utils.ServerStatusTxt(this.con); }
     else if (this.getDBType().equalsIgnoreCase("mysql")) { return mysql_utils.ServerStatusTxt(this.con); }
-    else if (this.getDBType().equalsIgnoreCase("oracle")) { return ora_utils.ServerStatusTxt(this.con); }
     else if (this.getDBType().equalsIgnoreCase("derby")) { return derby_utils.ServerStatusTxt(this.con); }
     else if (this.getDBType().equalsIgnoreCase("microsoft")) { return jtds_utils.ServerStatusTxt(this.con); }
     return null;
@@ -102,7 +93,6 @@ public class DBCon
   {
     if (this.getDBType().equalsIgnoreCase("postgres")) { return pg_utils.ExecuteSql(this.con,sql); }
     else if (this.getDBType().equalsIgnoreCase("mysql")) { return mysql_utils.ExecuteSql(this.con,sql); }
-    else if (this.getDBType().equalsIgnoreCase("oracle")) { return ora_utils.ExecuteSql(this.con,sql); }
     else if (this.getDBType().equalsIgnoreCase("derby")) { return derby_utils.ExecuteSql(this.con,sql); }
     else if (this.getDBType().equalsIgnoreCase("microsoft")) { return jtds_utils.ExecuteSql(this.con,sql); }
     return null;
@@ -113,7 +103,6 @@ public class DBCon
   {
     if (this.getDBType().equalsIgnoreCase("postgres")) { return pg_utils.Execute(this.con,sql); }
     else if (this.getDBType().equalsIgnoreCase("mysql")) { return mysql_utils.Execute(this.con,sql); }
-    else if (this.getDBType().equalsIgnoreCase("oracle")) { return ora_utils.Execute(this.con,sql); }
     else if (this.getDBType().equalsIgnoreCase("derby")) { return derby_utils.Execute(this.con,sql); }
     else if (this.getDBType().equalsIgnoreCase("microsoft")) { return jtds_utils.Execute(this.con,sql); }
     return false;
