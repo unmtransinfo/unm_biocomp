@@ -13,6 +13,12 @@
         <dependent-module archiveName="unm_biocomp_threads-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/unm_biocomp_threads/unm_biocomp_threads">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="unm_biocomp_db-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/unm_biocomp_db/unm_biocomp_db">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="unm_biocomp_freechart-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/unm_biocomp_freechart/unm_biocomp_freechart">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="biocomp_war"/>
         <property name="java-output-path" value="/biocomp_war/target/classes"/>
     </wb-module>

@@ -5,8 +5,13 @@
     <artifactId>biocomp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>unm_biocomp_threads</artifactId>
+  <artifactId>unm_biocomp_freechart</artifactId>
   <dependencies>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>1.0.17</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>

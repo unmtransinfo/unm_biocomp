@@ -18,6 +18,7 @@
   	<module>unm_biocomp_http</module>
   	<module>unm_biocomp_threads</module>
   	<module>unm_biocomp_util</module>
+  	<module>unm_biocomp_freechart</module>
   </modules>
 
   <dependencies>
