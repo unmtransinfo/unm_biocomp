@@ -26,6 +26,8 @@
   	<module>unm_biocomp_qed</module>
   	<module>unm_biocomp_fp</module>
   	<module>unm_biocomp_react</module>
+  	<module>unm_biocomp_ro5</module>
+  	<module>unm_biocomp_sim2d</module>
   </modules>
 
   <dependencies>

@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>unmbiocomputing</groupId>
+    <artifactId>biocomp</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>unm_biocomp_sim2d</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_util</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_http</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_threads</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>    
+     <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_fp</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_smarts</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+           
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_cdk</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>olegursu</groupId>
+      <artifactId>grouping</artifactId>
+      <version>2018</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.chemaxon</groupId>
+      <artifactId>jchem-main</artifactId>
+      <version>19.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.chemaxon</groupId>
+      <artifactId>marvin-app</artifactId>
+      <version>19.3.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.servlets</groupId>
+      <artifactId>cos</artifactId>
+      <version>05Nov2002</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>9.0.19</version>
+    </dependency>
+    
+    </dependencies>
+</project>
