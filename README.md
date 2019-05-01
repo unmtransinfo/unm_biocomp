@@ -19,7 +19,7 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
     <server>
       <username>[your_hub_user]</username>
       <password>[your_hub_API_key]</password>
-      <id>central-chemaxon</id>
+      <id>chemaxon-hub</id>
     </server>
     <server>
       <username>[your_hub_user]</username>
@@ -28,23 +28,21 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
     </server>
   </servers>
 
-  <mirrors>
-    <mirror>
-      <id>maven-repository</id>
-      <name>Maven Repo, via HTTP</name>
-      <url>http://repo1.maven.org/maven2/</url>
-      <mirrorOf>central</mirrorOf>
-    </mirror>
-  </mirrors>
-
   <profiles>
     <profile>
       <repositories>
+
+        <repository>
+          <id>maven-repository</id>
+          <name>Maven Repo, via HTTP</name>
+          <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+
         <repository>
           <snapshots>
             <enabled>false</enabled>
           </snapshots>
-         <id>central-chemaxon</id>
+         <id>chemaxon-hub</id>
           <name>libs-release</name>
           <url>https://hub.chemaxon.com/artifactory/libs-release</url>
         </repository>
@@ -60,7 +58,7 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
           <snapshots>
             <enabled>false</enabled>
           </snapshots>
-          <id>central-chemaxon</id>
+          <id>chemaxon-hub</id>
           <name>plugins-release</name>
           <url>https://hub.chemaxon.com/artifactory/plugins-release</url>
         </pluginRepository>
