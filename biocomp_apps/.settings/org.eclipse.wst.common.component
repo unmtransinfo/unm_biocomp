@@ -19,6 +19,12 @@
         <dependent-module archiveName="unm_biocomp_freechart-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/unm_biocomp_freechart/unm_biocomp_freechart">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="unm_biocomp_convert-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/unm_biocomp_convert/unm_biocomp_convert">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="unm_biocomp_smarts-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/unm_biocomp_smarts/unm_biocomp_smarts">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="biocomp_war"/>
         <property name="java-output-path" value="/biocomp_war/target/classes"/>
     </wb-module>

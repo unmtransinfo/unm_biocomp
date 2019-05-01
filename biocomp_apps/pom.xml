@@ -10,55 +10,69 @@
   <name>BIOCOMP_APPS</name>
   <description>Bundled apps, servlets, libs and external dependencies ready for deployment via WAR-file.</description>
   <dependencies>
-  	<dependency>
-  		<groupId>unmbiocomputing</groupId>
-  		<artifactId>unm_biocomp_util</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>unmbiocomputing</groupId>
-  		<artifactId>unm_biocomp_http</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>unmbiocomputing</groupId>
-  		<artifactId>unm_biocomp_threads</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>unmbiocomputing</groupId>
-  		<artifactId>unm_biocomp_db</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	  	<dependency>
-  		<groupId>unmbiocomputing</groupId>
-  		<artifactId>unm_biocomp_freechart</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_util</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_http</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_threads</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_db</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_freechart</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_convert</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-  	</dependency>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_smarts</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_molalign</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_depict</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_qed</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_fp</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_react</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>src/main/resources/data</directory>
-      </resource>
-      <resource>
-        <directory>src/main/java</directory>
-          <includes>
-            <include>**/*.properties</include>
-          </includes>
-      </resource>
-    </resources>
-
     <plugins>
       <!-- https://maven.apache.org/plugins/maven-war-plugin/ -->
       <plugin>
@@ -69,6 +83,24 @@
           <webResources>
             <resource>
               <directory>${project.parent.basedir}/src/main/resources</directory>
+              <excludes>
+                <exclude>*.properties</exclude>
+                <exclude>data/**/*.*</exclude>
+              </excludes>
+            </resource>
+            <resource>
+              <directory>${project.parent.basedir}/src/main/resources</directory>
+              <includes>
+                <include>*.properties</include>
+              </includes>
+              <targetPath>WEB-INF/classes</targetPath>
+            </resource>
+            <resource>
+              <directory>${project.parent.basedir}/src/main/resources/data</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <targetPath>WEB-INF/data</targetPath>
             </resource>
           </webResources>
         </configuration>
