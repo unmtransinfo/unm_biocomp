@@ -5,16 +5,8 @@
     <artifactId>biocomp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>unm_biocomp_sim2d</artifactId>
-
-  <repositories>
-    <repository>
-      <id>local</id>
-      <name>Locally Grown Stuff</name>
-      <url>http://localhost/.m2</url>
-    </repository>
-  </repositories>
-
+  <artifactId>unm_biocomp_tautomer</artifactId>
+  
   <dependencies>
     <dependency>
       <groupId>unmbiocomputing</groupId>
@@ -25,33 +17,6 @@
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_http</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_threads</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>    
-     <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_fp</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_smarts</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-           
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_cdk</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>olegursu</groupId>
-      <artifactId>grouping</artifactId>
-      <version>2018</version>
     </dependency>
     
     <dependency>
@@ -76,6 +41,5 @@
       <artifactId>tomcat-servlet-api</artifactId>
       <version>9.0.19</version>
     </dependency>
-    
-    </dependencies>
+  </dependencies>
 </project>

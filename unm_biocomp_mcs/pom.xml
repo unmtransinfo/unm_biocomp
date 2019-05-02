@@ -5,16 +5,8 @@
     <artifactId>biocomp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>unm_biocomp_sim2d</artifactId>
-
-  <repositories>
-    <repository>
-      <id>local</id>
-      <name>Locally Grown Stuff</name>
-      <url>http://localhost/.m2</url>
-    </repository>
-  </repositories>
-
+  <artifactId>unm_biocomp_mcs</artifactId>
+  
   <dependencies>
     <dependency>
       <groupId>unmbiocomputing</groupId>
@@ -25,33 +17,11 @@
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_http</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_threads</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
     </dependency>    
-     <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_fp</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_smarts</artifactId>
+      <artifactId>unm_biocomp_molalign</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-           
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_cdk</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>olegursu</groupId>
-      <artifactId>grouping</artifactId>
-      <version>2018</version>
     </dependency>
     
     <dependency>
