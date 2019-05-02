@@ -32,6 +32,8 @@
   	<module>unm_biocomp_tautomer</module>
   	<module>unm_biocomp_mcs</module>
   	<module>unm_biocomp_jchemdb</module>
+  	<module>unm_biocomp_descriptors</module>
+  	<module>unm_biocomp_text</module>
   </modules>
 
   <dependencies>
