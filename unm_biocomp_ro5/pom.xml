@@ -62,6 +62,23 @@
     </dependency>
   </dependencies>
  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>edu.unm.health.biocomp.ro5.ro5_utils</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <reporting> <!-- "mvn javadoc:javadoc" -->
     <plugins>
       <plugin>

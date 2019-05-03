@@ -23,7 +23,7 @@ public class sim2d
 {
   private static String MDL166FILE="/home/data/smarts/mdl166.sma";
   private static String SUNSETFILE="/home/data/smarts/sunsetkeys.sma";
-  private static String fptype="sunset";
+  private static String fptype="path";
 
   /////////////////////////////////////////////////////////////////////////////
   static void Sim2D_1xN_Path(MolImporter molReader, Molecule molQ,int verbose)
@@ -247,10 +247,16 @@ public class sim2d
     }
     else if (fptype.equalsIgnoreCase("maccs"))
     {
+      if (verbose>0) {
+        System.err.println("MDL166 SMARTS file: "+MDL166FILE);
+      }
       Sim2D_1xN_Smarts(MDL166FILE,"MACCS",molReader,molQ,verbose);
     }
     else if (fptype.equalsIgnoreCase("sunset"))
     {
+      if (verbose>0) {
+        System.err.println("SUNSET SMARTS file: "+SUNSETFILE);
+      }
       Sim2D_1xN_Smarts(SUNSETFILE,"Sunset",molReader,molQ,verbose);
     }
     else if (fptype.equalsIgnoreCase("ecfp"))

@@ -1,6 +1,6 @@
 # Biocomp
 
-Maven-ization of lobo repository.  Work in progress.
+Maven-ization of lobo repository. 
 
 
 ### ChemAxon repository
@@ -14,7 +14,6 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
   <servers>
     <server>
       <username>[your_hub_user]</username>
@@ -27,17 +26,14 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
       <id>snapshots</id>
     </server>
   </servers>
-
   <profiles>
     <profile>
       <repositories>
-
         <repository>
           <id>maven-repository</id>
           <name>Maven Repo, via HTTP</name>
           <url>http://repo1.maven.org/maven2/</url>
         </repository>
-
         <repository>
           <snapshots>
             <enabled>false</enabled>
@@ -77,3 +73,14 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
   </activeProfiles>
 </settings>
 ```
+
+### Local repository (_TO BE IMPROVED_)
+
+Currently two internal dependencies must be manually installed in a local Maven
+repository thus:
+
+```
+mvn install:install-file -Dfile=grouping.jar -DgroupId=olegursu -DartifactId=grouping -Dversion=2018 -Dpackaging=jar -DlocalRepositoryPath=/var/www/html/.m2/
+mvn install:install-file -Dfile=sasa.jar -DgroupId=olegursu -DartifactId=sasa -Dversion=2018 -Dpackaging=jar -DlocalRepositoryPath=/var/www/html/.m2/
+```
+

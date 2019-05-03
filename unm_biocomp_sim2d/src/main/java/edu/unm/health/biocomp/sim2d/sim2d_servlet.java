@@ -2003,7 +2003,6 @@ public class sim2d_servlet extends HttpServlet
     super.init(conf);
     CONTEXT=getServletContext();
     CONTEXTPATH=CONTEXT.getContextPath();
-    //CONFIG=conf;
     // read servlet parameters (from web.xml):
     try { APPNAME=conf.getInitParameter("APPNAME"); }
     catch (Exception e) { APPNAME=this.getServletName(); }
@@ -2024,12 +2023,12 @@ public class sim2d_servlet extends HttpServlet
     // Parse all smarts files into SmartsFile objects.
     // By doing this here in init(), then it happens only
     // once for each servlet instance and not each submit.
-    String fpath=DATADIR+"/"+MACCSFILE;
+    String fpath=DATADIR+"/smarts/"+MACCSFILE;
     try {
       maccssf = new SmartsFile();
       maccssf.parseFile(new File(fpath),false,"maccs166");
     }
-    catch (Exception e) { CONTEXT.log("problem reading: "+e.getMessage()); }
+    catch (Exception e) { CONTEXT.log("problem reading: "+fpath+" ; "+e.getMessage()); }
     CONTEXT.log("loaded smarts file: "+fpath+" ("
       +maccssf.getRawtxt().length()+" bytes , "
       +maccssf.size()+" smarts, "
@@ -2037,12 +2036,12 @@ public class sim2d_servlet extends HttpServlet
       +maccssf.getFailedsmarts().size()+" failed smarts)");
     for (String sma:maccssf.getFailedsmarts())
       CONTEXT.log("bad smarts: \""+sma+"\"");
-    fpath=DATADIR+"/"+SUNSETFILE;
+    fpath=DATADIR+"/smarts/"+SUNSETFILE;
     try {
       sunsetsf = new SmartsFile();
       sunsetsf.parseFile(new File(fpath),false,"sunset");
     }
-    catch (Exception e) { CONTEXT.log("problem reading: "+e.getMessage()); }
+    catch (Exception e) { CONTEXT.log("problem reading: "+fpath+" ; "+e.getMessage()); }
     CONTEXT.log("loaded smarts file: "+fpath+" ("
       +sunsetsf.getRawtxt().length()+" bytes , "
       +sunsetsf.size()+" smarts, "
@@ -2050,12 +2049,12 @@ public class sim2d_servlet extends HttpServlet
       +sunsetsf.getFailedsmarts().size()+" failed smarts)");
     for (String sma:sunsetsf.getFailedsmarts())
       CONTEXT.log("bad smarts: \""+sma+"\"");
-    fpath=DATADIR+"/"+PUBCHEMFILE;
+    fpath=DATADIR+"/smarts/"+PUBCHEMFILE;
     try {
       pubchemsf = new SmartsFile();
       pubchemsf.parseFile(new File(fpath),false,"pubchem");
     }
-    catch (Exception e) { CONTEXT.log("problem reading: "+e.getMessage()); }
+    catch (Exception e) { CONTEXT.log("problem reading: "+fpath+" ; "+e.getMessage()); }
     CONTEXT.log("loaded smarts file: "+fpath+" ("
       +pubchemsf.getRawtxt().length()+" bytes , "
       +pubchemsf.size()+" smarts, "
