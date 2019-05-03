@@ -42,11 +42,11 @@ public class logp_servlet extends HttpServlet
   private static String LOGDIR=null;
   private static String APPNAME=null;	// configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
-  private static String SCRATCHDIR=null; // configured in web.xml
-  private static String BB_ROOT=null;	// configured in web.xml
-  private static Boolean BB_OK=false;
   private static Integer N_MAX=100;	// configured in web.xml
   private static Integer MAX_POST_SIZE=null;	// configured in web.xml
+  private static String BB_ROOT=null;	// configured in web.xml
+  private static Boolean BB_OK=false;
+  private static String SCRATCHDIR=null;
   private static int scratch_retire_sec=3600;
   private static ResourceBundle rb=null;
   private static PrintWriter out=null;

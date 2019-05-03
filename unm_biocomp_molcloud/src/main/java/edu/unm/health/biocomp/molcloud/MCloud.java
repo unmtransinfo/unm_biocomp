@@ -536,7 +536,7 @@ public class MCloud
       }
       catch (Exception e)
       {
-        System.err.println("ERROR (LoadMolCloud): "+e.getMessage());
+        System.err.println("ERROR (LoadMolCloud) (name format ok?  SCORE<space>OPTIONALDATA): "+e.getMessage());
         ++n_failed;
         continue;
       }
@@ -632,6 +632,10 @@ public class MCloud
     {
       try {
         molReader = new MolImporter(ifile);
+        if (verbose>0) {
+          String desc=MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
+          System.err.println("Input: "+ifile+" : format: "+molReader.getFormat()+" ("+desc+")");
+        }
       }
       catch (IOException e) {
         System.err.println("ERROR: Cannot read file: "+ifile+" ;"+e.getMessage());

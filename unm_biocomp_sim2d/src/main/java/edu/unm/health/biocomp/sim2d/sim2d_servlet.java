@@ -46,11 +46,11 @@ public class sim2d_servlet extends HttpServlet
   private static String LOGDIR=null;	// configured in web.xml
   private static String APPNAME=null;	// configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
-  private static String SCRATCHDIR=null;	// configured in web.xml
   private static int N_MAX=10000;	// configured in web.xml
   private static int N_MAX_MATRIX=50;	// configured in web.xml
   private static Integer MAX_POST_SIZE=null;	// configured in web.xml
   private static Boolean ENABLE_NOLIMIT=null;	// configured in web.xml
+  private static String SCRATCHDIR=null;	// configured in web.xml
   private static String DATADIR=null;
   private static ServletContext CONTEXT=null;
   //private static ServletConfig CONFIG=null;

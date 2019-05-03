@@ -77,7 +77,13 @@
       <artifactId>marvin-app</artifactId>
       <version>19.3.0</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>commons-discovery</groupId>
+      <artifactId>commons-discovery</artifactId>
+      <version>0.4</version>
+    </dependency>
+
     <dependency>
       <groupId>com.servlets</groupId>
       <artifactId>cos</artifactId>

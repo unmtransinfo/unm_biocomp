@@ -91,8 +91,7 @@ class MarvinMolHandler implements MolHandler
     try {
       // PNG background "#00ffffff" for transparent.
       String imgfmt = "png:w"+this.getWidth()+",h"+this.getHeight()+",b32,#00ffffff";
-      System.err.println("DEBUG (MarvinMolHandler.draw): this.getWidth()="+this.getWidth()+" this.getHeight()="+this.getHeight());
-      System.err.println("DEBUG (MarvinMolHandler.draw): imgfmt="+imgfmt);
+      //System.err.println("DEBUG (MarvinMolHandler.draw): this.getWidth()="+this.getWidth()+" this.getHeight()="+this.getHeight()+" imgfmt="+imgfmt);
       pngbytes=MolExporter.exportToBinFormat(this.mol,imgfmt);
       img=ImageIO.read(new ByteArrayInputStream(pngbytes));
     }
