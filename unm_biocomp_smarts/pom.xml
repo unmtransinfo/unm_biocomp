@@ -6,6 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>unm_biocomp_smarts</artifactId>
+  <name>UNM_BIOCOMP_SMARTS</name>
+  <description>SMARTS-related code; includes smartsfilter webapp</description>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,4 +53,14 @@
       <version>9.0.19</version>
     </dependency>
   </dependencies>
+
+  <reporting> <!-- "mvn javadoc:javadoc" -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

@@ -6,6 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>unm_biocomp_qed</artifactId>
+  <name>UNM_BIOCOMP_QED</name>
+  <description>QED, Quantitative Estimate of Drug-likeness; includes webapp</description>
   
   <dependencies>
     <dependency>
@@ -47,6 +49,15 @@
       <artifactId>tomcat-servlet-api</artifactId>
       <version>9.0.19</version>
     </dependency>
-    
     </dependencies>
+
+  <reporting> <!-- "mvn javadoc:javadoc" -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

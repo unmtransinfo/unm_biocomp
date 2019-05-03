@@ -6,6 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>unm_biocomp_molalign</artifactId>
+  <name>UNM_BIOCOMP_MOLALIGN</name>
+  <description>Molecular alignment utils</description>
 
   <dependencies>
     <dependency>
@@ -24,6 +26,15 @@
       <artifactId>marvin-app</artifactId>
       <version>19.3.0</version>
     </dependency>
-    
   </dependencies>
+
+  <reporting> <!-- "mvn javadoc:javadoc" -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

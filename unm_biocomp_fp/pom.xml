@@ -6,6 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>unm_biocomp_fp</artifactId>
+  <name>UNM_BIOCOMP_FP</name>
+  <description>Molecular fingerprint processing utils</description>
   
   <dependencies>
     <dependency>
@@ -19,6 +21,15 @@
       <artifactId>jchem-main</artifactId>
       <version>19.3.0</version>
     </dependency>
-
   </dependencies>
+
+  <reporting> <!-- "mvn javadoc:javadoc" -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

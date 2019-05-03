@@ -6,6 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>unm_biocomp_depict</artifactId>
+  <name>UNM_BIOCOMP_DEPICT</name>
+  <description>Depiction classes; includes mol2img servlets and depict webapp</description>
   
   <dependencies>
     <dependency>
@@ -47,4 +49,14 @@
       <version>9.0.19</version>
     </dependency>
   </dependencies>
+
+  <reporting> <!-- "mvn javadoc:javadoc" -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
