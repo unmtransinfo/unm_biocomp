@@ -38,12 +38,12 @@ public class smartsfilter_servlet extends HttpServlet
   private static String APPNAME=null; // configured in web.xml
   private static String UPLOADDIR=null; // configured in web.xml
   private static String SCRATCHDIR=null; // configured in web.xml
-  private static String SMARTSDIR=null; // configured in web.xml
   private static Integer N_MAX=null;	// configured in web.xml
   private static Integer N_MAX_VIEW=null;	// configured in web.xml
   private static Integer MAX_POST_SIZE=null;	// configured in web.xml
   private static Boolean ENABLE_NOLIMIT=null;	// configured in web.xml
   private static ServletContext CONTEXT=null;
+  private static String SMARTSDIR=null;
   //private static ServletConfig CONFIG=null;
   private static ResourceBundle rb=null;
   private static PrintWriter out=null;
@@ -1407,9 +1407,7 @@ public class smartsfilter_servlet extends HttpServlet
     catch (Exception e) { ENABLE_NOLIMIT=false; }
     try { MAX_POST_SIZE=Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
     catch (Exception e) { MAX_POST_SIZE=10*1024*1024; }
-    SMARTSDIR=conf.getInitParameter("SMARTSDIR");
-    if (SMARTSDIR==null)
-      throw new ServletException("Please supply SMARTSDIR parameter");
+    SMARTSDIR=CONTEXT.getRealPath("")+"/WEB-INF/data/smarts"; //Works.
     ArrayList<String> smartsfnames = new ArrayList<String>();
     smartsfnames.addAll(Arrays.asList(glaxo_files));
     smartsfnames.addAll(Arrays.asList(ursu_files));

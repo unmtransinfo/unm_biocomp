@@ -1026,7 +1026,7 @@ public class mcs_servlet extends HttpServlet
     if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
-    DEMOSMIFILE=conf.getInitParameter("DEMOSMIFILE");
+    DEMOSMIFILE=CONTEXT.getRealPath("")+"/WEB-INF/data/"+conf.getInitParameter("DEMOSMIFILE");
   }
   /////////////////////////////////////////////////////////////////////////////
   public void doGet(HttpServletRequest request,HttpServletResponse response)

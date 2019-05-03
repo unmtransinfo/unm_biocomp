@@ -47,11 +47,11 @@ public class sim2d_servlet extends HttpServlet
   private static String APPNAME=null;	// configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
   private static String SCRATCHDIR=null;	// configured in web.xml
-  private static String DATADIR=null;	// configured in web.xml
   private static int N_MAX=10000;	// configured in web.xml
   private static int N_MAX_MATRIX=50;	// configured in web.xml
   private static Integer MAX_POST_SIZE=null;	// configured in web.xml
   private static Boolean ENABLE_NOLIMIT=null;	// configured in web.xml
+  private static String DATADIR=null;
   private static ServletContext CONTEXT=null;
   //private static ServletConfig CONFIG=null;
   private static ResourceBundle rb=null;
@@ -2009,8 +2009,7 @@ public class sim2d_servlet extends HttpServlet
     catch (Exception e) { APPNAME=this.getServletName(); }
     UPLOADDIR=conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null) throw new ServletException("Please supply UPLOADDIR parameter");
-    DATADIR=conf.getInitParameter("DATADIR");
-    if (DATADIR==null) throw new ServletException("Please supply DATADIR parameter");
+    DATADIR=CONTEXT.getRealPath("")+"/WEB-INF/data";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=10000; }
     try { N_MAX_MATRIX=Integer.parseInt(conf.getInitParameter("N_MAX_MATRIX")); }
