@@ -1,7 +1,13 @@
 # Biocomp
 
-Maven-ization of lobo repository. 
-
+* Maven multi-module project.
+* Modules: `unm_biocomp_convert`, `unm_biocomp_db`, `unm_biocomp_depict`, 
+`unm_biocomp_fp`, `unm_biocomp_freechart`, `unm_biocomp_http`, 
+`unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molalign`, `unm_biocomp_molcloud`, 
+`unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`, 
+`unm_biocomp_smarts`, `unm_biocomp_tautomer`, `unm_biocomp_threads`, `unm_biocomp_util`
+* WAR produced deploys several TID web apps, including: Convert, Depict, MolCloud,
+Ro5, Sim2D and SmartsFilter.
 
 ### ChemAxon repository
 

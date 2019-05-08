@@ -109,7 +109,6 @@
   
   <build>
     <plugins>
-      <!-- https://maven.apache.org/plugins/maven-war-plugin/ -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -140,11 +139,14 @@
           </webResources>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.4.18-SNAPSHOT</version>
       </plugin>
     </plugins>
+
   </build>
+
 </project>
