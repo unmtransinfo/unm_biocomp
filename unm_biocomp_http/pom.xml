@@ -8,6 +8,20 @@
   <artifactId>unm_biocomp_http</artifactId>
   <name>UNM_BIOCOMP_HTTP</name>
   <description>Utils for web apps/services</description>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>9.0.19</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -15,34 +29,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.1.1</version>
-        <configuration>
-          <!-- http://maven.apache.org/shared/maven-archiver/ -->
-          <archive>
-            <addMavenDescriptor>true</addMavenDescriptor>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <!-- mainClass>edu.unm.health.biocomp.util.HtmUtils</mainClass -->
-            </manifest>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.12</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-servlet-api -->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-servlet-api</artifactId>
-      <version>9.0.19</version>
-    </dependency>
-  </dependencies>
 
   <reporting> <!-- "mvn javadoc:javadoc" -->
     <plugins>

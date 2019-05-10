@@ -8,7 +8,7 @@
   <artifactId>biocomp_apps</artifactId>
   <packaging>war</packaging>
   <name>BIOCOMP_APPS</name>
-  <description>Bundled apps, servlets, libs and external dependencies ready for deployment via WAR-file.</description>
+  <description>Maven sub-module to generate WAR-file.</description>
   <dependencies>
     <dependency>
       <groupId>unmbiocomputing</groupId>

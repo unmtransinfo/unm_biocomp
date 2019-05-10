@@ -4,8 +4,9 @@
   <artifactId>biocomp</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>BIOCOMP-MAVEN</name>
-  <url>http://www.unm.edu/</url>
+  <name>BIOCOMP</name>
+  <description>Bundled apps, servlets, libs and external dependencies ready for deployment via WAR-file.</description>
+  <url>https://bitbucket.org/jeremyjyang/biocomp</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -35,7 +36,6 @@
   </modules>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/junit/junit -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
