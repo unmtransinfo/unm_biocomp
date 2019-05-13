@@ -18,8 +18,8 @@ import chemaxon.license.*;
 import chemaxon.util.MolHandler;
 import chemaxon.reaction.*;
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	Reaction transform application using Reactor.
 

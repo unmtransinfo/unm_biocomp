@@ -23,8 +23,8 @@ import chemaxon.sss.search.*; //MolSearch,SearchException
 import chemaxon.license.*; //LicenseException,LicenseManager
 import chemaxon.marvin.io.MolExportException;
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 import edu.unm.health.biocomp.molalign.*;
 
 /**	Depict molecules as PNG or JPEG images using mol2img servlet.

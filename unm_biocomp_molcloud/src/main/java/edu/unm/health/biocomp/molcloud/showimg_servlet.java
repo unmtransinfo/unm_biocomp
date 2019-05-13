@@ -6,8 +6,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
-import edu.unm.health.biocomp.http.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	Outputs PNG, JPEG, or GIF image from file for inline display.
 	<br>

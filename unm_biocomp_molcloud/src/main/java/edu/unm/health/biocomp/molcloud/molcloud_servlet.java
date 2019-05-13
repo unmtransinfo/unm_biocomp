@@ -23,8 +23,8 @@ import chemaxon.struc.*; //Molecule, MolAtom
 import chemaxon.license.*; //LicenseManager
 
 import edu.unm.health.biocomp.qed.*;
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	MolCloud web app. 
 	

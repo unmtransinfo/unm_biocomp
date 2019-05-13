@@ -19,8 +19,8 @@ import chemaxon.struc.prop.MMoleculeProp;
 import chemaxon.sss.search.*;
 import chemaxon.license.*; //LicenseManager
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*; //time_utils,math_utils
+import edu.unm.health.biocomp.util.http.*;
 
 /**	Lipinsky Rule of 5 analysis.
 	See Help() for list of descriptors.

@@ -14,7 +14,7 @@ import chemaxon.sss.search.*;
 import chemaxon.util.MolHandler;
 import chemaxon.license.LicenseManager;
 
-import edu.unm.health.biocomp.http.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	Generates PNG or JPEG image for inline display.
 	Input smiles or MDL molfile.

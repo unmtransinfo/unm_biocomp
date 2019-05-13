@@ -20,8 +20,8 @@ import chemaxon.marvin.calculations.MarkushEnumerationPlugin;
 import chemaxon.marvin.plugin.PluginException;
 import chemaxon.license.*; //LicenseManager
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	Molecular file format conversion web app.
 

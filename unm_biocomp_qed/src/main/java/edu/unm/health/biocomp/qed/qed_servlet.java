@@ -20,8 +20,8 @@ import chemaxon.util.MolHandler;
 import chemaxon.struc.*;
 import chemaxon.license.*; //LicenseManager
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	QED: Quantitative Estimate of Drug-likeness (Bickerton, et al.).
 

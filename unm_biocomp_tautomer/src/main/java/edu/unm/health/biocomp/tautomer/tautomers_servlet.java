@@ -23,8 +23,8 @@ import chemaxon.marvin.calculations.TautomerizationPlugin;
 import chemaxon.marvin.plugin.PluginException;
 import chemaxon.license.*;
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 
 /**	Predicts tautomers for ONE input molecule.
 

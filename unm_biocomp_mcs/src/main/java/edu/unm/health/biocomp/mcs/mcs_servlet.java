@@ -23,8 +23,8 @@ import chemaxon.jchem.version.*;
 
 import com.chemaxon.search.mcs.*; //MaxCommonSubstructure,TerminationCause,SearchMode,McsSearchOptions
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 import edu.unm.health.biocomp.molalign.*;
 
 /**	Max Common Substructure app.

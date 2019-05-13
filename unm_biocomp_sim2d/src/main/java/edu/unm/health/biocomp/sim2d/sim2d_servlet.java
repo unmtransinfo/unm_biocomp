@@ -30,8 +30,8 @@ import chemaxon.descriptors.CFParameters;
 import chemaxon.descriptors.ChemicalFingerprint;
 import chemaxon.descriptors.MDGeneratorException;
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 import edu.unm.health.biocomp.smarts.*;
 import edu.unm.health.biocomp.threads.*;
 

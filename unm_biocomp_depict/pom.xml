@@ -17,11 +17,6 @@
     </dependency>
     <dependency>
       <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_http</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_molalign</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
