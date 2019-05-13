@@ -2,10 +2,12 @@
 
 * Maven multi-module project.
 * Modules: `unm_biocomp_convert`, `unm_biocomp_db`, `unm_biocomp_depict`, 
-`unm_biocomp_fp`, `unm_biocomp_freechart`, `unm_biocomp_http`, 
+`unm_biocomp_fp`, `unm_biocomp_freechart`,
 `unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molalign`, `unm_biocomp_molcloud`, 
 `unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`, 
 `unm_biocomp_smarts`, `unm_biocomp_tautomer`, `unm_biocomp_threads`, `unm_biocomp_util`
+* Modules developed by Oleg Ursu: `unm_biocomp_sasa`, `unm_biocomp_grouping`
+* `unm_biocomp_http` is deprecated by merging into `unm_biocomp_util`.
 * WAR produced deploys several TID web apps, including: Convert, Depict, MolCloud,
 Ro5, Sim2D and SmartsFilter.
 
@@ -22,13 +24,13 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <servers>
     <server>
-      <username>[your_hub_user]</username>
-      <password>[your_hub_API_key]</password>
+      <username>[YOUR_HUB_USERNAME]</username>
+      <password>[YOUR_HUB_API_KEY]</password>
       <id>chemaxon-hub</id>
     </server>
     <server>
-      <username>[your_hub_user]</username>
-      <password>[your_hub_API_key]</password>
+      <username>[YOUR_HUB_USERNAME]</username>
+      <password>[YOUR_HUB_API_KEY]</password>
       <id>snapshots</id>
     </server>
   </servers>
@@ -78,15 +80,5 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
     <activeProfile>artifactory</activeProfile>
   </activeProfiles>
 </settings>
-```
-
-### Local repository (_TO BE IMPROVED_)
-
-Currently two internal dependencies must be manually installed in a local Maven
-repository thus:
-
-```
-mvn install:install-file -Dfile=grouping.jar -DgroupId=olegursu -DartifactId=grouping -Dversion=2018 -Dpackaging=jar -DlocalRepositoryPath=/var/www/html/.m2/
-mvn install:install-file -Dfile=sasa.jar -DgroupId=olegursu -DartifactId=sasa -Dversion=2018 -Dpackaging=jar -DlocalRepositoryPath=/var/www/html/.m2/
 ```
 
