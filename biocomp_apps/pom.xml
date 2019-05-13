@@ -9,15 +9,11 @@
   <packaging>war</packaging>
   <name>BIOCOMP_APPS</name>
   <description>Maven sub-module to generate WAR-file.</description>
+
   <dependencies>
     <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_util</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_http</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -114,6 +110,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.2</version>
         <configuration>
+          <outputDirectory>${project.parent.basedir}/target</outputDirectory>
           <webResources>
             <resource>
               <directory>${project.parent.basedir}/src/main/resources</directory>

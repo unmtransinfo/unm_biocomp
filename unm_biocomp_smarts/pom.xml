@@ -21,11 +21,6 @@
     </dependency>
     <dependency>
       <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_http</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_threads</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
@@ -51,6 +46,7 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
       <version>9.0.19</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

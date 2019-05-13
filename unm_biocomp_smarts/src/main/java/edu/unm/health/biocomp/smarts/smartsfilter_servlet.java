@@ -21,8 +21,8 @@ import chemaxon.sss.search.*;
 import chemaxon.reaction.*; //Standardizer, StandardizerException
 import chemaxon.license.*; //LicenseManager
 
-import edu.unm.health.biocomp.http.*;
 import edu.unm.health.biocomp.util.*;
+import edu.unm.health.biocomp.util.http.*;
 import edu.unm.health.biocomp.threads.*;
 
 /**	SMARTS based filtering application.
