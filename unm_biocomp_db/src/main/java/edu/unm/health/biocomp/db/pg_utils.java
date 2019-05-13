@@ -4,9 +4,6 @@ import java.sql.*;
 
 import org.postgresql.Driver;
 
-//import edu.unm.health.biocomp.http.*;
-
-
 /**	Static utility methods for PostgreSQL databases.
 	<br>
 	Uses PostgreSQL JDBC driver (org.postgresql.Driver).
