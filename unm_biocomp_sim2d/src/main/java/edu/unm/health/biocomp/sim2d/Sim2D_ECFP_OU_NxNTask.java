@@ -80,7 +80,7 @@ public class Sim2D_ECFP_OU_NxNTask
           Arrays.sort(fps[i]);
         }
       }
-      catch (SearchException e) {
+      catch (Exception e) {
         System.err.println("bad FP: "+e.getMessage());
       }
       ++this.n_done_fps;

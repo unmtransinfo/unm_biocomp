@@ -67,14 +67,13 @@ public class Sim2D_ECFP_OU_1xNTask
     this.fper = new ConnectivityFingerprint();
     this.fper.setAtomInvariantsGenerator(new ECMolGraphInvariants());
     this.fper.setMolecule(this.molQ.cloneMolecule());
-    try { this.fper.calculate(this.diam); }
-    catch (SearchException e) {
-      System.err.println("bad FP: "+e.getMessage());
+    try {
+      this.fper.calculate(this.diam);
+      this.fpQ=this.fper.getFingerprint();
     }
     catch (Exception e) {
       System.err.println("bad FP: "+e.getMessage());
     }
-    this.fpQ=this.fper.getFingerprint();
     Arrays.sort(this.fpQ);
     this.arom=arom;
     this.alpha=alpha;
@@ -149,7 +148,7 @@ public class Sim2D_ECFP_OU_1xNTask
           hit.sim=0.0f;
         }
       }
-      catch (SearchException e) {
+      catch (Exception e) {
         System.err.println("bad FP: "+e.getMessage());
         hit.sim=0.0f;
       }

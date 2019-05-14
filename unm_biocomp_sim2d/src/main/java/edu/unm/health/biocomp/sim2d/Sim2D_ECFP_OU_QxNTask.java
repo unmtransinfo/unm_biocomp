@@ -86,7 +86,7 @@ public class Sim2D_ECFP_OU_QxNTask
           Arrays.sort(fpsQ[i]);
         }
       }
-      catch (SearchException e) {
+      catch (Exception e) {
         System.err.println("bad FP: "+e.getMessage());
       }
       ++this.q_done_fps;
@@ -102,7 +102,7 @@ public class Sim2D_ECFP_OU_QxNTask
           Arrays.sort(fpsDB[i]);
         }
       }
-      catch (SearchException e) {
+      catch (Exception e) {
         System.err.println("bad FP: "+e.getMessage());
       }
       ++this.n_done_fps;
