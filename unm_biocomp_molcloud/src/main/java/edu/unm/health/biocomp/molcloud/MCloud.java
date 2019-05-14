@@ -499,7 +499,7 @@ public class MCloud
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private static int LoadMolCloud(MCloud molcloud, MolImporter molReader,int n_max,boolean randomscale)
+  private static int LoadMolCloud(MCloud molcloud, MolImporter molReader,int n_max,boolean name2scale)
   {
     int n_mol=0;
     Molecule mol;
@@ -520,15 +520,11 @@ public class MCloud
         String molname = mol.getName();
         String[] fields = Pattern.compile("\\s+").split(molname);
         Double scale = null;
-        if (randomscale)
-        {
-          scale = Math.random() * 100.0 + 1.0; //Avoid log(0).
-          //System.err.println("DEBUG: scale = "+scale);
-        }
-        else
-        {
+        if (name2scale)
           scale = Double.parseDouble(fields[0]);
-        }
+        else
+          scale = Math.random() * 100.0 + 1.0; //Avoid log(0).
+        //System.err.println("DEBUG: scale = "+scale);
         String f2 = (fields.length>1)?fields[1]:"";
         String smi = MolExporter.exportToFormat(mol,"smiles:-a");
         MolBox mbox = new MolBox(smi,scale,f2,"");
@@ -564,8 +560,8 @@ public class MCloud
     System.err.println("     -y value ....... image height ["+pheight+"]");
     System.err.println("     -nmax NMAX ..... process only first NMAX mols");
     System.err.println("     -skip N ........ skip first n structures");
+    System.err.println("     -name2scale .... scale by name-score (else randomly)");
     System.err.println("     -logscale ...... scale by log(score)");
-    System.err.println("     -randomscale ... randomly scaled (for testing)");
     System.err.println("     -opt ........... optimize layout");
     System.err.println("     -v [-vv] ....... verbose [very]");
     System.err.println("===========================================================================");
@@ -587,7 +583,7 @@ public class MCloud
     boolean noMolecules = false;
     boolean doGui = false;
     boolean doImage = false;
-    boolean randomscale = false;
+    boolean name2scale = false;
     int n_max = Integer.MAX_VALUE;
     int verbose = 0;
     String ifile = null;
@@ -605,7 +601,7 @@ public class MCloud
       else if (args[i].equals("-y")) pheight = Integer.parseInt(args[++i]);
       else if (args[i].equals("-skip")) n_skip = Integer.parseInt(args[++i]);
       else if (args[i].equals("-gui")) doGui = true;
-      else if (args[i].equals("-randomscale")) randomscale = true;
+      else if (args[i].equals("-name2scale")) name2scale = true;
       else if (args[i].equals("-v")) verbose = 1;
       else if (args[i].equals("-vv")) verbose = 2;
       else if (args[i].equals("-stop")) {
@@ -641,7 +637,7 @@ public class MCloud
         System.err.println("ERROR: Cannot read file: "+ifile+" ;"+e.getMessage());
         System.exit(-1);
       }
-      int n_mol = LoadMolCloud(molcloud,molReader,n_max,randomscale);
+      int n_mol = LoadMolCloud(molcloud,molReader,n_max,name2scale);
       System.err.println("mols in: "+n_mol);
       if (n_mol==n_max)
         System.err.println("Limit reached: N_MAX mols: "+n_max);

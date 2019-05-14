@@ -27,8 +27,7 @@ import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
 
 /**	MolCloud web app. 
-	
-	@author Jeremy J Yang (molcloud_servlet.java)
+	@author Jeremy J Yang
 */
 public class molcloud_servlet extends HttpServlet
 {
@@ -40,6 +39,7 @@ public class molcloud_servlet extends HttpServlet
   private static String LOGDIR=null;
   private static String APPNAME=null;	// configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
+  private static String DEMOSMIFILE=null;       // configured in web.xml
   private static Integer MAX_POST_SIZE=null;    // configured in web.xml
   private static Integer N_MAX=null; // configured in web.xml
   private static String SCRATCHDIR=null; // configured in web.xml
@@ -178,7 +178,7 @@ public class molcloud_servlet extends HttpServlet
         out=response.getWriter();
         out.println(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
         out.println(FormHtm(mrequest,response));
-        out.println("<SCRIPT>go_reset(window.document.mainform)</SCRIPT>");
+        out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
       }
     }
@@ -585,7 +585,7 @@ public class molcloud_servlet extends HttpServlet
 
     //Launch popup window:
     String title="View"+APPNAME;
-    outputs.add("<SCRIPT LANGUAGE=\"JavaScript\">go_molcloud_win('"+SHOWIMGAPP+"','"+fout_img.getAbsolutePath()+"',"+w+","+h+",'"+title+"')</SCRIPT>");
+    outputs.add("<SCRIPT>go_molcloud_win('"+SHOWIMGAPP+"','"+fout_img.getAbsolutePath()+"',"+w+","+h+",'"+title+"')</SCRIPT>");
     outputs.add("(<I>If MolCloud popup does not appear, use button:</I>)");
     String bhtm=("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+SHOWIMGAPP+"?imgfile="+fout_img.getAbsolutePath()+"','"+title+"','width="+w+",height="+h+",scrollbars=1,resizable=1')\"><B>View "+APPNAME+"...</B></BUTTON>\n");
     outputs.add("<BLOCKQUOTE>"+bhtm+"</BLOCKQUOTE>");
@@ -634,6 +634,7 @@ public class molcloud_servlet extends HttpServlet
     +("<TD>- Molecule Cloud generator (algorithm by P. Ertl &amp; B. Rohde, Novartis)</TD>")
     +("<TD ALIGN=RIGHT>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+response.encodeURL(SERVLETNAME)+"?help=TRUE','helpwin','width=600,height=400,scrollbars=1,resizable=1')\"><B>Help</B></BUTTON>\n")
+    +("<BUTTON TYPE=BUTTON onClick=\"go_demo(this.form)\"><B>Demo</B></BUTTON>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"window.location.replace('"+response.encodeURL(SERVLETNAME)+"')\"><B>Reset</B></BUTTON>\n")
     +("</TD></TR></TABLE>\n")
     +("<HR>\n")
@@ -673,9 +674,19 @@ public class molcloud_servlet extends HttpServlet
   }
   /////////////////////////////////////////////////////////////////////////////
   private static String JavaScript()
+	throws IOException
   {
-    return(
-"function go_reset(form)"+
+    String js="var demotxt='';";
+    if (DEMOSMIFILE!=null) {
+      BufferedReader buff=new BufferedReader(new FileReader(DEMOSMIFILE));
+      String line=null;
+      String startdate=null;
+      while ((line=buff.readLine())!=null)
+        js+=("demotxt+='"+line+"\\n';\n");
+      buff.close();
+    }
+    js+=(
+"function go_init(form)"+
 "{\n"+
 "  form.file2txt.checked=true;\n"+
 "  form.intxt.value='';\n"+
@@ -715,6 +726,12 @@ public class molcloud_servlet extends HttpServlet
 "  }\n"+
 "  return true;\n"+
 "}\n"+
+"function go_demo(form) {\n"+
+"  go_init(form);\n"+
+"  form.intxt.value=demotxt;\n"+
+"  form.molcloud.value='TRUE';\n"+
+"  form.submit()\n"+
+"}\n"+
 "function go_molcloud(form)\n"+
 "{\n"+
 "  if (!checkform(form)) return;\n"+
@@ -727,6 +744,7 @@ public class molcloud_servlet extends HttpServlet
 "    'width='+w+',height='+h+',scrollbars=1,resizable=1,location=0,status=0,toolbar=0');\n"+
 "  cwin.focus();\n"+
 "}\n");
+    return(js);
   }
   /////////////////////////////////////////////////////////////////////////////
   private static String HelpHtm()
@@ -777,6 +795,7 @@ public class molcloud_servlet extends HttpServlet
     catch (Exception e) { MAX_POST_SIZE=1*1024*1024; }
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
+    DEMOSMIFILE=CONTEXT.getRealPath("")+"/WEB-INF/data/"+conf.getInitParameter("DEMOSMIFILE");
   }
 
   /////////////////////////////////////////////////////////////////////////////
