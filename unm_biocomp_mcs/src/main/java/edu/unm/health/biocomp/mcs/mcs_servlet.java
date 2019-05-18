@@ -154,9 +154,7 @@ public class mcs_servlet extends HttpServlet
         out=response.getWriter();
         out.print(HtmUtils.HeaderHtm(SERVLETNAME,jsincludes,cssincludes,JavaScript(),color1,request));
         out.println(FormHtm(mrequest,response));
-        out.println("<SCRIPT LANGUAGE=\"JavaScript\">");
-        out.println("go_init(window.document.mainform);");
-        out.println("</SCRIPT>");
+        out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
       }
     }

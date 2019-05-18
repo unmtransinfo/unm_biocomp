@@ -82,3 +82,8 @@ At this writing, I'm using version is 19.3.0.  An account and API key is require
 </settings>
 ```
 
+## Demo commands
+
+```
+mvn exec:java -Dexec.mainClass="edu.unm.health.biocomp.molcloud.MCloud" -Dexec.args="-i test.smi -gui -v"
+```

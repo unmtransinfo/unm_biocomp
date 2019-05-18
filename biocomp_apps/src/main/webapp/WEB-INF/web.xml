@@ -4,8 +4,8 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
   version="2.4">
 
-  <display-name>Translational Informatics Division Web Apps</display-name>
-  <description>Translational Informatics Division Web Apps</description>
+  <display-name>UNM TID Web Apps</display-name>
+  <description>UNM Translational Informatics Division Web Apps</description>
 
   <servlet>
     <servlet-name>mol2img</servlet-name>
@@ -316,6 +316,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
+    <init-param> <param-name>DEMOSMIFILE</param-name>
+      <param-value>molcloud_demo.smi</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>molcloud</servlet-name>
@@ -330,6 +332,5 @@
     <servlet-name>showimg</servlet-name>
     <url-pattern>/showimg</url-pattern>
   </servlet-mapping>
-
 
 </web-app>
