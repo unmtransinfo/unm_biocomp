@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <servers>
+    <server>
+      <username>[YOUR_HUB_USERNAME]</username>
+      <password>[YOUR_HUB_API_KEY]</password>
+      <id>chemaxon-hub</id>
+    </server>
+    <server>
+      <username>[YOUR_HUB_USERNAME]</username>
+      <password>[YOUR_HUB_API_KEY]</password>
+      <id>snapshots</id>
+    </server>
+  </servers>
+
+  <profiles>
+    <profile>
+      <id>biocomp</id>
+      <repositories>
+        <repository>
+          <id>maven-repository</id>
+          <name>Maven Repo, via HTTP</name>
+          <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+         <id>chemaxon-hub</id>
+          <name>libs-release</name>
+          <url>https://hub.chemaxon.com/artifactory/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots />
+          <id>snapshots</id>
+          <name>libs-snapshot</name>
+          <url>https://hub.chemaxon.com/artifactory/libs-snapshot</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>chemaxon-hub</id>
+          <name>plugins-release</name>
+          <url>https://hub.chemaxon.com/artifactory/plugins-release</url>
+        </pluginRepository>
+        <pluginRepository>
+          <snapshots />
+          <id>snapshots</id>
+          <name>plugins-release</name>
+          <url>https://hub.chemaxon.com/artifactory/plugins-release</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>biocomp</activeProfile>
+  </activeProfiles>
+</settings>
