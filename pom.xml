@@ -17,7 +17,7 @@
   </properties>
 
   <modules>
-  	<module>biocomp_apps</module>
+  	<module>biocomp_war</module>
   	<module>unm_biocomp_db</module>
   	<module>unm_biocomp_threads</module>
   	<module>unm_biocomp_util</module>
