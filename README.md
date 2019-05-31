@@ -1,4 +1,7 @@
-# Biocomp
+# BIOCOMP <img align="right" src="/doc/images/unm_new.png" height="80">
+
+Libraries and web apps developed at the UNM Translational Informatics Division 
+(formerly Biocomputing Division). The name _BIOCOMP_ reflects this proud history.
 
 * Maven multi-module project.
 * Modules: `unm_biocomp_convert`, `unm_biocomp_db`, `unm_biocomp_depict`, 
@@ -6,7 +9,6 @@
 `unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molalign`, `unm_biocomp_molcloud`, 
 `unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`, 
 `unm_biocomp_smarts`, `unm_biocomp_tautomer`, `unm_biocomp_threads`, `unm_biocomp_util`
-* `unm_biocomp_http` is deprecated by merging into `unm_biocomp_util`.
 * WAR produced deploys several TID web apps, including: Convert, Depict, MolCloud,
 Ro5, Sim2D and SmartsFilter.
 
@@ -14,14 +16,9 @@ Ro5, Sim2D and SmartsFilter.
 
 * Java 8
 * Maven 3.5+
-
-### Other UNMTID repositories:
-
-* `unm_biocomp_sasa`, `unm_biocomp_grouping` (developed by Oleg Ursu)
-
-### Other:
-
-* Many,including ChemAxon, CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart, 
+* ChemAxon JChem (19.3.0 ok)
+* `unm_biocomp_sasa`, `unm_biocomp_grouping`
+* Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart, 
 many Apache and other open source libraries.
 
 ## ChemAxon repository
@@ -37,13 +34,13 @@ settings.xml](doc/settings.xml).
 
 ## Compilation
 
-To build all JARs and the biocomp WAR:
-
 ```
 mvn clean package
 ```
 
-## Demo commands
+## Usage
+
+Example commmands
 
 ```
 mvn exec:java -Dexec.mainClass="edu.unm.health.biocomp.molcloud.MCloud" -Dexec.args="-i test.smi -gui -v"
