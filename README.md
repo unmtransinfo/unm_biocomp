@@ -38,9 +38,17 @@ certification path to requested target` requiring solutions such as:
 openssl s_client -showcerts -connect www.ebi.ac.uk:443
 ```
 _(Edit output, save root.crt and intermediate.crt.)_
+
+MacOSX:
 ```
 sudo keytool -importcert -keystore /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts -storepass changeit -file root.crt -alias "ebi-root"
 sudo keytool -importcert -keystore /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts -storepass changeit -file intermediate.crt -alias "ebi-intermediate"
+```
+
+Ubuntu:
+```
+sudo keytool -importcert -cacerts -storepass changeit -file root.crt -alias "ebi-root"
+sudo keytool -importcert -cacerts -storepass changeit -file intermediate.crt -alias "ebi-intermediate"
 ```
 
 ## Compilation
