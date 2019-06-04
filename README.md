@@ -16,21 +16,32 @@ Ro5, Sim2D and SmartsFilter.
 
 * Java 8
 * Maven 3.5+
-* ChemAxon JChem (19.3.0 ok)
+* ChemAxon (19.3.0)
+* ChemAxon (14.7.7.0)
+* Access to [ChemAxon Maven repository](https://hub.chemaxon.com)
+(see [documentation](https://docs.chemaxon.com/display/docs/Public+Repository))
+  * Requires API key.
+* Access to [Oracle Maven repository](https://https://maven.oracle.com)
+  * Requires credentials.
+* Access to [EBI Maven repository](http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/)
 * `unm_biocomp_sasa`, `unm_biocomp_grouping`
 * Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart, 
 many Apache and other open source libraries.
 
-## ChemAxon repository
+## Issues with repositories
 
-ChemAxon provides a Maven repository at <https://hub.chemaxon.com> and documentation for use at
-<https://docs.chemaxon.com/display/docs/Public+Repository>. As the docs say: "To integrate a product,
-you only need to add its top-level module as dependency, all required modules will be downloaded transitively
-(with the exception of the module naming which also needs to be added separately)." The top-level modules are
-`jchem-main` and `marvin-app`. At this writing, we are using version 19.3.0 but also for some legacy
-dependencies version 14.7.7.0 which appears to be the earliest version available from the repository. 
-An account and API key is required and may be configured as in this [example Maven
-settings.xml](doc/settings.xml).
+* See configuration [example settings.xml](doc/settings.xml).
+* Java/SSL-cert issues may result in error: `unable to find valid
+certification path to requested target` requiring solutions such as:
+
+```
+openssl s_client -showcerts -connect www.ebi.ac.uk:443
+```
+_(Edit output, save root.crt and intermediate.crt.)_
+```
+sudo keytool -importcert -keystore /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts -storepass changeit -file root.crt -alias "ebi-root"
+sudo keytool -importcert -keystore /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts -storepass changeit -file intermediate.crt -alias "ebi-intermediate"
+```
 
 ## Compilation
 
