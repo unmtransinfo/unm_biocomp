@@ -27,7 +27,7 @@ import edu.unm.health.biocomp.molfp.*; //ConnectivityFingerprint, ECMolGraphInva
 import edu.unm.health.biocomp.grouping.SimilarityMeasures;
 
 import edu.unm.health.biocomp.fp.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
  
 /**	Callable task for processing ECFP similarity search.
 	Calls ECFP code by Oleg Ursu.

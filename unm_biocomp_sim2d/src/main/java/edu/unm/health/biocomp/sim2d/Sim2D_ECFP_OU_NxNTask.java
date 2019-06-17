@@ -28,7 +28,7 @@ import edu.unm.health.biocomp.molfp.ECMolGraphInvariants;
 import edu.unm.health.biocomp.grouping.SimilarityMeasures;
 
 import edu.unm.health.biocomp.fp.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
  
 /**	Callable task for processing ECFP similarity NxN matrix calculation.
 	Calls ECFP code by Oleg Ursu.

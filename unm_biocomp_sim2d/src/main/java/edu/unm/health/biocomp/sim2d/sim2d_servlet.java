@@ -32,8 +32,8 @@ import chemaxon.descriptors.MDGeneratorException;
 
 import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
+import edu.unm.health.biocomp.util.threads.*;
 import edu.unm.health.biocomp.smarts.*;
-import edu.unm.health.biocomp.threads.*;
 
 /**	Similarity searching and matrix computation by various methods.
 

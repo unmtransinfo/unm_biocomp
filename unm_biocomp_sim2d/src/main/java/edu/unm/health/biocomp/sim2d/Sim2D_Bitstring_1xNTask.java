@@ -27,7 +27,7 @@ import edu.unm.health.biocomp.molfp.ConnectivityFingerprint;
 import edu.unm.health.biocomp.molfp.ECMolGraphInvariants;
 import edu.unm.health.biocomp.grouping.SimilarityMeasures;
 
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
 import edu.unm.health.biocomp.fp.*;
  
 /**	Callable task for processing bitstring similarity search.

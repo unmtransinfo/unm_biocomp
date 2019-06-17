@@ -18,7 +18,7 @@ import org.openscience.cdk.similarity.Tanimoto;
 
 import edu.unm.health.biocomp.cdk.*;
 import edu.unm.health.biocomp.fp.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
  
 /**	Callable task for processing ECFP similarity search.
 	From this ChemAxon code, calls CDK functions:

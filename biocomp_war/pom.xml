@@ -22,16 +22,6 @@
     </dependency>
     <dependency>
       <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_threads</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_db</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_freechart</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>

@@ -24,7 +24,7 @@ import edu.unm.health.biocomp.molfp.ECMolGraphInvariants;
 import edu.unm.health.biocomp.grouping.SimilarityMeasures;
 
 import edu.unm.health.biocomp.fp.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
 import edu.unm.health.biocomp.smarts.*;
  
 /**	Callable task for processing smarts-based fp similarity search.

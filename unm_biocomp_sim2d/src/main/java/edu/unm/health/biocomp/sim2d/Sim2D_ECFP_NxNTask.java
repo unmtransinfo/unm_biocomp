@@ -15,7 +15,7 @@ import chemaxon.descriptors.ECFPGenerator;
 import chemaxon.descriptors.ECFPParameters;
 
 import edu.unm.health.biocomp.fp.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
  
 /**	Callable task for processing ECFP similarity NxN matrix calculation.
 	@author Jeremy J Yang

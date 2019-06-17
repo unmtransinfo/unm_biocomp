@@ -11,7 +11,7 @@ import chemaxon.struc.prop.MMoleculeProp;
 import chemaxon.sss.search.*;
 import chemaxon.reaction.*; //Standardizer, StandardizerException
  
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
  
 /**	Callable task for smarts searching.
 

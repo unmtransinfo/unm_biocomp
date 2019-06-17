@@ -1,4 +1,4 @@
-package edu.unm.health.biocomp.db;
+package edu.unm.health.biocomp.util.db;
 
 import java.sql.*;
 import java.util.concurrent.*;

@@ -27,7 +27,7 @@ import edu.unm.health.biocomp.molfp.ECMolGraphInvariants;
 import edu.unm.health.biocomp.grouping.SimilarityMeasures;
 
 import edu.unm.health.biocomp.fp.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
  
 /**	Callable task for processing path fp similarity NxN matrix calculation.
 	@author Jeremy J Yang

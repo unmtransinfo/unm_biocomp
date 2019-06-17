@@ -23,7 +23,7 @@ import chemaxon.license.*; //LicenseManager
 
 import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
-import edu.unm.health.biocomp.threads.*;
+import edu.unm.health.biocomp.util.threads.*;
 
 /**	SMARTS based filtering application.
 	Note: Must add &lt;load-on-startup/&gt; to web.xml for smarts pre-load.

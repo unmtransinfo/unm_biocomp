@@ -18,8 +18,8 @@
 
   <modules>
   	<module>biocomp_war</module>
-  	<module>unm_biocomp_db</module>
-  	<module>unm_biocomp_threads</module>
+  	<!-- module>unm_biocomp_db</module OBSOLETE, MERGED INTO UTIL -->
+  	<!-- module>unm_biocomp_threads</module OBSOLETE, MERGED INTO UTIL -->
   	<module>unm_biocomp_util</module>
   	<module>unm_biocomp_freechart</module>
   	<module>unm_biocomp_convert</module>
