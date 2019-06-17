@@ -2008,7 +2008,7 @@ public class sim2d_servlet extends HttpServlet
     catch (Exception e) { APPNAME=this.getServletName(); }
     UPLOADDIR=conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null) throw new ServletException("Please supply UPLOADDIR parameter");
-    DATADIR=CONTEXT.getRealPath("")+"/WEB-INF/data";
+    DATADIR=CONTEXT.getRealPath("")+"/data";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=10000; }
     try { N_MAX_MATRIX=Integer.parseInt(conf.getInitParameter("N_MAX_MATRIX")); }
