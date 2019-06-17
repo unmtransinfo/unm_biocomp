@@ -795,7 +795,7 @@ public class molcloud_servlet extends HttpServlet
     catch (Exception e) { MAX_POST_SIZE=1*1024*1024; }
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
-    DEMOSMIFILE=CONTEXT.getRealPath("")+"/WEB-INF/data/"+conf.getInitParameter("DEMOSMIFILE");
+    DEMOSMIFILE=CONTEXT.getRealPath("")+"/data/"+conf.getInitParameter("DEMOSMIFILE");
   }
 
   /////////////////////////////////////////////////////////////////////////////

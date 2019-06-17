@@ -1407,7 +1407,7 @@ public class smartsfilter_servlet extends HttpServlet
     catch (Exception e) { ENABLE_NOLIMIT=false; }
     try { MAX_POST_SIZE=Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
     catch (Exception e) { MAX_POST_SIZE=10*1024*1024; }
-    SMARTSDIR=CONTEXT.getRealPath("")+"/WEB-INF/data/smarts"; //Works.
+    SMARTSDIR=CONTEXT.getRealPath("")+"/data/smarts"; //Works.
     ArrayList<String> smartsfnames = new ArrayList<String>();
     smartsfnames.addAll(Arrays.asList(glaxo_files));
     smartsfnames.addAll(Arrays.asList(ursu_files));
