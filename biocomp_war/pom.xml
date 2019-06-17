@@ -113,41 +113,26 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.2</version>
-        <configuration>
-          <outputDirectory>${project.parent.basedir}/target</outputDirectory>
-          <webResources>
-            <resource>
-              <directory>${project.parent.basedir}/src/main/resources</directory>
-              <excludes>
-                <exclude>*.properties</exclude>
-                <exclude>data/**/*.*</exclude>
-              </excludes>
-            </resource>
-            <resource>
-              <directory>${project.parent.basedir}/src/main/resources</directory>
-              <includes>
-                <include>*.properties</include>
-              </includes>
-              <targetPath>WEB-INF/classes</targetPath>
-            </resource>
-            <resource>
-              <directory>${project.parent.basedir}/src/main/resources/data</directory>
-              <includes>
-                <include>**/*.*</include>
-              </includes>
-              <targetPath>WEB-INF/data</targetPath>
-            </resource>
-          </webResources>
-        </configuration>
       </plugin>
 
-      <plugin>
+      <plugin> <!-- How to use this for testing? -->
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.4.18-SNAPSHOT</version>
       </plugin>
-    </plugins>
 
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId> <!-- Ok for v8/v9? -->
+        <version>2.2</version>
+        <configuration>
+          <url>http://localhost:8080/manager/text</url>
+          <server>TomcatServer</server> <!-- Credentials in settings.xml. -->
+          <path>/biocomp</path>
+        </configuration>
+      </plugin>
+
+    </plugins>
   </build>
 
 </project>

@@ -54,7 +54,21 @@ sudo keytool -importcert -cacerts -storepass changeit -file intermediate.crt -al
 ## Compilation
 
 ```
-mvn clean package
+mvn clean install
+```
+
+## Deploying `BIOCOMP_WAR`
+
+Ok for Tomcat v8/v9 also, apparently.
+
+```
+mvn --projects biocomp_war tomcat7:deploy
+```
+
+or
+
+```
+mvn --projects biocomp_war tomcat7:redeploy
 ```
 
 ## Usage
