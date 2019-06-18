@@ -1,15 +1,16 @@
 # BIOCOMP <img align="right" src="/doc/images/unm_new.png" height="80">
 
-Libraries and web apps developed at the UNM Translational Informatics Division 
-(formerly Biocomputing Division). The name _BIOCOMP_ reflects this proud history.
+Libraries and web apps developed at the UNM Translational Informatics Division
+(formerly Biocomputing Division). The name _BIOCOMP_ reflects this provenance.
 
 * Maven multi-module project.
-* Modules: `unm_biocomp_convert`, `unm_biocomp_db`, `unm_biocomp_depict`, 
+* Modules
+  * (JARs): `unm_biocomp_convert`, `unm_biocomp_depict`,
 `unm_biocomp_fp`, `unm_biocomp_freechart`,
-`unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molalign`, `unm_biocomp_molcloud`, 
-`unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`, 
-`unm_biocomp_smarts`, `unm_biocomp_tautomer`, `unm_biocomp_threads`, `unm_biocomp_util`
-* WAR produced deploys several TID web apps, including: Convert, Depict, MolCloud,
+`unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molalign`, `unm_biocomp_molcloud`,
+`unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`,
+`unm_biocomp_smarts`, `unm_biocomp_tautomer`, `unm_biocomp_util`
+  * (WAR) `biocomp_war` deploys several web apps, including: Convert, Depict, MolCloud,
 Ro5, Sim2D and SmartsFilter.
 
 ## Dependencies
@@ -25,7 +26,7 @@ Ro5, Sim2D and SmartsFilter.
   * Requires credentials.
 * Access to [EBI Maven repository](http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/)
 * `unm_biocomp_sasa`, `unm_biocomp_grouping`
-* Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart, 
+* Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart,
 many Apache and other open source libraries.
 
 ## Issues with repositories
@@ -73,8 +74,4 @@ mvn --projects biocomp_war tomcat7:redeploy
 
 ## Usage
 
-Example commmands
-
-```
-mvn exec:java -Dexec.mainClass="edu.unm.health.biocomp.molcloud.MCloud" -Dexec.args="-i test.smi -gui -v"
-```
+See example commmands in [README_APPS.md](doc/README_APPS.md)
