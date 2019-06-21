@@ -72,6 +72,15 @@ or
 mvn --projects biocomp_war tomcat7:redeploy
 ```
 
+## Apache configuration
+
+Convention to proxy Tomcat via Apache HTTPD:
+
+```
+ProxyPass /tomcat http://localhost:8080
+ProxyPassReverse /tomcat http://localhost:8080
+```
+
 ## Usage
 
 See example commmands in [README_APPS.md](doc/README_APPS.md)
