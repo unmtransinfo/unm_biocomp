@@ -87,7 +87,7 @@ public class react_servlet extends HttpServlet
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.println(HtmUtils.HeaderHtm(SERVLETNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+      out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
       out.println(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -97,7 +97,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(FormHtm(mrequest,response));
         ArrayList<ArrayList<Molecule> > rxnmols = react_utils.ReactMols(MOLS,params.getVal("smirks"),params.isChecked("recurse"),params.isChecked("verbose"));
         ReactOutput(rxnmols,params.isChecked("verbose"));
@@ -115,7 +115,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -123,7 +123,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_reset(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
