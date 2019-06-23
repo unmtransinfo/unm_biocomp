@@ -119,7 +119,7 @@ public class smartsfilter_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(FormHtm(mrequest,response,params.getVal("formmode")));
         out.print(HtmUtils.FooterHtm(errors,true));
         return;
@@ -128,7 +128,7 @@ public class smartsfilter_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(FormHtm(mrequest,response,params.getVal("formmode")));
         out.println("<SCRIPT LANGUAGE=\"JavaScript\">go_reset(window.document.mainform,'"+params.getVal("formmode")+"',true)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
@@ -139,7 +139,7 @@ public class smartsfilter_servlet extends HttpServlet
         {
           response.setContentType("text/html");
           out=response.getWriter();
-          out.print(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+          out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
           out.println(FormHtm(mrequest,response,params.getVal("formmode")));
           Date t_i = new Date();
 
@@ -160,7 +160,7 @@ public class smartsfilter_servlet extends HttpServlet
         {
           response.setContentType("text/html");
           out=response.getWriter();
-          out.print(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+          out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
           out.println(FormHtm(mrequest,response,params.getVal("formmode")));
           Analyze1mol(this.molReader,params);
           out.print(HtmUtils.OutputHtm(outputs));
@@ -177,7 +177,7 @@ public class smartsfilter_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.print(HelpHtm());
         out.print(HtmUtils.FooterHtm(errors,true));
       }
@@ -204,7 +204,7 @@ public class smartsfilter_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME,jsincludes,cssincludes,JavaScript(),color1,request));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(FormHtm(mrequest,response,request.getParameter("formmode")));
         out.println("<SCRIPT>go_reset(window.document.mainform,'"+request.getParameter("formmode")+"',false)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
