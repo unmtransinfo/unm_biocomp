@@ -143,7 +143,7 @@ public class depict_servlet extends HttpServlet
         out=response.getWriter();
         out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
         out.println(FormHtm(mrequest,response));
-        out.println("<SCRIPT>go_reset(window.document.mainform)</SCRIPT>");
+        out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
       }
     }
@@ -808,7 +808,7 @@ public class depict_servlet extends HttpServlet
   private static String JavaScript()
   {
     return(
-"function go_reset(form)"+
+"function go_init(form)"+
 "{\n"+
 "  form.file2txt.checked=true;\n"+
 "  form.smarts.value='';\n"+
@@ -845,7 +845,7 @@ public class depict_servlet extends HttpServlet
 "}\n"+
 "function go_demo(form)\n"+
 "{\n"+
-"  go_reset(form);"+
+"  go_init(form);"+
 "  form.intxt.value='CN1C(=O)N(C)C(=O)C(N(C)C=N2)=C12 caffeine\\n';\n"+
 "  form.intxt.value+='COc1cc2c(ccnc2cc1)C(O)C4CC(CC3)C(C=C)CN34 quinine\\n';\n"+
 "  form.intxt.value+='CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(=O)O benzylpenicillin\\n';\n"+

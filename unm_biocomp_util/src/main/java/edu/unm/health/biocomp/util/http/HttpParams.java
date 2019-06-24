@@ -37,6 +37,7 @@ public class HttpParams
   {
     if (!params.containsKey(key)) return false;
     if (params.get(key).equals("")) return false;
+    if (params.get(key)==null) return false;
     return true;
   }
   public boolean containsKey(String key)
