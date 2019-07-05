@@ -18,7 +18,7 @@ public class TaskUtils
 	String name,int tpoll)
   {
     T val=null;
-    Future<T> fut= exec.submit(task);
+    Future<T> fut = exec.submit(task);
     try {
       while (!fut.isDone())
       {
@@ -89,7 +89,7 @@ public class TaskUtils
     response.flushBuffer();
 
     T val=null;
-    Future<T> fut= exec.submit(task);
+    Future<T> fut = exec.submit(task);
     try {
       while (!fut.isDone())
       {
@@ -97,7 +97,7 @@ public class TaskUtils
 "<SCRIPT>\n"+
 "pwin.document.writeln('"+name+": "+tst.status()+" ...<BR>');\n"+
 "if (navigator.appName.match('Explorer')) pwin.scrollTo(0,99999);\n"+
-"else pwin.scrollTo(0,pwin.document.body.offsetHeight);\n"+
+"else pwin.scrollTo(0, pwin.document.body.offsetHeight);\n"+
 "</SCRIPT>");
         out.flush();
         response.flushBuffer();
@@ -118,7 +118,7 @@ public class TaskUtils
 "<SCRIPT>\n"+
 "pwin.document.writeln('"+name+": "+tst.status()+" (done).<BR>');\n"+
 "if (navigator.appName.match('Explorer')) pwin.scrollTo(0,99999);\n"+
-"else pwin.scrollTo(0,pwin.document.body.offsetHeight);\n"+
+"else pwin.scrollTo(0, pwin.document.body.offsetHeight);\n"+
 "</SCRIPT>");
     out.flush();
     response.flushBuffer();
