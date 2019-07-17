@@ -25,7 +25,8 @@ Ro5, Sim2D and SmartsFilter.
 * Access to [Oracle Maven repository](https://https://maven.oracle.com)
   * Requires credentials.
 * Access to [EBI Maven repository](http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/)
-* `unm_biocomp_sasa`, `unm_biocomp_grouping`
+* `unm_biocomp_sasa`, `unm_biocomp_grouping`, `unm_biocomp_text`,
+`unm_biocomp_cdk`, `unm_biocomp_hscaf`, `unm_biocomp_descriptors`
 * Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart,
 many Apache and other open source libraries.
 
