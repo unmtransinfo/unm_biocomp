@@ -1,4 +1,4 @@
-package edu.unm.health.biocomp.molalign;
+package edu.unm.health.biocomp.depict.molalign;
 
 import java.io.*;
 import java.util.*;

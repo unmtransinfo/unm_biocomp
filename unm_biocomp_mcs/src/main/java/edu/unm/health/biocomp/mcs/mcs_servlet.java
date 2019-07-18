@@ -25,7 +25,7 @@ import com.chemaxon.search.mcs.*; //MaxCommonSubstructure,TerminationCause,Searc
 
 import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
-import edu.unm.health.biocomp.molalign.*;
+import edu.unm.health.biocomp.depict.molalign.*;
 
 /**	Max Common Substructure app.
 

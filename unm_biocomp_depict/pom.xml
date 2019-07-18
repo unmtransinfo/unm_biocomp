@@ -15,12 +15,7 @@
       <artifactId>unm_biocomp_util</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_molalign</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    
+
     <dependency>
       <groupId>com.chemaxon</groupId>
       <artifactId>jchem-main</artifactId>

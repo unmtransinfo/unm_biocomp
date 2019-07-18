@@ -1,4 +1,4 @@
-package edu.unm.health.biocomp.molalign;
+package edu.unm.health.biocomp.depict.molalign;
 
 import java.io.*;
 import java.util.*;
@@ -7,8 +7,6 @@ import chemaxon.struc.*;
 import chemaxon.util.MolHandler;
 import chemaxon.sss.search.MolSearch;
 import chemaxon.sss.search.SearchException;
-
-import edu.unm.health.biocomp.molalign.*;
 
 /**	Test application for molecular alignment.
 

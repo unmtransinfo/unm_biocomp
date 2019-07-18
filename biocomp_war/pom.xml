@@ -17,11 +17,6 @@
   <dependencies>
     <dependency>
       <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_util</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_freechart</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
@@ -33,16 +28,6 @@
     <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_smarts</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_molalign</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_depict</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -90,6 +75,18 @@
       <artifactId>unm_biocomp_jchemdb</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_util</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>unmbiocomputing</groupId>
+      <artifactId>unm_biocomp_depict</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
     <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_descriptors</artifactId>
