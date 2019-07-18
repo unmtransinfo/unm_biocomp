@@ -15,6 +15,7 @@
   <description>Maven sub-module to generate WAR-file.</description>
 
   <dependencies>
+    <!-- From THIS unmbiocomputing repo: -->
     <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_freechart</artifactId>
@@ -76,6 +77,7 @@
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
+    <!-- From SEPARATE unmbiocomputing repos: -->
     <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_util</artifactId>

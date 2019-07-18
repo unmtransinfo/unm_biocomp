@@ -9,7 +9,6 @@ Libraries and web apps developed at the UNM Translational Informatics Division
 `unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molcloud`,
 `unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`,
 `unm_biocomp_smarts`, `unm_biocomp_tautomer`
-  * (`unm_biocomp_depict`, `unm_biocomp_util` being moved to separate repos).
   * (WAR) `biocomp_war` deploys several web apps, including: Convert, Depict, MolCloud,
 Ro5, Sim2D and SmartsFilter.
 
@@ -25,8 +24,8 @@ Ro5, Sim2D and SmartsFilter.
 * Access to [Oracle Maven repository](https://https://maven.oracle.com)
   * Requires credentials.
 * Access to [EBI Maven repository](http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/)
-* `unm_biocomp_sasa`, `unm_biocomp_grouping`, `unm_biocomp_text`,
-`unm_biocomp_cdk`, `unm_biocomp_hscaf`, `unm_biocomp_descriptors`,
+* Separate <https://github.com/unmtransinfo/> repos:
+  * `unm_biocomp_depict`, `unm_biocomp_util`, `unm_biocomp_sasa`, `unm_biocomp_grouping`, `unm_biocomp_text`, `unm_biocomp_cdk`, `unm_biocomp_hscaf`, `unm_biocomp_descriptors`,
 `unm_biocomp_biobyte`, `unm_biocomp_vcclab`
 * Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart,
 many Apache and other open source libraries.
