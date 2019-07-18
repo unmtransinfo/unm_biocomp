@@ -27,6 +27,7 @@ Ro5, Sim2D and SmartsFilter.
 * Separate <https://github.com/unmtransinfo/> repos:
   * `unm_biocomp_depict`, `unm_biocomp_util`, `unm_biocomp_sasa`, `unm_biocomp_grouping`, `unm_biocomp_text`, `unm_biocomp_cdk`, `unm_biocomp_hscaf`, `unm_biocomp_descriptors`,
 `unm_biocomp_biobyte`, `unm_biocomp_vcclab`
+  * See also [README_REPOS.md](doc/README_REPOS.md).
 * Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart,
 many Apache and other open source libraries.
 
