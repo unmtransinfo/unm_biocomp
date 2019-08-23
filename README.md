@@ -1,7 +1,7 @@
-# BIOCOMP <img align="right" src="/doc/images/unm_new.png" height="80">
+# `UNM_BIOCOMP` <img align="right" src="/doc/images/unm_new.png" height="80">
 
 Libraries and web apps developed at the UNM Translational Informatics Division
-(formerly Biocomputing Division). The name _BIOCOMP_ reflects this provenance.
+(formerly Biocomputing Division). The name _UNM\_BIOCOMP_ reflects this provenance.
 
 * Maven multi-module project.
 * Modules
@@ -16,8 +16,7 @@ Ro5, Sim2D and SmartsFilter.
 
 * Java 8
 * Maven 3.5+
-* ChemAxon (19.3.0)
-* ChemAxon (14.7.7.0)
+* ChemAxon (14.7.7.0, 19.3.0)
 * Access to [ChemAxon Maven repository](https://hub.chemaxon.com)
 (see [documentation](https://docs.chemaxon.com/display/docs/Public+Repository))
   * Requires API key.
@@ -70,6 +69,22 @@ sudo keytool -importcert -cacerts -storepass changeit -file intermediate.crt -al
 mvn clean install
 ```
 
+### Cloning and compiling dependency repositories
+
+```
+git clone git@github.com:unmtransinfo/unm_biocomp_util.git ; cd unm_biocomp_util ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_text.git ; cd unm_biocomp_text ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_smarts.git ; cd unm_biocomp_smarts ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_depict.git ; cd unm_biocomp_depict ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_hscaf.git ; cd unm_biocomp_hscaf ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_sasa.git ; cd unm_biocomp_sasa ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_grouping.git ; cd unm_biocomp_grouping ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_cdk.git ; cd unm_biocomp_cdk ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_biobyte.git ; cd unm_biocomp_biobyte ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_vcclab.git ; cd unm_biocomp_vcclab ; mvn clean install
+git clone git@github.com:unmtransinfo/unm_biocomp_descriptors.git ; cd unm_biocomp_descriptors ; mvn clean install
+```
+
 ## Deploying `BIOCOMP_WAR`
 
 Ok for Tomcat v8/v9 also, apparently.
@@ -84,13 +99,12 @@ or
 mvn --projects biocomp_war tomcat7:redeploy
 ```
 
-## Apache configuration
+## Testing with Jetty
 
-Convention to proxy Tomcat via Apache HTTPD:
+<http://localhost:8081/biocomp/convert>, etc.
 
 ```
-ProxyPass /tomcat http://localhost:8080
-ProxyPassReverse /tomcat http://localhost:8080
+mvn --projects biocomp_war jetty:run
 ```
 
 ## Usage
