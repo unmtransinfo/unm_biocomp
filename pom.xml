@@ -20,7 +20,6 @@
   	<module>biocomp_war</module>
   	<module>unm_biocomp_freechart</module>
   	<module>unm_biocomp_convert</module>
-  	<module>unm_biocomp_smarts</module>
   	<module>unm_biocomp_qed</module>
   	<module>unm_biocomp_fp</module>
   	<module>unm_biocomp_react</module>

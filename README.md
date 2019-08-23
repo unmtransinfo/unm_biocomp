@@ -8,7 +8,7 @@ Libraries and web apps developed at the UNM Translational Informatics Division
   * (JARs): `unm_biocomp_convert`, `unm_biocomp_fp`, `unm_biocomp_freechart`,
 `unm_biocomp_jchemdb`, `unm_biocomp_mcs`, `unm_biocomp_molcloud`,
 `unm_biocomp_qed`, `unm_biocomp_react`, `unm_biocomp_ro5`, `unm_biocomp_sim2d`,
-`unm_biocomp_smarts`, `unm_biocomp_tautomer`
+`unm_biocomp_tautomer`
   * (WAR) `biocomp_war` deploys several web apps, including: Convert, Depict, MolCloud,
 Ro5, Sim2D and SmartsFilter.
 
@@ -22,11 +22,21 @@ Ro5, Sim2D and SmartsFilter.
 (see [documentation](https://docs.chemaxon.com/display/docs/Public+Repository))
   * Requires API key.
 * Access to [Oracle Maven repository](https://https://maven.oracle.com)
-  * Requires credentials.
+  * Requires credentials, obtained via maven.oracle.com registration and
+license agreement acceptance.
 * Access to [EBI Maven repository](http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/)
 * Separate <https://github.com/unmtransinfo/> repos:
-  * `unm_biocomp_depict`, `unm_biocomp_util`, `unm_biocomp_sasa`, `unm_biocomp_grouping`, `unm_biocomp_text`, `unm_biocomp_cdk`, `unm_biocomp_hscaf`, `unm_biocomp_descriptors`,
-`unm_biocomp_biobyte`, `unm_biocomp_vcclab`
+  * [`unm_biocomp_util`](https://github.com/unmtransinfo/unm_biocomp_util),
+[`unm_biocomp_text`](https://github.com/unmtransinfo/unm_biocomp_text),
+[`unm_biocomp_smarts`](https://github.com/unmtransinfo/unm_biocomp_smarts),
+[`unm_biocomp_depict`](https://github.com/unmtransinfo/unm_biocomp_depict),
+[`unm_biocomp_hscaf`](https://github.com/unmtransinfo/unm_biocomp_hscaf),
+[`unm_biocomp_sasa`](https://github.com/unmtransinfo/unm_biocomp_sasa),
+[`unm_biocomp_grouping`](https://github.com/unmtransinfo/unm_biocomp_grouping),
+[`unm_biocomp_cdk`](https://github.com/unmtransinfo/unm_biocomp_cdk),
+[`unm_biocomp_biobyte`](https://github.com/unmtransinfo/unm_biocomp_biobyte),
+[`unm_biocomp_vcclab`](https://github.com/unmtransinfo/unm_biocomp_vcclab),
+[`unm_biocomp_descriptors`](https://github.com/unmtransinfo/unm_biocomp_descriptors)
   * See also [README_REPOS.md](doc/README_REPOS.md).
 * Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart,
 many Apache and other open source libraries.
