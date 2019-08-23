@@ -36,7 +36,6 @@ license agreement acceptance.
 [`unm_biocomp_biobyte`](https://github.com/unmtransinfo/unm_biocomp_biobyte),
 [`unm_biocomp_vcclab`](https://github.com/unmtransinfo/unm_biocomp_vcclab),
 [`unm_biocomp_descriptors`](https://github.com/unmtransinfo/unm_biocomp_descriptors)
-  * See also [README_REPOS.md](doc/README_REPOS.md).
 * Many others, including CDK, Derby, MySql, PostgreSql, Oracle, VCCLAB, Freechart,
 many Apache and other open source libraries.
 
@@ -65,24 +64,10 @@ sudo keytool -importcert -cacerts -storepass changeit -file intermediate.crt -al
 
 ## Compilation
 
+* See [README_REPOS.md](doc/README_REPOS.md) for cloning and compiling dependency repos.
+
 ```
 mvn clean install
-```
-
-### Cloning and compiling dependency repositories
-
-```
-git clone git@github.com:unmtransinfo/unm_biocomp_util.git ; cd unm_biocomp_util ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_text.git ; cd unm_biocomp_text ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_smarts.git ; cd unm_biocomp_smarts ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_depict.git ; cd unm_biocomp_depict ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_hscaf.git ; cd unm_biocomp_hscaf ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_sasa.git ; cd unm_biocomp_sasa ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_grouping.git ; cd unm_biocomp_grouping ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_cdk.git ; cd unm_biocomp_cdk ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_biobyte.git ; cd unm_biocomp_biobyte ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_vcclab.git ; cd unm_biocomp_vcclab ; mvn clean install
-git clone git@github.com:unmtransinfo/unm_biocomp_descriptors.git ; cd unm_biocomp_descriptors ; mvn clean install
 ```
 
 ## Deploying `BIOCOMP_WAR`
