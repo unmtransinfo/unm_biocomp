@@ -19,7 +19,7 @@ import chemaxon.struc.prop.MMoleculeProp;
 import chemaxon.sss.search.*;
 import chemaxon.license.*; //LicenseManager
 
-import edu.unm.health.biocomp.util.*; //time_utils,math_utils
+import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
 
 /**	Lipinsky Rule of 5 analysis.
@@ -44,9 +44,6 @@ public class ro5_servlet extends HttpServlet
   private static PrintWriter out=null;
   private static ArrayList<String> outputs=null;
   private static ArrayList<String> errors=null;
-  private static String smi2img_url=null;
-  private static String barchartimg_url=null;
-  private static String histoimg_url=null;
   private static HttpParams params=null;
   private static ArrayList<Molecule> mols=null;
   private static byte[] inbytes=null;
@@ -57,6 +54,9 @@ public class ro5_servlet extends HttpServlet
   private static String PREFIX=null;
   private static String ofmt="";
   private static String color1="#EEEEEE";
+  private static String SMI2IMG_URL=null;
+  private static String BARCHARTIMG_URL=null;
+  private static String HISTOIMG_URL=null;
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -92,14 +92,14 @@ public class ro5_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList("biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList("/marvin/marvin.js","biocomp.js","ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+      out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -109,7 +109,7 @@ public class ro5_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         Date t_0 = new Date();
         Ro5Results results=null;
@@ -139,7 +139,7 @@ public class ro5_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -167,7 +167,7 @@ public class ro5_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT LANGUAGE=\"JavaScript\">");
         out.println("go_reset(window.document.mainform);");
@@ -189,24 +189,24 @@ public class ro5_servlet extends HttpServlet
     Calendar calendar=Calendar.getInstance();
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
 
     //logo_htm+="</TD><TD>";
-    //imghtm=("<IMG BORDER=0 HEIGHT=\"60\" SRC=\"/tomcat"+CONTEXTPATH+"/images/eADMET_logo.png\">");
+    //imghtm=("<IMG BORDER=0 HEIGHT=\"60\" SRC=\""+CONTEXTPATH+"/images/eADMET_logo.png\">");
     //tiphtm=("ALOGPS from VCCLAB and eADMET.");
     //href=("http://www.eadmet.com");
     //logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
 
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\"/tomcat"+CONTEXTPATH+"/images/cdk_logo.png\">");
+    imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+CONTEXTPATH+"/images/cdk_logo.png\">");
     tiphtm=("CDK");
     href=("http://sourceforge.net/projects/cdk/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
@@ -214,10 +214,9 @@ public class ro5_servlet extends HttpServlet
     logo_htm+="</TD></TR></TABLE>";
     errors.add("<CENTER>"+logo_htm+"</CENTER>");
 
-    // This is our convention; Apache proxies the 8080 port via /tomcat.
-    smi2img_url=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/mol2img");
-    barchartimg_url=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/barchartimg");
-    histoimg_url=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/histoimg");
+    SMI2IMG_URL=(CONTEXTPATH+"/mol2img");
+    BARCHARTIMG_URL=(CONTEXTPATH+"/barchartimg");
+    HISTOIMG_URL=(CONTEXTPATH+"/histoimg");
 
     inbytes=new byte[1024];
 
@@ -516,7 +515,7 @@ public class ro5_servlet extends HttpServlet
       math_utils.HistoAnalyze(dvals,nbins,xmaxs,freqs);
       if (freqs.size()!=xmaxs.size())
         errors.add("DEBUG: freqs.size()!=xmaxs.size(): "+freqs.size()+"!="+xmaxs.size());
-      charthtm=HtmUtils.HistoImgHtm(freqs,xmaxs,opts,w,h,histoimg_url,true,4,"go_zoom_chartimg");
+      charthtm=HtmUtils.HistoImgHtm(freqs,xmaxs,opts,w,h,HISTOIMG_URL,true,4,"go_zoom_chartimg");
     }
     else if (field.equalsIgnoreCase("hbd")||field.equalsIgnoreCase("hba")) 
     {
@@ -525,7 +524,7 @@ public class ro5_servlet extends HttpServlet
       ArrayList<String> labels = new ArrayList<String>();
       for (int i=range[0];i<=range[1];++i)
         labels.add(""+i);
-      charthtm=HtmUtils.BarchartImgHtm(freqs,labels,opts,w,h,barchartimg_url,true,4,"go_zoom_chartimg");
+      charthtm=HtmUtils.BarchartImgHtm(freqs,labels,opts,w,h,BARCHARTIMG_URL,true,4,"go_zoom_chartimg");
     }
     return charthtm;
   }
@@ -719,14 +718,14 @@ public class ro5_servlet extends HttpServlet
         if (params.isChecked("depict"))
         {
           rhtm+=("<TD BGCOLOR=\"white\" ALIGN=CENTER>");
-          String imghtm=HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,smi2img_url,true,4,"go_zoom_smi2img");
+          String imghtm=HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,SMI2IMG_URL,true,4,"go_zoom_smi2img");
           rhtm+=(imghtm+"</TD>\n");
           rhtm+=("<TD BGCOLOR=\"white\"><TT>"+result.getName()+"</TT></TD>\n");
         }
         else
         {
           rhtm+=("<TD BGCOLOR=\"white\">");
-          String imghtm=HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,smi2img_url,false,4,null);
+          String imghtm=HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,SMI2IMG_URL,false,4,null);
           rhtm+=("<TT>"+HtmUtils.HtmTipper(result.getName(),imghtm,w_dep,"white")+"</TT></TD>\n");
         }
         String bgcolor="#FFFFFF";
@@ -915,8 +914,8 @@ public class ro5_servlet extends HttpServlet
       throw new ServletException("Please supply UPLOADDIR parameter (web.xml).");
     SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    LOGDIR=conf.getInitParameter("LOGDIR")+CONTEXTPATH;
-    if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
+    LOGDIR=conf.getInitParameter("LOGDIR");
+    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
     try { MAX_POST_SIZE=Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }

@@ -66,6 +66,7 @@ public class mcs_servlet extends HttpServlet
   private static String ofmt="";
   private static String color1="#EEEEEE";
   private static Integer arom=null;
+  private static String MOL2IMG_SERVLETURL=null;
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -99,14 +100,14 @@ public class mcs_servlet extends HttpServlet
       }
     }
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList("biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList("/marvin/marvin.js","biocomp.js","ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+      out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -116,7 +117,7 @@ public class mcs_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         if (params.getVal("runmode").equals("NxN"))
         {
@@ -138,7 +139,7 @@ public class mcs_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,false));
       }
@@ -152,7 +153,7 @@ public class mcs_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
@@ -171,14 +172,15 @@ public class mcs_servlet extends HttpServlet
     sizes_w=new LinkedHashMap<String,Integer>();
     calendar=Calendar.getInstance();
     mols=new ArrayList<Molecule>();
+    MOL2IMG_SERVLETURL=(CONTEXTPATH+"/mol2img");
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem and Marvin from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
@@ -551,9 +553,6 @@ public class mcs_servlet extends HttpServlet
     else if (params.getVal("dep_arom").equals("bas")) depictopts+=("&arom_bas=true");
     else if (params.getVal("dep_arom").equals("none")) depictopts+=("&kekule=true");
 
-    // This is our convention; Apache proxies the 8080 port via /tomcat.
-    String mol2img_servleturl=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/mol2img");
-
     String smifmt="smiles:";
     String mrvfmt="mrv:-H";
     if (params.getVal("arom").equals("gen")) { smifmt+="+a"; mrvfmt+="+a"; }
@@ -565,7 +564,7 @@ public class mcs_servlet extends HttpServlet
     String smiQ=MolExporter.exportToFormat(molQ,smifmt);
     String mrvcodeQ=MolExporter.exportToFormat(molQ,"base64:gzip:"+mrvfmt);
     String imghtmQ=HtmUtils.Mrvcode2ImgHtm(mrvcodeQ,atomColors,depictopts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
 
@@ -674,7 +673,7 @@ public class mcs_servlet extends HttpServlet
       {
         mrvcodeQ=MolExporter.exportToFormat(molQ,"base64:gzip:"+mrvfmt);
         imghtmQ=HtmUtils.Mrvcode2ImgHtm(mrvcodeQ,atomColors,depictopts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
         tablehtm+=("<TD ALIGN=CENTER VALIGN=TOP>");
@@ -683,7 +682,7 @@ public class mcs_servlet extends HttpServlet
       }
       tablehtm+=("<TD ALIGN=CENTER VALIGN=TOP>");
       String imghtm=HtmUtils.Mrvcode2ImgHtm(mrvcode,atomColors,opts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
       tablehtm+=(imghtm+"<BR>\n");
@@ -699,7 +698,7 @@ public class mcs_servlet extends HttpServlet
         else	// TIME_LIMIT
           tablehtm+=("<TD BGCOLOR=\"#FF8888\" ALIGN=CENTER VALIGN=TOP>");
         imghtm=HtmUtils.Mrvcode2ImgHtm(mrvcodeMCS,atomColors,depictopts,h,w,
-				mol2img_servleturl,true,4,
+				MOL2IMG_SERVLETURL,true,4,
 				"go_zoom_mrv2img");
         tablehtm+=(imghtm);
         tablehtm+=("<BR>\nna="+molMCS.getAtomCount()+",nb="+molMCS.getBondCount());
@@ -741,9 +740,6 @@ public class mcs_servlet extends HttpServlet
     if (params.getVal("dep_arom").equals("gen")) depictopts+=("&arom_gen=true");
     else if (params.getVal("dep_arom").equals("bas")) depictopts+=("&arom_bas=true");
     else if (params.getVal("dep_arom").equals("none")) depictopts+=("&kekule=true");
-
-    // This is our convention; Apache proxies the 8080 port via /tomcat.
-    String mol2img_servleturl=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/mol2img");
 
     String smifmt="smiles:";
     String mrvfmt="mrv:-H";
@@ -825,7 +821,7 @@ public class mcs_servlet extends HttpServlet
       //opts=depictopts+"&bgcolor=#DDDDDD";
       opts=depictopts+"&transparent=TRUE";
       String imghtm=HtmUtils.Mrvcode2ImgHtm(mrvcode,null,opts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
       tablehtm+=("<TD ALIGN=CENTER VALIGN=TOP>"+imghtm+"</TD>\n");
@@ -841,7 +837,7 @@ public class mcs_servlet extends HttpServlet
       //opts=depictopts+"&bgcolor=#DDDDDD";
       opts=depictopts+"&transparent=TRUE";
       String imghtm=HtmUtils.Mrvcode2ImgHtm(mrvcode,null,opts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
       rowhtm+=("<TD ALIGN=CENTER VALIGN=TOP>"+imghtm+"</TD>\n");
@@ -870,7 +866,7 @@ public class mcs_servlet extends HttpServlet
           {
             mrvcode=MolExporter.exportToFormat(molMCS,"base64:gzip:"+mrvfmt);
             imghtm=HtmUtils.Mrvcode2ImgHtm(mrvcode,null,depictopts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
           }
@@ -893,7 +889,7 @@ public class mcs_servlet extends HttpServlet
             mrvcode=MolExporter.exportToFormat(molT,"base64:gzip:"+mrvfmt);
             opts=depictopts+"&atomcolors=TRUE&color0=000000&color1=FF0000";
             imghtm=HtmUtils.Mrvcode2ImgHtm(mrvcode,atomColors,opts,h,w,
-				mol2img_servleturl,
+				MOL2IMG_SERVLETURL,
 				true,4,
 				"go_zoom_mrv2img");
           }
@@ -1020,8 +1016,8 @@ public class mcs_servlet extends HttpServlet
     UPLOADDIR=conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null)
       throw new ServletException("Please supply UPLOADDIR parameter");
-    LOGDIR=conf.getInitParameter("LOGDIR")+CONTEXTPATH;
-    if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
+    LOGDIR=conf.getInitParameter("LOGDIR");
+    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
     DEMOSMIFILE=CONTEXT.getRealPath("")+"/data/"+conf.getInitParameter("DEMOSMIFILE");

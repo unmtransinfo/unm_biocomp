@@ -54,6 +54,7 @@ public class tautomers_servlet extends HttpServlet
   private static String datestr=null;
   private static File logfile=null;
   private static String color1="#EEEEEE";
+  private static String MOL2IMG_SERVLETURL=null;
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -85,14 +86,14 @@ public class tautomers_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList("biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList("/marvin/marvin.js","biocomp.js","ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+      out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
       out.println(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -102,7 +103,7 @@ public class tautomers_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
 
         ArrayList<TautomerResult> tresults = Tautomers(mrequest,response);
@@ -119,7 +120,7 @@ public class tautomers_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -132,7 +133,7 @@ public class tautomers_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
@@ -148,14 +149,15 @@ public class tautomers_servlet extends HttpServlet
     outputs=new ArrayList<String>();
     errors=new ArrayList<String>();
     params=new HttpParams();
+    MOL2IMG_SERVLETURL=(CONTEXTPATH+"/mol2img");
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
@@ -544,9 +546,6 @@ public class tautomers_servlet extends HttpServlet
   private static void TautomerResultsOutput(ArrayList<TautomerResult> tresults)
       throws IOException, ServletException
   {
-    // This is our convention; Apache proxies the 8080 port via /tomcat.
-    String mol2img_servleturl=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/mol2img");
-
     int n_mols=0;
     int n_tmols=0;
     int deph=160;
@@ -568,7 +567,7 @@ public class tautomers_servlet extends HttpServlet
       thtm+=("<TD ALIGN=\"right\" VALIGN=\"top\">"+n_mols+"</TD>\n");
       thtm+=("<TD ALIGN=\"center\" VALIGN=\"top\">"+tresults_this.getMol().getName()+"<BR>\n");
       String smi=tresults_this.getMol().exportToFormat("smiles");
-      thtm+=(HtmUtils.Smi2ImgHtm(smi,depopts,depw,deph,mol2img_servleturl,true,4,"go_zoom_smi2img")+"</TD>\n");
+      thtm+=(HtmUtils.Smi2ImgHtm(smi,depopts,depw,deph,MOL2IMG_SERVLETURL,true,4,"go_zoom_smi2img")+"</TD>\n");
 
       thtm+=("<TD><CENTER><B>TautomerCount: "+tresults_this.tautomerCount()+"</B></CENTER><BR>\n");
       String thtm2=("<TABLE BORDER=\"0\">\n");
@@ -578,7 +577,7 @@ public class tautomers_servlet extends HttpServlet
         if (n_tmols_this%n_cols==0) thtm2+="<TR>\n";
         ++n_tmols_this;
         String tsmi=tmol.exportToFormat("smiles");
-        thtm2+=("<TD VALIGN=\"top\">"+HtmUtils.Smi2ImgHtm(tsmi,depopts,depw,deph,mol2img_servleturl,true,4,"go_zoom_smi2img")+"</TD>\n");
+        thtm2+=("<TD VALIGN=\"top\">"+HtmUtils.Smi2ImgHtm(tsmi,depopts,depw,deph,MOL2IMG_SERVLETURL,true,4,"go_zoom_smi2img")+"</TD>\n");
         if (n_tmols_this%n_cols==0) thtm2+="</TR>\n";
       }
       if (n_tmols_this%n_cols>0)
@@ -677,8 +676,8 @@ public class tautomers_servlet extends HttpServlet
       throw new ServletException("Please supply UPLOADDIR parameter");
     SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    LOGDIR=conf.getInitParameter("LOGDIR")+CONTEXTPATH;
-    if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
+    LOGDIR=conf.getInitParameter("LOGDIR");
+    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
   }

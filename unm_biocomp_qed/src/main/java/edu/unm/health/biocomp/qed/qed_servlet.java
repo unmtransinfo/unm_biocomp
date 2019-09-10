@@ -59,7 +59,8 @@ public class qed_servlet extends HttpServlet
   private static QED qed = null;
   private static String ofmt;
   private static String PREFIX=null;
-  private static String histoimg_url=null;
+  private static String HISTOIMG_URL=null;
+  private static String MOL2IMG_SERVLETURL=null;
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -90,14 +91,14 @@ public class qed_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList("biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList("/marvin/marvin.js","biocomp.js","ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+      out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
       out.println(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -108,7 +109,7 @@ public class qed_servlet extends HttpServlet
         response.setContentType("text/html");
         out=response.getWriter();
         // headerHtm must invoke marvin.js for applet for work.
-        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         ArrayList<Molecule> mols=QEDGenerate();
         QEDResults(mols,params,response);
@@ -126,7 +127,7 @@ public class qed_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -146,7 +147,7 @@ public class qed_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
@@ -164,22 +165,22 @@ public class qed_servlet extends HttpServlet
     params=new HttpParams();
     sizes_h=new LinkedHashMap<String,Integer>();
     sizes_w=new LinkedHashMap<String,Integer>();
+    MOL2IMG_SERVLETURL=(CONTEXTPATH+"/mol2img");
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
-    // This is our convention; Apache proxies the 8080 port via /tomcat.
-    histoimg_url=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/histoimg");
+    HISTOIMG_URL=(CONTEXTPATH+"/histoimg");
 
     //booleans:
     sizes_h.put("xs",96); sizes_w.put("xs",96);
@@ -528,7 +529,7 @@ public class qed_servlet extends HttpServlet
 
     //String vals_str="";
     //for (int i: vals) vals_str+=(""+i+",");
-    //histohtm=histoimg_url+"?w=400&h=200&fgcolor=x0088CC&title=QED%20"+score_tag;
+    //histohtm=HISTOIMG_URL+"?w=400&h=200&fgcolor=x0088CC&title=QED%20"+score_tag;
     //histohtm+="&yaxis="+URLEncoder.encode("frequency","UTF-8");
     //histohtm+="&values="+URLEncoder.encode(vals_str,"UTF-8");
     //String xmaxs_str="";
@@ -539,7 +540,7 @@ public class qed_servlet extends HttpServlet
 
     String opts="&title=QED%20"+score_tag+"&fgcolor=x0088CC";
     opts+="&yaxis="+URLEncoder.encode("frequency","UTF-8");
-    histohtm=HtmUtils.HistoImgHtm(vals,xmaxs,opts,400,200,histoimg_url,true,4,"go_zoom_chartimg");
+    histohtm=HtmUtils.HistoImgHtm(vals,xmaxs,opts,400,200,HISTOIMG_URL,true,4,"go_zoom_chartimg");
     outputs.add("<BLOCKQUOTE>"+histohtm+"</BLOCKQUOTE>");
 
     for (int i=0;i<vals.size();++i)
@@ -556,8 +557,6 @@ public class qed_servlet extends HttpServlet
     int n_mol=0;
     int N_MAX_VIEW=1000;
 
-    // This is our convention; Apache proxies the 8080 port via /tomcat.
-    String mol2img_servleturl=("http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/mol2img");
     int w=sizes_w.get(params.getVal("size"));
     int h=sizes_h.get(params.getVal("size"));
     String depopts=("mode=cow&imgfmt=png&kekule=true");
@@ -640,7 +639,7 @@ public class qed_servlet extends HttpServlet
 
         if (params.isChecked("depict"))
         {
-          String imghtm=HtmUtils.Smi2ImgHtm(smiles,depopts,h,w,mol2img_servleturl,true,4,"go_zoom_smi2img");
+          String imghtm=HtmUtils.Smi2ImgHtm(smiles,depopts,h,w,MOL2IMG_SERVLETURL,true,4,"go_zoom_smi2img");
           rhtm+=("<TD ALIGN=CENTER BGCOLOR=\"white\">"+imghtm+"</TD>\n");
         }
         rhtm+=("<TD ALIGN=CENTER BGCOLOR=\"white\">"+mol.getName()+"</TD>\n");
@@ -770,8 +769,8 @@ public class qed_servlet extends HttpServlet
       throw new ServletException("Please supply UPLOADDIR parameter");
     SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    LOGDIR=conf.getInitParameter("LOGDIR")+CONTEXTPATH;
-    if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
+    LOGDIR=conf.getInitParameter("LOGDIR");
+    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { MAX_POST_SIZE=Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
     catch (Exception e) { MAX_POST_SIZE=1*1024*1024; }
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }

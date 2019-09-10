@@ -85,15 +85,15 @@ public class convert_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList("biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList("/marvin/marvin.js","biocomp.js","ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
 
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+      out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -103,7 +103,7 @@ public class convert_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         Date t_i = new Date();
         Convert(mrequest,response);
@@ -125,7 +125,7 @@ public class convert_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -153,7 +153,7 @@ public class convert_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
@@ -171,15 +171,15 @@ public class convert_servlet extends HttpServlet
     Calendar calendar=Calendar.getInstance();
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
-    logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\"/tomcat"+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
-    logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
@@ -784,8 +784,8 @@ public class convert_servlet extends HttpServlet
       throw new ServletException("Please supply UPLOADDIR parameter");
     SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    LOGDIR=conf.getInitParameter("LOGDIR")+CONTEXTPATH;
-    if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
+    LOGDIR=conf.getInitParameter("LOGDIR");
+    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=1000; }
     try { N_MAX_LINES=Integer.parseInt(conf.getInitParameter("N_MAX_LINES")); }

@@ -50,6 +50,7 @@ public class react_servlet extends HttpServlet
   private static String datestr=null;
   private static File logfile=null;
   private static String color1="#EEEEEE";
+  private static String MOL2IMG_SERVLETURL=null;
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -80,14 +81,14 @@ public class react_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList("biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList("/marvin/marvin.js","biocomp.js","ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+      out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
       out.println(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -97,7 +98,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         ArrayList<ArrayList<Molecule> > rxnmols = react_utils.ReactMols(MOLS,params.getVal("smirks"),params.isChecked("recurse"),params.isChecked("verbose"));
         ReactOutput(rxnmols,params.isChecked("verbose"));
@@ -115,7 +116,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -123,7 +124,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, "tomcat"));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_reset(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
@@ -139,6 +140,7 @@ public class react_servlet extends HttpServlet
     errors=new ArrayList<String>();
     params=new HttpParams();
     MOLS=new ArrayList<Molecule>();
+    MOL2IMG_SERVLETURL=(CONTEXTPATH+"/mol2img");
 
     errors.add("<A HREF=\"http://medicine.unm.edu/informatics/\">"+
       "<IMG BORDER=0 SRC=\""+HtmUtils.ImageURL("biocomp_logo_only.gif",request)+"\"></A>"+
@@ -432,7 +434,6 @@ public class react_servlet extends HttpServlet
     else depopts+=("&kekule=true");
     if (params.isChecked("showmaps")) depopts+=("&showmaps=true");
     if (params.isChecked("showh")) depopts+=("&showh=true");
-    String mol2img_servleturl="http://"+SERVERNAME+"/tomcat"+CONTEXTPATH+"/mol2img";
 
     int n_mol=0;
     String thtm="";
@@ -457,7 +458,7 @@ public class react_servlet extends HttpServlet
       {
         ++i_x;
         String rxnsmi=MolExporter.exportToFormat(rxn,"smiles:u");
-        String imghtm=HtmUtils.Smi2ImgHtm(rxnsmi,depopts,h,w,mol2img_servleturl,true,4,"go_zoom_smi2img");
+        String imghtm=HtmUtils.Smi2ImgHtm(rxnsmi,depopts,h,w,MOL2IMG_SERVLETURL,true,4,"go_zoom_smi2img");
         thtm+=("<TR><TD>"+imghtm+"</TD></TR>\n");
         if (verbose) errors.add("&nbsp; reaction ["+i_x+"]: "+rxnsmi);
       }
@@ -578,8 +579,8 @@ public class react_servlet extends HttpServlet
     UPLOADDIR=conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null)
       throw new ServletException("Please supply UPLOADDIR parameter");
-    LOGDIR=conf.getInitParameter("LOGDIR")+CONTEXTPATH;
-    if (LOGDIR==null) LOGDIR="/usr/local/tomcat/logs"+CONTEXTPATH;
+    LOGDIR=conf.getInitParameter("LOGDIR");
+    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
   }
