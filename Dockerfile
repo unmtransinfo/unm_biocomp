@@ -46,6 +46,10 @@ RUN /usr/share/tomcat9/bin/catalina.sh start
 RUN echo "=== Done starting Tomcat."
 #
 ###
+RUN mkdir /usr/share/tomcat9/.chemaxon
+COPY conf/chemaxon/license.cxl /usr/share/tomcat9/.chemaxon
+RUN chown -R tomcat /usr/share/tomcat9/.chemaxon
+###
 #
 CMD ["/usr/share/tomcat9/bin/catalina.sh", "run"]
 #
