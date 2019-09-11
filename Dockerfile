@@ -36,20 +36,18 @@ RUN echo "=== Done installing Tomcat."
 COPY biocomp_war/target/biocomp_war-0.0.1-SNAPSHOT.war /usr/share/tomcat9/webapps/biocomp.war
 #RUN i=0; while [ ! -d /usr/share/tomcat9/webapps/carlsbad ]; do sleep 1; i=$(($i+1)); printf "%d. Waiting for auto-deploy...\n" "$i"; done
 RUN cd /usr/share/tomcat9/webapps; mkdir biocomp; cd biocomp; unzip ../biocomp.war
-RUN chown -R tomcat /usr/share/tomcat9/webapps/biocomp
 RUN ls -laR /usr/share/tomcat9/webapps
 RUN echo "=== Done installing application BIOCOMP."
 #
 ###
-# Needed?
+# Needed? Tomcat run by root, apparently.
 RUN /usr/share/tomcat9/bin/catalina.sh start
 RUN echo "=== Done starting Tomcat."
 #
 ###
-RUN mkdir /usr/share/tomcat9/.chemaxon
-COPY conf/chemaxon/license.cxl /usr/share/tomcat9/.chemaxon
-RUN chown -R tomcat /usr/share/tomcat9/.chemaxon
-###
+RUN mkdir /root/.chemaxon
+COPY conf/chemaxon/license.cxl /root/.chemaxon
 #
+###
 CMD ["/usr/share/tomcat9/bin/catalina.sh", "run"]
 #
