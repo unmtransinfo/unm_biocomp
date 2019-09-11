@@ -95,3 +95,17 @@ mvn --projects biocomp_war jetty:run
 ## Usage
 
 See example commmands in [README_APPS.md](doc/README_APPS.md)
+
+## Docker
+
+The ChemAxon license file is expected at `~/.chemaxon/license.cxl`.
+
+From the Docker engine host, the applications are accessible via
+<http://localhost:9091/biocomp/>.
+
+See:
+
+* [Dockerfile](Dockerfile)
+* [Go\_DockerBuild.sh](sh/Go_DockerBuild.sh)
+* [Go\_DockerRun.sh](sh/Go_DockerRun.sh)
+* [Go\_DockerClean.sh](sh/Go_DockerClean.sh)
