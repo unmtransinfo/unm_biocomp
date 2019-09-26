@@ -42,6 +42,8 @@
       <param-value>/tmp/scratch</param-value></init-param>
     <init-param> <param-name>LOGDIR</param-name>
       <param-value>${catalina.home}/logs</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>convert</servlet-name>
@@ -59,6 +61,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value> </init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>depict</servlet-name>
@@ -76,6 +80,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value> </init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>cdkdepict</servlet-name>
@@ -101,6 +107,8 @@
       <param-value>true</param-value></init-param>
     <init-param> <param-name>BB_ROOT</param-name>
       <param-value>/home/app/clogp/</param-value> </init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>descriptors</servlet-name>
@@ -126,6 +134,8 @@
       <param-value>true</param-value></init-param>
     <init-param> <param-name>BB_ROOT</param-name>
       <param-value>/home/app/clogp/</param-value> </init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>logp</servlet-name>
@@ -152,6 +162,8 @@
       <param-value>/tmp/scratch</param-value></init-param>
     <init-param> <param-name>LOGDIR</param-name>
       <param-value>${catalina.home}/logs</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
       <servlet-name>sim2d</servlet-name>
@@ -178,6 +190,8 @@
       <param-value>/tmp/scratch</param-value></init-param>
     <init-param> <param-name>LOGDIR</param-name>
       <param-value>${catalina.home}/logs</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>smartsfilter</servlet-name>
@@ -195,6 +209,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>tautomers</servlet-name>
@@ -212,6 +228,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>react</servlet-name>
@@ -231,6 +249,8 @@
       <param-value>100</param-value></init-param>
     <init-param> <param-name>DEMOSMIFILE</param-name>
       <param-value>mcs_demo.smi</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>mcs</servlet-name>
@@ -254,6 +274,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>ro5</servlet-name>
@@ -277,6 +299,8 @@
       <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>qed</servlet-name>
@@ -318,6 +342,8 @@
       <param-value>1000</param-value> </init-param>
     <init-param> <param-name>DEMOSMIFILE</param-name>
       <param-value>molcloud_demo.smi</param-value></init-param>
+    <init-param> <param-name>PROXY_PREFIX</param-name>
+      <param-value>/tomcat</param-value></init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>molcloud</servlet-name>

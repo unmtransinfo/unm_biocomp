@@ -15,38 +15,76 @@ import chemaxon.struc.Molecule;
 public class AppTest 
     extends TestCase
 {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+  /**
+   * Create the test case
+   *
+   * @param testName name of the test case
+   */
+  public AppTest( String testName )
+  {
+    super( testName );
+  }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+  /**
+   * @return the suite of tests being tested
+   */
+  public static Test suite()
+  {
+    return new TestSuite( AppTest.class );
+  }
 
-    /**
-     * Rigourous Test
-     */
-    public void testApp()
-    {
-        String intxt = "NCCc1cc(O)c(O)cc1";
-        String infmt = "smiles";
-        String outfmt = "sdf";
-	MolImporter molReader=new MolImporter(new ByteArrayInputStream(intxt.getBytes()), ifmt);
-	Molecule mol = molReader.read();
-	ByteArrayOutputStream obuff=new ByteArrayOutputStream();
-	MolExporter molWriter = new MolExporter(obuff, ofmt);
-	molWriter.write(mol);
-        String otxt = new String(obuff.toByteArray(),"utf-8");
-        assertTrue(otxt.length>0);
+  public void testSmiles2Sdf()
+  {
+    String itxt = "NCCc1cc(O)c(O)cc1";
+    String ifmt = "smiles";
+    String ofmt = "sdf";
+    MolImporter molReader = null;
+    Molecule mol = null;
+    System.err.println("INPUT: \""+itxt+"\"");
+    try {
+      molReader=new MolImporter(new ByteArrayInputStream(itxt.getBytes()), ifmt);
+      mol = molReader.read();
+    } catch (Exception e) {
+      System.err.println(e.toString());
     }
+    ByteArrayOutputStream obuff = new ByteArrayOutputStream();
+    MolExporter molWriter = null;
+    String otxt = null;
+    try {
+      molWriter = new MolExporter(obuff, ofmt);
+      molWriter.write(mol);
+      otxt = new String(obuff.toByteArray(), "utf-8");
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
+    System.err.println("OUTPUT: \""+otxt+"\"");
+    assertTrue(otxt.length()>0);
+  }
+  public void testInchi2Smiles()
+  {
+    String itxt = "InChI=1S/C4H5NO2/c1-2-3(5)4(6)7/h1,3H,5H2,(H,6,7)";
+    String ifmt = "inchi";
+    String ofmt = "smiles";
+    MolImporter molReader = null;
+    Molecule mol = null;
+    System.err.println("INPUT: \""+itxt+"\"");
+    try {
+      molReader=new MolImporter(new ByteArrayInputStream(itxt.getBytes()), ifmt);
+      mol = molReader.read();
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
+    ByteArrayOutputStream obuff = new ByteArrayOutputStream();
+    MolExporter molWriter = null;
+    String otxt = null;
+    try {
+      molWriter = new MolExporter(obuff, ofmt);
+      molWriter.write(mol);
+      otxt = new String(obuff.toByteArray(), "utf-8");
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
+    System.err.println("OUTPUT: \""+otxt+"\"");
+    assertTrue(otxt.length()>0);
+  }
 }

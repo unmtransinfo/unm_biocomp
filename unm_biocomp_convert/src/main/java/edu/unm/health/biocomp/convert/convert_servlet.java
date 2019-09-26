@@ -38,6 +38,7 @@ public class convert_servlet extends HttpServlet
   private static String SCRATCHDIR=null; // configured in web.xml
   private static Integer N_MAX=null;	// configured in web.xml
   private static Integer N_MAX_LINES=null;	// configured in web.xml
+  private static String PROXY_PREFIX=null; // configured in web.xml
   private static String PREFIX=null;
   private static int scratch_retire_sec=3600;
   private static MolImporter molReader=null;
@@ -85,8 +86,8 @@ public class convert_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js", PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
 
     boolean ok=initialize(request,mrequest);
     if (!ok)
@@ -171,12 +172,12 @@ public class convert_servlet extends HttpServlet
     Calendar calendar=Calendar.getInstance();
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
@@ -790,6 +791,7 @@ public class convert_servlet extends HttpServlet
     catch (Exception e) { N_MAX=1000; }
     try { N_MAX_LINES=Integer.parseInt(conf.getInitParameter("N_MAX_LINES")); }
     catch (Exception e) { N_MAX_LINES=10000; }
+    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
   public void doGet(HttpServletRequest request,HttpServletResponse response)
