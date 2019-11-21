@@ -106,6 +106,7 @@ public class sim2d_servlet extends HttpServlet
   private static BufferedReader buffReaderDB=null; //for bitstrs
   private static boolean CA_ECFP_IS_LICENSED=false; //ChemAxon license flag (not in FreeWeb-2015).
   private static String SMI2IMG_SERVLETURL=null;
+  private static String PROXY_PREFIX=null;	// configured in web.xml
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -132,14 +133,14 @@ public class sim2d_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js",PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+      out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -149,7 +150,7 @@ public class sim2d_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response,params.getVal("formmode")));
         out.println("<SCRIPT>go_reset(window.document.mainform,'"+params.getVal("formmode")+"',true)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
@@ -159,7 +160,7 @@ public class sim2d_servlet extends HttpServlet
         //response.setBufferSize(0); //call before any content written; if content written or object committed, IllegalStateException. 
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response,params.getVal("formmode")));
         out.flush();
         response.flushBuffer();
@@ -227,7 +228,7 @@ public class sim2d_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.print(HelpHtm());
         out.print(HtmUtils.FooterHtm(errors,true));
       }
@@ -254,7 +255,7 @@ public class sim2d_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response,request.getParameter("formmode")));
         out.println("<SCRIPT>go_reset(window.document.mainform,'"+request.getParameter("formmode")+"',false)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
@@ -291,20 +292,20 @@ public class sim2d_servlet extends HttpServlet
     params=new HttpParams();
     outputs=new ArrayList<String>();
     errors=new ArrayList<String>();
-    SMI2IMG_SERVLETURL=(CONTEXTPATH+"/mol2img");
+    SMI2IMG_SERVLETURL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=\"0\" SRC=\""+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String imghtm=("<IMG BORDER=\"0\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
     String href=("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\""+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem and Marvin from ChemAxon Ltd.");
     href=("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+CONTEXTPATH+"/images/cdk_logo.png\">");
+    imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/cdk_logo.png\">");
     tiphtm=("CDK");
     href=("http://sourceforge.net/projects/cdk/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
@@ -1722,7 +1723,7 @@ public class sim2d_servlet extends HttpServlet
 "  pwin.document.close(); //if window exists, clear\n"+
 "  pwin.document.open('text/html');\n"+
 "  pwin.document.writeln('<HTML><HEAD>');\n"+
-"  pwin.document.writeln('<LINK REL=\"stylesheet\" type=\"text/css\" HREF=\""+CONTEXTPATH+"/css/biocomp.css\" />');\n"+
+"  pwin.document.writeln('<LINK REL=\"stylesheet\" type=\"text/css\" HREF=\""+PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css\" />');\n"+
 "  pwin.document.writeln('</HEAD><BODY BGCOLOR=\"#DDDDDD\">');\n"+
 "  pwin.document.writeln('"+SERVLETNAME+"...<BR>');\n"+
 " pwin.document.writeln('"+DateFormat.getDateInstance(DateFormat.FULL).format(new Date())+"<BR>');\n"+
@@ -2018,6 +2019,7 @@ public class sim2d_servlet extends HttpServlet
     SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
     LOGDIR=conf.getInitParameter("LOGDIR");
     if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
+    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
     // Parse all smarts files into SmartsFile objects.
     // By doing this here in init(), then it happens only
     // once for each servlet instance and not each submit.

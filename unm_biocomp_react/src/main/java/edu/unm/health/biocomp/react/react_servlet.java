@@ -51,6 +51,7 @@ public class react_servlet extends HttpServlet
   private static File logfile=null;
   private static String color1="#EEEEEE";
   private static String MOL2IMG_SERVLETURL=null;
+  private static String PROXY_PREFIX=null;	// configured in web.xml
 
   /////////////////////////////////////////////////////////////////////////////
   public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -81,14 +82,14 @@ public class react_servlet extends HttpServlet
     }
 
     // main logic:
-    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/css/biocomp.css"));
-    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(CONTEXTPATH+"/js/biocomp.js",CONTEXTPATH+"/js/ddtip.js"));
+    ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
+    ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js",PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
     boolean ok=initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out=response.getWriter();
-      out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+      out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
       out.println(HtmUtils.FooterHtm(errors,true));
       return;
     }
@@ -98,7 +99,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response));
         ArrayList<ArrayList<Molecule> > rxnmols = react_utils.ReactMols(MOLS,params.getVal("smirks"),params.isChecked("recurse"),params.isChecked("verbose"));
         ReactOutput(rxnmols,params.isChecked("verbose"));
@@ -116,7 +117,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
       }
@@ -124,7 +125,7 @@ public class react_servlet extends HttpServlet
       {
         response.setContentType("text/html");
         out=response.getWriter();
-        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request, null));
+        out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_reset(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
@@ -140,7 +141,7 @@ public class react_servlet extends HttpServlet
     errors=new ArrayList<String>();
     params=new HttpParams();
     MOLS=new ArrayList<Molecule>();
-    MOL2IMG_SERVLETURL=(CONTEXTPATH+"/mol2img");
+    MOL2IMG_SERVLETURL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
     errors.add("<A HREF=\"http://medicine.unm.edu/informatics/\">"+
       "<IMG BORDER=0 SRC=\""+HtmUtils.ImageURL("biocomp_logo_only.gif",request)+"\"></A>"+
@@ -583,6 +584,7 @@ public class react_servlet extends HttpServlet
     if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
+    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
   public void doGet(HttpServletRequest request,HttpServletResponse response)
