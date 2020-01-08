@@ -53,8 +53,8 @@ public class convert_servlet extends HttpServlet
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
   private static String REMOTEAGENT=null;
-  private static String datestr=null;
-  private static File logfile=null;
+  private static String DATESTR=null;
+  private static File LOGFILE=null;
   private static String color1="#EEEEEE";
 
   /////////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ public class convert_servlet extends HttpServlet
       else if (downloadfile!=null && downloadfile.length()>0) // POST param
       {
         ServletOutputStream ostream=response.getOutputStream();
-        HtmUtils.DownloadFile(response,ostream,downloadfile,
+        HtmUtils.DownloadFile(response, ostream, downloadfile,
           request.getParameter("fname"));
       }
       else	// GET method, initial invocation of servlet w/ no params
@@ -155,21 +155,20 @@ public class convert_servlet extends HttpServlet
         response.setContentType("text/html");
         out=response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
-        out.println(FormHtm(mrequest,response));
+        out.println(FormHtm(mrequest, response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
-        out.println(HtmUtils.FooterHtm(errors,true));
+        out.println(HtmUtils.FooterHtm(errors, true));
       }
     }
   }
   /////////////////////////////////////////////////////////////////////////////
-  private boolean initialize(HttpServletRequest request,MultipartRequest mrequest)
-      throws IOException,ServletException
+  private boolean initialize(HttpServletRequest request, MultipartRequest mrequest)
+      throws IOException, ServletException
   {
     SERVLETNAME=this.getServletName();
     outputs = new ArrayList<String>();
     errors = new ArrayList<String>();
     params = new HttpParams();
-    Calendar calendar=Calendar.getInstance();
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
     String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
@@ -192,66 +191,73 @@ public class convert_servlet extends HttpServlet
       System.err.println("LOGDIR creation "+(ok?"succeeded":"failed")+": "+LOGDIR);
       if (!ok)
       {
-        errors.add("ERROR: could not create LOGDIR: "+LOGDIR);
-        return false;
+        errors.add("ERROR: could not create LOGDIR (logging disabled): "+LOGDIR);
+      }
+    }
+    LOGFILE = new File(LOGDIR+"/"+SERVLETNAME+".log");
+    if (!LOGFILE.exists())
+    {
+      try {
+        LOGFILE.createNewFile();
+        LOGFILE.setWritable(true,true);
+        PrintWriter out_log = new PrintWriter(LOGFILE);
+        out_log.println("date\tip\tN"); 
+        out_log.flush();
+        out_log.close();
+      }
+      catch (Exception e) {
+        errors.add("ERROR: could not create LOGFILE (logging disabled): "+e);
+        LOGFILE = null;
+      }
+    }
+    else if (!LOGFILE.canWrite())
+    {
+      errors.add("ERROR: LOGFILE not writable (logging disabled).");
+      LOGFILE = null;
+    }
+    if (LOGFILE!=null)
+    {
+      BufferedReader buff = new BufferedReader(new FileReader(LOGFILE));
+      if (buff==null)
+      {
+        errors.add("ERROR: Cannot open log file.");
+      }
+      else
+      {
+        int n_lines=0;
+        String line=null;
+        Calendar calendar=Calendar.getInstance();
+        String startdate=null;
+        while ((line=buff.readLine())!=null)
+        {
+          ++n_lines;
+          String[] fields=Pattern.compile("\\t").split(line);
+          if (n_lines==2) startdate=fields[0];
+        }
+        buff.close(); //Else can result in error: "Too many open files"
+        if (n_lines>2)
+        {
+          calendar.set(Integer.parseInt(startdate.substring(0,4)),
+                   Integer.parseInt(startdate.substring(4,6))-1,
+                   Integer.parseInt(startdate.substring(6,8)),
+                   Integer.parseInt(startdate.substring(8,10)),
+                   Integer.parseInt(startdate.substring(10,12)),0);
+  
+          DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
+          errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
+        }
+        calendar.setTime(new Date());
+        DATESTR=String.format("%04d%02d%02d%02d%02d",
+          calendar.get(Calendar.YEAR),
+          calendar.get(Calendar.MONTH)+1,
+          calendar.get(Calendar.DAY_OF_MONTH),
+          calendar.get(Calendar.HOUR_OF_DAY),
+          calendar.get(Calendar.MINUTE));
       }
     }
 
-    String logpath=LOGDIR+"/"+SERVLETNAME+".log";
-    logfile=new File(logpath);
-    if (!logfile.exists())
-    {
-      logfile.createNewFile();
-      logfile.setWritable(true,true);
-      PrintWriter out_log=new PrintWriter(logfile);
-      out_log.println("date\tip\tN"); 
-      out_log.flush();
-      out_log.close();
-    }
-    if (!logfile.canWrite())
-    {
-      errors.add("ERROR: Log file not writable.");
-      return false;
-    }
-    BufferedReader buff=new BufferedReader(new FileReader(logfile));
-    if (buff==null)
-    {
-      errors.add("ERROR: Cannot open log file.");
-      return false;
-    }
-
-    int n_lines=0;
-    String line=null;
-    String startdate=null;
-    while ((line=buff.readLine())!=null)
-    {
-      ++n_lines;
-      String[] fields=Pattern.compile("\\t").split(line);
-      if (n_lines==2) startdate=fields[0];
-    }
-    buff.close(); //Else can result in error: "Too many open files"
-    if (n_lines>2)
-    {
-      calendar.set(Integer.parseInt(startdate.substring(0,4)),
-               Integer.parseInt(startdate.substring(4,6))-1,
-               Integer.parseInt(startdate.substring(6,8)),
-               Integer.parseInt(startdate.substring(8,10)),
-               Integer.parseInt(startdate.substring(10,12)),0);
-
-      DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
-      errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
-    }
-
-    calendar.setTime(new Date());
-    datestr=String.format("%04d%02d%02d%02d%02d",
-      calendar.get(Calendar.YEAR),
-      calendar.get(Calendar.MONTH)+1,
-      calendar.get(Calendar.DAY_OF_MONTH),
-      calendar.get(Calendar.HOUR_OF_DAY),
-      calendar.get(Calendar.MINUTE));
-
     Random rand = new Random();
-    PREFIX=SERVLETNAME+"."+datestr+"."+String.format("%03d",rand.nextInt(1000));
+    PREFIX=SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
     if (mrequest==null) return true;
 
@@ -283,6 +289,7 @@ public class convert_servlet extends HttpServlet
     //errors.add("DEBUG: filePart.getSize() = "+filePart.getSize());
 
     String intxtDB=params.getVal("intxt").replaceFirst("[\\s]+$","");
+    String line = null;
     if (fileDB!=null)
     {
       if (params.isChecked("file2txt"))
@@ -583,10 +590,11 @@ public class convert_servlet extends HttpServlet
       "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">"+
       "download "+fname+" ("+file_utils.NiceBytes(fsize)+")</BUTTON></FORM>\n");
 
-    PrintWriter out_log=new PrintWriter(
-      new BufferedWriter(new FileWriter(logfile,true)));
-    out_log.printf("%s\t%s\t%d\n",datestr,REMOTEHOST,n_mols_out); 
-    out_log.close();
+    if (LOGFILE!=null) {
+      PrintWriter out_log=new PrintWriter(new BufferedWriter(new FileWriter(LOGFILE,true)));
+      out_log.printf("%s\t%s\t%d\n",DATESTR,REMOTEHOST,n_mols_out); 
+      out_log.close();
+    }
   }
   /////////////////////////////////////////////////////////////////////////////
   private static int WriteMol(Molecule mol,MolExporter molWriter,HttpParams params)

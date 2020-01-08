@@ -49,7 +49,7 @@ public class ro5_servlet extends HttpServlet
   private static byte[] inbytes=null;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static String datestr=null;
+  private static String DATESTR=null;
   private static File LOGFILE=null;
   private static String PREFIX=null;
   private static String ofmt="";
@@ -121,10 +121,11 @@ public class ro5_servlet extends HttpServlet
         }
         catch (Exception e) { errors.add("ERROR: "+e.toString()); }//catches LicenseException
 
-        PrintWriter out_log=new PrintWriter(
-          new BufferedWriter(new FileWriter(LOGFILE,true)));
-        out_log.printf("%s\t%s\t%d\n",datestr,REMOTEHOST,mols.size()); 
-        out_log.close();
+        if (LOGFILE!=null) {
+          PrintWriter out_log=new PrintWriter(new BufferedWriter(new FileWriter(LOGFILE,true)));
+          out_log.printf("%s\t%s\t%d\n",DATESTR,REMOTEHOST,mols.size()); 
+          out_log.close();
+        }
 
         errors.add(SERVLETNAME+": elapsed time: "+time_utils.TimeDeltaStr(t_0,new Date()));
         out.print(HtmUtils.OutputHtm(outputs));
@@ -222,72 +223,74 @@ public class ro5_servlet extends HttpServlet
     inbytes=new byte[1024];
 
     //Create webapp-specific log dir if necessary:
-    File dout=new File(LOGDIR);
+    File dout = new File(LOGDIR);
     if (!dout.exists())
     {
-      boolean ok=dout.mkdir();
+      boolean ok = dout.mkdir();
       System.err.println("LOGDIR creation "+(ok?"succeeded":"failed")+": "+LOGDIR);
       if (!ok)
       {
-        errors.add("ERROR: could not create LOGDIR: "+LOGDIR);
-        return false;
+        errors.add("ERROR: could not create LOGDIR (logging disabled): "+LOGDIR);
       }
     }
-
-    String logpath=LOGDIR+"/"+SERVLETNAME+".log";
-    LOGFILE=new File(logpath);
+    LOGFILE = new File(LOGDIR+"/"+SERVLETNAME+".log");
     if (!LOGFILE.exists())
     {
-      LOGFILE.createNewFile();
-      LOGFILE.setWritable(true,true);
-      PrintWriter out_log=new PrintWriter(LOGFILE);
-      out_log.println("date\tip\tN"); 
-      out_log.flush();
-      out_log.close();
+      try {
+        LOGFILE.createNewFile();
+        LOGFILE.setWritable(true,true);
+        PrintWriter out_log = new PrintWriter(LOGFILE);
+        out_log.println("date\tip\tN"); 
+        out_log.flush();
+        out_log.close();
+      }
+      catch (Exception e) {
+        errors.add("ERROR: Could not create LOGFILE (logging disabled): "+e.getMessage());
+      }
     }
-    if (!LOGFILE.canWrite())
+    else if (!LOGFILE.canWrite())
     {
-      errors.add("ERROR: Log file not writable.");
-      return false;
+      errors.add("ERROR: Log file not writable (logging disabled).");
+      LOGFILE = null;
     }
-    BufferedReader buff=new BufferedReader(new FileReader(LOGFILE));
-    if (buff==null)
-    {
-      errors.add("ERROR: Cannot open log file.");
-      return false;
+    if (LOGFILE!=null) {
+      BufferedReader buff = new BufferedReader(new FileReader(LOGFILE));
+      if (buff==null)
+      {
+        errors.add("ERROR: Cannot open log file.");
+      }
+      else
+      {
+        int n_lines=0;
+        String line=null;
+        String startdate=null;
+        while ((line=buff.readLine())!=null)
+        {
+          ++n_lines;
+          String[] fields = java.util.regex.Pattern.compile("\\t").split(line);
+          if (n_lines==2) startdate = fields[0];
+        }
+        if (n_lines>2)
+        {
+          calendar.set(Integer.parseInt(startdate.substring(0,4)),
+                   Integer.parseInt(startdate.substring(4,6))-1,
+                   Integer.parseInt(startdate.substring(6,8)),
+                   Integer.parseInt(startdate.substring(8,10)),
+                   Integer.parseInt(startdate.substring(10,12)),0);
+          DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
+          errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
+        }
+        calendar.setTime(new Date());
+        DATESTR = String.format("%04d%02d%02d%02d%02d",
+          calendar.get(Calendar.YEAR),
+          calendar.get(Calendar.MONTH)+1,
+          calendar.get(Calendar.DAY_OF_MONTH),
+          calendar.get(Calendar.HOUR_OF_DAY),
+          calendar.get(Calendar.MINUTE));
+        Random rand = new Random();
+        PREFIX=SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
+      }
     }
-
-    int n_lines=0;
-    String line=null;
-    String startdate=null;
-    while ((line=buff.readLine())!=null)
-    {
-      ++n_lines;
-      String[] fields=java.util.regex.Pattern.compile("\\t").split(line);
-      if (n_lines==2) startdate=fields[0];
-    }
-    if (n_lines>2)
-    {
-      calendar.set(Integer.parseInt(startdate.substring(0,4)),
-               Integer.parseInt(startdate.substring(4,6))-1,
-               Integer.parseInt(startdate.substring(6,8)),
-               Integer.parseInt(startdate.substring(8,10)),
-               Integer.parseInt(startdate.substring(10,12)),0);
-
-      DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
-      errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
-    }
-
-    calendar.setTime(new Date());
-    datestr=String.format("%04d%02d%02d%02d%02d",
-      calendar.get(Calendar.YEAR),
-      calendar.get(Calendar.MONTH)+1,
-      calendar.get(Calendar.DAY_OF_MONTH),
-      calendar.get(Calendar.HOUR_OF_DAY),
-      calendar.get(Calendar.MINUTE));
-
-    Random rand = new Random();
-    PREFIX=SERVLETNAME+"."+datestr+"."+String.format("%03d",rand.nextInt(1000));
 
     //Really needed?  Yes.  "Structure Search"
     LicenseManager.refresh();
