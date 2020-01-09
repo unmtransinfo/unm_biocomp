@@ -410,6 +410,11 @@ public class sim2d_servlet extends HttpServlet
       }
     }
 
+    try {
+      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
+    } catch (Exception e) {
+      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+    }
     LicenseManager.refresh();
     //Really needed?  Yes.
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM))

@@ -74,6 +74,9 @@ mvn clean install
 
 Ok for Tomcat v8/v9 also, apparently.
 
+Copy your ChemAxon license to `/biocomp_war/src/main/webapp/.chemaxon/license.cxl` 
+for inclusion in the WAR.
+
 ```
 mvn --projects biocomp_war tomcat7:deploy
 ```
@@ -98,7 +101,8 @@ See example commmands in [README_APPS.md](doc/README_APPS.md)
 
 ## Docker
 
-The ChemAxon license file is expected at `~/.chemaxon/license.cxl`.
+Copy your ChemAxon license to `/biocomp_war/src/main/webapp/.chemaxon/license.cxl` 
+for inclusion in the WAR.
 
 From the Docker engine host, the applications are accessible via
 <http://localhost:9091/biocomp/>.

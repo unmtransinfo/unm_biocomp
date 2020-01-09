@@ -219,8 +219,14 @@ public class molcloud_servlet extends HttpServlet
     sizes_h.put("l",1000); sizes_w.put("l",1400);
     sizes_h.put("xl",1600); sizes_w.put("xl",2400);
 
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+    Random rand = new Random();
+    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
+
     //Create webapp-specific log dir if necessary:
-    File dout=new File(LOGDIR);
+    File dout = new File(LOGDIR);
     if (!dout.exists())
     {
       boolean ok = dout.mkdir();
@@ -236,7 +242,7 @@ public class molcloud_servlet extends HttpServlet
       try {
         LOGFILE.createNewFile();
         LOGFILE.setWritable(true,true);
-        PrintWriter out_log=new PrintWriter(LOGFILE);
+        PrintWriter out_log = new PrintWriter(LOGFILE);
         out_log.println("date\tip\tN"); 
         out_log.flush();
         out_log.close();
@@ -253,7 +259,7 @@ public class molcloud_servlet extends HttpServlet
         LOGFILE = null;
     }
     if (LOGFILE!=null) {
-      BufferedReader buff=new BufferedReader(new FileReader(LOGFILE));
+      BufferedReader buff = new BufferedReader(new FileReader(LOGFILE));
       if (buff==null)
       {
         errors.add("ERROR: Cannot open log file (logging disabled).");
@@ -267,10 +273,9 @@ public class molcloud_servlet extends HttpServlet
         while ((line=buff.readLine())!=null)
         {
           ++n_lines;
-          String[] fields=Pattern.compile("\\t").split(line);
-          if (n_lines==2) startdate=fields[0];
+          String[] fields = Pattern.compile("\\t").split(line);
+          if (n_lines==2) startdate = fields[0];
         }
-        Calendar calendar=Calendar.getInstance();
         if (n_lines>2)
         {
           calendar.set(Integer.parseInt(startdate.substring(0,4)),
@@ -278,19 +283,9 @@ public class molcloud_servlet extends HttpServlet
                    Integer.parseInt(startdate.substring(6,8)),
                    Integer.parseInt(startdate.substring(8,10)),
                    Integer.parseInt(startdate.substring(10,12)),0);
-    
-          DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
+          DateFormat df = DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
           errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
         }
-        calendar.setTime(new Date());
-        DATESTR=String.format("%04d%02d%02d%02d%02d",
-          calendar.get(Calendar.YEAR),
-          calendar.get(Calendar.MONTH)+1,
-          calendar.get(Calendar.DAY_OF_MONTH),
-          calendar.get(Calendar.HOUR_OF_DAY),
-          calendar.get(Calendar.MINUTE));
-        Random rand = new Random();
-        PREFIX=SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
       }
     }
 

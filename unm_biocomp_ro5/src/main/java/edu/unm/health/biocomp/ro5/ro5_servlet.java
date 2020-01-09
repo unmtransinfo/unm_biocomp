@@ -179,16 +179,14 @@ public class ro5_servlet extends HttpServlet
     }
   }
   /////////////////////////////////////////////////////////////////////////////
-  private boolean initialize(HttpServletRequest request,
-                                    MultipartRequest mrequest)
+  private boolean initialize(HttpServletRequest request, MultipartRequest mrequest)
       throws IOException,ServletException
   {
-    SERVLETNAME=this.getServletName();
-    outputs=new ArrayList<String>();
-    errors=new ArrayList<String>();
-    params=new HttpParams();
-    mols=new ArrayList<Molecule>();
-    Calendar calendar=Calendar.getInstance();
+    SERVLETNAME = this.getServletName();
+    outputs = new ArrayList<String>();
+    errors = new ArrayList<String>();
+    params = new HttpParams();
+    mols = new ArrayList<Molecule>();
 
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
     String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
@@ -216,11 +214,17 @@ public class ro5_servlet extends HttpServlet
     logo_htm+="</TD></TR></TABLE>";
     errors.add("<CENTER>"+logo_htm+"</CENTER>");
 
-    SMI2IMG_URL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
-    BARCHARTIMG_URL=(PROXY_PREFIX+CONTEXTPATH+"/barchartimg");
-    HISTOIMG_URL=(PROXY_PREFIX+CONTEXTPATH+"/histoimg");
+    SMI2IMG_URL = (PROXY_PREFIX+CONTEXTPATH+"/mol2img");
+    BARCHARTIMG_URL = (PROXY_PREFIX+CONTEXTPATH+"/barchartimg");
+    HISTOIMG_URL = (PROXY_PREFIX+CONTEXTPATH+"/histoimg");
 
-    inbytes=new byte[1024];
+    inbytes = new byte[1024];
+
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+    Random rand = new Random();
+    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
     //Create webapp-specific log dir if necessary:
     File dout = new File(LOGDIR);
@@ -246,6 +250,7 @@ public class ro5_servlet extends HttpServlet
       }
       catch (Exception e) {
         errors.add("ERROR: Could not create LOGFILE (logging disabled): "+e.getMessage());
+        LOGFILE = null;
       }
     }
     else if (!LOGFILE.canWrite())
@@ -257,7 +262,7 @@ public class ro5_servlet extends HttpServlet
       BufferedReader buff = new BufferedReader(new FileReader(LOGFILE));
       if (buff==null)
       {
-        errors.add("ERROR: Cannot open log file.");
+        errors.add("ERROR: Cannot open LOGFILE.");
       }
       else
       {
@@ -280,19 +285,15 @@ public class ro5_servlet extends HttpServlet
           DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
           errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
         }
-        calendar.setTime(new Date());
-        DATESTR = String.format("%04d%02d%02d%02d%02d",
-          calendar.get(Calendar.YEAR),
-          calendar.get(Calendar.MONTH)+1,
-          calendar.get(Calendar.DAY_OF_MONTH),
-          calendar.get(Calendar.HOUR_OF_DAY),
-          calendar.get(Calendar.MINUTE));
-        Random rand = new Random();
-        PREFIX=SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
       }
     }
 
-    //Really needed?  Yes.  "Structure Search"
+    //License required for "Structure Search".
+    try {
+      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
+    } catch (Exception e) {
+      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+    }
     LicenseManager.refresh();
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
     {
@@ -313,7 +314,6 @@ public class ro5_servlet extends HttpServlet
 
     if (params.isChecked("verbose"))
     {
-      //errors.add("JChem version: "+chemaxon.jchem.version.VersionInfo.getVersion());
       errors.add("JChem version: "+com.chemaxon.version.VersionInfo.getVersion());
       errors.add("server: "+CONTEXT.getServerInfo()+" [API:"+CONTEXT.getMajorVersion()+"."+CONTEXT.getMinorVersion()+"]");
     }

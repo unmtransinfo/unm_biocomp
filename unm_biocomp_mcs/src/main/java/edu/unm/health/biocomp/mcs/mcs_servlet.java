@@ -17,6 +17,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import chemaxon.formats.*;
 import chemaxon.util.MolHandler;
 import chemaxon.struc.*;
+import chemaxon.license.*; //LicenseManager
 import chemaxon.struc.prop.MMoleculeProp;
 import chemaxon.sss.search.*; //SearchException, MCES
 import chemaxon.jchem.version.*;
@@ -60,7 +61,6 @@ public class mcs_servlet extends HttpServlet
   private static int serverport=0;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static Calendar calendar=null;
   private static String DATESTR=null;
   private static File LOGFILE=null;
   private static String ofmt="";
@@ -172,7 +172,6 @@ ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     params=new HttpParams();
     sizes_h=new LinkedHashMap<String,Integer>();
     sizes_w=new LinkedHashMap<String,Integer>();
-    calendar=Calendar.getInstance();
     mols=new ArrayList<Molecule>();
     MOL2IMG_SERVLETURL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
@@ -195,6 +194,10 @@ ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     sizes_h.put("m",160); sizes_w.put("m",180);
     sizes_h.put("l",200); sizes_w.put("l",240);
     sizes_h.put("xl",300); sizes_w.put("xl",400);
+
+    Calendar calendar=Calendar.getInstance();
+    calendar.setTime(new Date());
+    DATESTR=String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
 
     //Create webapp-specific log dir if necessary:
     File dout = new File(LOGDIR);
@@ -254,19 +257,18 @@ ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
                    Integer.parseInt(startdate.substring(6,8)),
                    Integer.parseInt(startdate.substring(8,10)),
                    Integer.parseInt(startdate.substring(10,12)),0);
-    
           DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
           errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
         }
-        calendar.setTime(new Date());
-        DATESTR=String.format("%04d%02d%02d%02d%02d",
-          calendar.get(Calendar.YEAR),
-          calendar.get(Calendar.MONTH)+1,
-          calendar.get(Calendar.DAY_OF_MONTH),
-          calendar.get(Calendar.HOUR_OF_DAY),
-          calendar.get(Calendar.MINUTE));
       }
     }
+
+    try {
+      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
+    } catch (Exception e) {
+      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+    }
+    LicenseManager.refresh();
 
     if (mrequest==null) return true;
 
