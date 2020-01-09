@@ -74,7 +74,6 @@ public class sim2d_servlet extends HttpServlet
   //private static int serverport=0;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static Calendar calendar=Calendar.getInstance();
   private static String DATESTR=null;
   private static String PREFIX=null;
   private static File LOGFILE=null;
@@ -335,6 +334,12 @@ public class sim2d_servlet extends HttpServlet
     HEATCOLORS.add("FF1111");
     HEATCOLORS.add("FF0000");
 
+    Calendar calendar=Calendar.getInstance();
+    calendar.setTime(new Date());
+    DATESTR = String.format("%04d%02d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
+    Random rand = new Random();
+    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
+
     //Create webapp-specific log dir if necessary:
     File dout = new File(LOGDIR);
     if (!dout.exists())
@@ -356,14 +361,15 @@ public class sim2d_servlet extends HttpServlet
         out_log.println("date\tip\tN"); 
         out_log.flush();
         out_log.close();
-      } catch (Exception e) {
-        errors.add("ERROR: could not create LOGFILE (logging disabled): "+e);
+      }
+      catch (Exception e) {
+        errors.add("ERROR: could not create LOGFILE (logging disabled): "+e.getMessage());
         LOGFILE = null;
       }
     }
     else if (!LOGFILE.canWrite())
     {
-      errors.add("ERROR: Log file not writable (logging disabled).");
+      errors.add("ERROR: LOGFILE not writable (logging disabled).");
       LOGFILE = null;
     }
     if (LOGFILE!=null)
@@ -371,7 +377,7 @@ public class sim2d_servlet extends HttpServlet
       BufferedReader buff=new BufferedReader(new FileReader(LOGFILE));
       if (buff==null)
       {
-        errors.add("ERROR: Cannot open log file (logging disabled).");
+        errors.add("ERROR: Cannot open LOGFILE (logging disabled).");
         LOGFILE = null;
       }
       else
@@ -397,16 +403,6 @@ public class sim2d_servlet extends HttpServlet
           DateFormat df=DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
           errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
         }
-        calendar.setTime(new Date());
-        DATESTR=String.format("%04d%02d%02d%02d%02d%02d",
-          calendar.get(Calendar.YEAR),
-          calendar.get(Calendar.MONTH)+1,
-          calendar.get(Calendar.DAY_OF_MONTH),
-          calendar.get(Calendar.HOUR_OF_DAY),
-          calendar.get(Calendar.MINUTE),
-          calendar.get(Calendar.SECOND));
-        Random rand = new Random();
-        PREFIX=SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
       }
     }
 
@@ -416,7 +412,6 @@ public class sim2d_servlet extends HttpServlet
       errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
     }
     LicenseManager.refresh();
-    //Really needed?  Yes.
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
     {
       errors.add("ERROR: ChemAxon license error; JCHEM required.");
