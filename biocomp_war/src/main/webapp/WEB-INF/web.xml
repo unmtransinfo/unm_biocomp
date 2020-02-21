@@ -25,6 +25,8 @@
     <url-pattern>/cdkmol2img</url-pattern>
   </servlet-mapping>
 
+  <!-- NOW HANDLED BY JAVA ANNOTATIONS: hscaf -->
+
   <servlet>
     <servlet-name>convert</servlet-name>
     <servlet-class>edu.unm.health.biocomp.convert.convert_servlet</servlet-class>
