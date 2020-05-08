@@ -80,7 +80,7 @@ public class sim2d_servlet extends HttpServlet
   private static String ofmt="";
   private static String MACCSFILE="mdl166.sma";
   private static String SUNSETFILE="sunsetkeys.sma";
-  private static String PUBCHEMFILE="dalke_chemfp_pubchem.sma";
+  private static String PUBCHEMFILE="chemfp_pubchem.sma";
   private static SmartsFile maccssf=null;
   private static SmartsFile sunsetsf=null;
   private static SmartsFile pubchemsf=null;
