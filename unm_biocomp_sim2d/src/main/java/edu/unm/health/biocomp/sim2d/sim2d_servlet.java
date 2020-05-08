@@ -406,11 +406,9 @@ public class sim2d_servlet extends HttpServlet
       }
     }
 
-    try {
-      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-    } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
-    }
+    String cxlic = (new File(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl")).exists() ? (CONTEXT.getRealPath("")+"/.chemaxon/license.cxl") : (System.getenv("HOME")+"/.chemaxon/license.cxl");
+    try { LicenseManager.setLicenseFile(cxlic); }
+    catch (Exception e) { errors.add("ERROR: "+e.getMessage()); }
     LicenseManager.refresh();
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
     {
@@ -434,7 +432,6 @@ public class sim2d_servlet extends HttpServlet
 
     if (params.isChecked("verbose"))
     {
-      //errors.add("JChem version: "+chemaxon.jchem.version.VersionInfo.getVersion());
       errors.add("JChem version: "+com.chemaxon.version.VersionInfo.getVersion());
       errors.add("server: "+CONTEXT.getServerInfo()+" [API:"+CONTEXT.getMajorVersion()+"."+CONTEXT.getMinorVersion()+"]");
     }
