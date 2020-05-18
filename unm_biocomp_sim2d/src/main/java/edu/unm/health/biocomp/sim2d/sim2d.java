@@ -21,12 +21,8 @@ import edu.unm.health.biocomp.cdk.*;
 */
 public class sim2d
 {
-  private static String MDL166FILE="/home/data/smarts/mdl166.sma";
-  private static String SUNSETFILE="/home/data/smarts/sunsetkeys.sma";
-  private static String fptype="path";
-
   /////////////////////////////////////////////////////////////////////////////
-  static void Sim2D_1xN_Path(MolImporter molReader, Molecule molQ,int verbose)
+  static void Sim2D_1xN_Path(MolImporter molReader, Molecule molQ, PrintWriter fout_writer, int verbose)
 	throws IOException
   {
     CFParameters cfparams = new CFParameters();
@@ -46,27 +42,30 @@ public class sim2d
     }
     Molecule mol;
     int n_mol=0;
+    fout_writer.write("Name\tPath_Similarity\n");
     while ((mol=molReader.read())!=null)
     {
       ++n_mol;
-      System.err.println(""+(n_mol)+". "+mol.getName()+":");
-
       float sim_tan=0.0f;
       ChemicalFingerprint fp = new ChemicalFingerprint(cfparams);
       try { fp.generate(mol); }
       catch (MDGeneratorException e) { System.err.println("problem generating FP: "+e.toString()); }
       sim_tan = 1.0f - fpQ.getTanimoto(fp);
-      System.err.println("\tpath:   "+String.format("%.2f",sim_tan));
+      if (verbose>0)
+      {
+        System.err.println(""+(n_mol)+". "+mol.getName()+"; path: "+String.format("%.2f", sim_tan));
+      }
+      fout_writer.write(mol.getName()+"\t"+String.format("%.2f", sim_tan)+"\n");
     }
     System.err.println("n_mol = "+n_mol);
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  static void Sim2D_1xN_Smarts(String sfpath,String fpname,MolImporter molReader, Molecule molQ,int verbose)
+  static void Sim2D_1xN_Smarts(String sfpath, String fpname, MolImporter molReader, Molecule molQ, PrintWriter fout_writer, int verbose)
 	throws IOException
   {
     SmartsFile smartsfile = new SmartsFile();
-    try { smartsfile.parseFile(new File(sfpath),false,fpname); }
+    try { smartsfile.parseFile(new File(sfpath), false, fpname); }
     catch (Exception e) { System.err.println("problem parsing smartsfile: "+e.toString()); }
     if (verbose>0)
     {
@@ -77,28 +76,32 @@ public class sim2d
     }
 
     BinaryFP fpQ = new BinaryFP(smartsfile.size());
-    try { fpQ.generate(smartsfile,molQ); }
+    try { fpQ.generate(smartsfile, molQ); }
     catch (Exception e) { System.err.println("problem generating FP: "+e.toString()); }
 
     Molecule mol;
     int n_mol=0;
+    fout_writer.write("Name\t"+fpname+"_Similarity\n");
     while ((mol=molReader.read())!=null)
     {
       ++n_mol;
-      System.err.println(""+(n_mol)+". "+mol.getName()+":");
 
       float sim_tan=0.0f;
       BinaryFP fp = new BinaryFP(smartsfile.size());
-      try { fp.generate(smartsfile,mol); }
+      try { fp.generate(smartsfile, mol); }
       catch (Exception e) { System.err.println("problem generating FP: "+e.toString()); }
       sim_tan = fpQ.tanimoto(fp);
-      System.err.println(String.format("\t%s: %.2f",fpname,sim_tan));
+      if (verbose>0)
+      {
+        System.err.println(""+(n_mol)+". "+mol.getName()+"; "+fpname+": "+String.format("%.2f", sim_tan));
+      }
+      fout_writer.write(mol.getName()+"\t"+String.format("%.2f", sim_tan)+"\n");
     }
     System.err.println("n_mol = "+n_mol);
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  static void Sim2D_1xN_Ecfp(MolImporter molReader, Molecule molQ,int verbose)
+  static void Sim2D_1xN_Ecfp(MolImporter molReader, Molecule molQ, PrintWriter fout_writer, int verbose)
 	throws IOException
   {
     ECFPGenerator ecfper = new ECFPGenerator();
@@ -115,58 +118,66 @@ public class sim2d
     ecfp_params.setDiameter(ecfp_diam);
     ecfp_params.setLength(ecfp_len);
     ECFP ecfpQ = new ECFP(ecfp_params);
-    try { ecfper.generate(molQ,ecfpQ); }
+    try { ecfper.generate(molQ, ecfpQ); }
     catch (MDGeneratorException e) { System.err.println("ERROR: "+e.toString()); }
 
     Molecule mol;
     int n_mol=0;
+    fout_writer.write("Name\tECFP_JChem_Similarity\n");
     while ((mol=molReader.read())!=null)
     {
       ++n_mol;
-      System.err.println(""+(n_mol)+". "+mol.getName()+":");
-
       float sim_tan=0.0f;
       ECFP ecfp = new ECFP(ecfp_params);
       try {
-        ecfper.generate(mol,ecfp);
+        ecfper.generate(mol, ecfp);
         sim_tan = 1.0f - ecfpQ.getTanimoto(ecfp);
       }
       catch (MDGeneratorException e) {
         System.err.println("ERROR: "+e.toString());
         sim_tan=0.0f;
       }
-      System.err.println("\tecfp: "+String.format("%.2f",sim_tan));
+      if (verbose>0)
+      {
+        System.err.println(""+(n_mol)+". "+mol.getName()+"; ecfp_jchem: "+String.format("%.2f", sim_tan));
+      }
+      fout_writer.write(mol.getName()+"\t"+String.format("%.2f", sim_tan)+"\n");
     }
     System.err.println("n_mol = "+n_mol);
   }
   /////////////////////////////////////////////////////////////////////////////
-  static void Sim2D_1xN_Ecfp_CDK(MolImporter molReader, Molecule molQ,int verbose)
+  static void Sim2D_1xN_Ecfp_CDK(MolImporter molReader, Molecule molQ, PrintWriter fout_writer, int verbose)
 	throws Exception
   {
-    org.openscience.cdk.fingerprint.IFingerprinter fper = new org.openscience.cdk.fingerprint.ExtendedFingerprinter(1024,4);
-    String smiQ = MolExporter.exportToFormat(molQ,"smiles:-a");
-    BitSet fpQ = cdk_utils.CalcFpFromSmiles(smiQ,fper);
+    org.openscience.cdk.fingerprint.IFingerprinter fper = new org.openscience.cdk.fingerprint.ExtendedFingerprinter(1024, 4);
+    String smiQ = MolExporter.exportToFormat(molQ, "smiles:-a");
+    BitSet fpQ = cdk_utils.CalcFpFromSmiles(smiQ, fper);
 
     Molecule mol;
     int n_mol=0;
+    fout_writer.write("Name\tECFP_CDK_Similarity\n");
     while ((mol=molReader.read())!=null)
     {
       ++n_mol;
-      System.err.println(""+(n_mol)+". "+mol.getName()+":");
-
       float sim_tan=0.0f;
       String smi = null;
       BitSet fp = null;
       try {
-        smi = MolExporter.exportToFormat(mol,"smiles:-a");
-        fp = cdk_utils.CalcFpFromSmiles(smi,fper);
-        sim_tan=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ,fp);
+        smi = MolExporter.exportToFormat(mol, "smiles:-a");
+        fp = cdk_utils.CalcFpFromSmiles(smi, fper);
+        sim_tan=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
       }
       catch (Exception e) { System.err.println(e.toString()); }
-      System.err.println("\tecfp_cdk: "+String.format("%.2f",sim_tan));
+      if (verbose>0)
+      {
+        System.err.println(""+(n_mol)+". "+mol.getName()+"; ecfp_cdk: "+String.format("%.2f", sim_tan));
+      }
+      fout_writer.write(mol.getName()+"\t"+String.format("%.2f", sim_tan)+"\n");
     }
     System.err.println("n_mol = "+n_mol);
   }
+
+  private static String fptype="path";
 
   /////////////////////////////////////////////////////////////////////////////
   private static void Help(String msg)
@@ -184,18 +195,20 @@ public class sim2d
       +"\n"
       +"options:\n"
       +"    -fptype FPTYPE ....................... FP type ["+fptype+"]\n"
+      +"    -smartsfile SMARTSFILE ............... SMARTS file, for -fptype smartsfile, e.g. mdl166.sma, sunsetkeys.sma\n"
       +"    -v ................................... verbose\n"
       +"    -h ................................... this help\n"
       +"\n"
-      +"FPTYPEs: maccs|sunset|path|ecfp|ecfp_cdk\n"
+      +"FPTYPEs: path|ecfp|ecfp_cdk|smartsfile\n"
     );
     System.exit(1);
   }
   private static int verbose=0;
-  private static String qsmi="";
-  private static String ifile="";
-  private static String qfile="";
-  private static String ofile="";
+  private static String ifile=null;
+  private static String qsmi=null;
+  private static String qfile=null;
+  private static String ofile=null;
+  private static String smartsfile=null;
 
   /////////////////////////////////////////////////////////////////////////////
   private static void ParseCommand(String args[])
@@ -207,6 +220,7 @@ public class sim2d
       else if (args[i].equals("-qsmi")) qsmi=args[++i];
       else if (args[i].equals("-qmol")) qfile=args[++i];
       else if (args[i].equals("-fptype")) fptype=args[++i];
+      else if (args[i].equals("-smartsfile")) smartsfile=args[++i];
       else if (args[i].equals("-v")) verbose=1;
       else if (args[i].equals("-h")) Help("");
       else Help("Unknown option: "+args[i]);
@@ -214,21 +228,23 @@ public class sim2d
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  public static void main(String[] args)
-    throws IOException,MolExportException,Exception
+  public static void main(String[] args) throws IOException, MolExportException, Exception
   {
     ParseCommand(args);
-    if (ifile.length()==0) Help("Input file required.");
+    if (ifile==null) Help("Input file required.");
+
+    File fout = (ofile!=null) ? (new File(ofile)) : null;
+    PrintWriter fout_writer = (fout!=null) ? (new PrintWriter(new BufferedWriter(new FileWriter(fout, false)))) : new PrintWriter(System.out);
 
     MolImporter molReaderQ = null;
     Molecule molQ = null;
-    if (qsmi.length()>0)
+    if (qsmi!=null)
     {
-      molQ=MolImporter.importMol(qsmi,"smiles:d");
+      molQ = MolImporter.importMol(qsmi, "smiles:d");
     }
-    else if (qfile.length()>0)
+    else if (qfile!=null)
     {
-      molReaderQ = new MolImporter(new File(qfile),"smiles:d");
+      molReaderQ = new MolImporter(new File(qfile), "smiles:d");
       try { molQ=molReaderQ.read(); }
       catch (MolFormatException e) { System.err.println(e.toString()); }
     }
@@ -237,41 +253,37 @@ public class sim2d
       Help("Input query required: -qsmi or -qmol.");
     }
 
-    System.err.println("query mol: "+MolExporter.exportToFormat(molQ,"smiles:u")+" "+molQ.getName());
+    System.err.println("query mol: "+MolExporter.exportToFormat(molQ, "smiles:u")+" "+molQ.getName());
 
     MolImporter molReader = new MolImporter(ifile);
 
     if (fptype.equalsIgnoreCase("path"))
     {
-      Sim2D_1xN_Path(molReader,molQ,verbose);
-    }
-    else if (fptype.equalsIgnoreCase("maccs"))
-    {
-      if (verbose>0) {
-        System.err.println("MDL166 SMARTS file: "+MDL166FILE);
-      }
-      Sim2D_1xN_Smarts(MDL166FILE,"MACCS",molReader,molQ,verbose);
-    }
-    else if (fptype.equalsIgnoreCase("sunset"))
-    {
-      if (verbose>0) {
-        System.err.println("SUNSET SMARTS file: "+SUNSETFILE);
-      }
-      Sim2D_1xN_Smarts(SUNSETFILE,"Sunset",molReader,molQ,verbose);
+      Sim2D_1xN_Path(molReader, molQ, fout_writer, verbose);
     }
     else if (fptype.equalsIgnoreCase("ecfp"))
     {
-      Sim2D_1xN_Ecfp(molReader,molQ,verbose);
+      Sim2D_1xN_Ecfp(molReader, molQ, fout_writer, verbose);
     }
     else if (fptype.equalsIgnoreCase("ecfp_cdk"))
     {
-      Sim2D_1xN_Ecfp_CDK(molReader,molQ,verbose);
+      Sim2D_1xN_Ecfp_CDK(molReader, molQ, fout_writer, verbose);
+    }
+    else if (fptype.equalsIgnoreCase("smartsfile"))
+    {
+      if (!(new File(smartsfile)).exists()) {
+        Help("SMARTS file not found: "+smartsfile);
+      }
+      if (verbose>0) {
+        System.err.println("SMARTS file: "+smartsfile);
+      }
+      Sim2D_1xN_Smarts(smartsfile, (new File(smartsfile)).getName(),
+molReader, molQ, fout_writer, verbose);
     }
     else
     {
       Help("Invalid fptype: "+fptype);
     }
-
     System.exit(0);
   }
 }
