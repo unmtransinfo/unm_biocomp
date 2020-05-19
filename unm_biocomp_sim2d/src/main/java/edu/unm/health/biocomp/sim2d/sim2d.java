@@ -4,9 +4,9 @@ import java.io.*;
 import java.util.*; //BitSet
 import java.util.concurrent.*; // ExecutorService, Executors
 
-import chemaxon.formats.*; //MolExporter
+import chemaxon.formats.*; //MolImporter, MolExporter
 import chemaxon.struc.*; //Molecule, MoleculeGraph
-import chemaxon.descriptors.*; //CFParameters
+import chemaxon.descriptors.*; //CFParameters, ECFPParameters
 
 //NOTE: CDK classes specifed fully qualified (org.openscience.cdk)
 
@@ -27,9 +27,9 @@ public class sim2d
 	molQ,
 	null, //mols (if preloaded)
 	molReader,
-	chemaxon.descriptors.CFParameters.DEFAULT_LENGTH, //1024
-	chemaxon.descriptors.CFParameters.DEFAULT_BOND_COUNT, //7
-	chemaxon.descriptors.CFParameters.DEFAULT_BITS_SET, //2
+	CFParameters.DEFAULT_LENGTH, //1024
+	CFParameters.DEFAULT_BOND_COUNT, //7
+	CFParameters.DEFAULT_BITS_SET, //2
 	MoleculeGraph.AROM_GENERAL,
 	null, //alpha
 	null, //beta
@@ -40,9 +40,8 @@ public class sim2d
     int tpoll = 1000; //msec
     ExecutorService exec = Executors.newSingleThreadExecutor();
     TaskUtils.ExecTask(exec, simtask, simtask.taskstatus, APPNAME, tpoll);
-    Vector<Sim2DHit> hits = simtask.getHits();
-    Collections.sort(hits); //Why needed? Should be redundant.
-    return hits;
+    Collections.sort(simtask.getHits()); //Why needed? Should be redundant.
+    return simtask.getHits();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -65,9 +64,8 @@ public class sim2d
     int tpoll = 1000; //msec
     ExecutorService exec = Executors.newSingleThreadExecutor();
     TaskUtils.ExecTask(exec, simtask, simtask.taskstatus, APPNAME, tpoll);
-    Vector<Sim2DHit> hits = simtask.getHits();
-    Collections.sort(hits); //Why needed? Should be redundant.
-    return hits;
+    Collections.sort(simtask.getHits()); //Why needed? Should be redundant.
+    return simtask.getHits();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -77,8 +75,8 @@ public class sim2d
 	molQ,
 	null, //mols (if preloaded)
 	molReader,
-	chemaxon.descriptors.ECFPParameters.DEFAULT_DIAMETER, //4
-	chemaxon.descriptors.ECFPParameters.DEFAULT_LENGTH, //1024
+	ECFPParameters.DEFAULT_DIAMETER, //4
+	ECFPParameters.DEFAULT_LENGTH, //1024
 	MoleculeGraph.AROM_GENERAL,
 	null, //alpha
 	null, //beta
@@ -89,9 +87,8 @@ public class sim2d
     int tpoll = 1000; //msec
     ExecutorService exec = Executors.newSingleThreadExecutor();
     TaskUtils.ExecTask(exec, simtask, simtask.taskstatus, APPNAME, tpoll);
-    Vector<Sim2DHit> hits = simtask.getHits();
-    Collections.sort(hits); //Why needed? Should be redundant.
-    return hits;
+    Collections.sort(simtask.getHits()); //Why needed? Should be redundant.
+    return simtask.getHits();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -113,16 +110,14 @@ public class sim2d
     int tpoll = 1000; //msec
     ExecutorService exec = Executors.newSingleThreadExecutor();
     TaskUtils.ExecTask(exec, simtask, simtask.taskstatus, APPNAME, tpoll);
-    Vector<Sim2DHit> hits = simtask.getHits();
-    Collections.sort(hits); //Why needed? Should be redundant.
-    return hits;
+    Collections.sort(simtask.getHits()); //Why needed? Should be redundant.
+    return simtask.getHits();
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  static void WriteHits(Vector<Sim2DHit> hits, String fpname, Integer n_max_hits, PrintWriter fout_writer, int verbose)
-	throws Exception
+  static void WriteHits(Vector<Sim2DHit> hits, String fpname, Integer n_max_hits, Boolean output_smiles, PrintWriter fout_writer, int verbose) throws Exception
   {
-    fout_writer.write("Name\t"+fpname+"_Similarity\tFP_Is_Subset\n");
+    fout_writer.write((output_smiles?"SMILES\t":"")+"Name\t"+fpname+"_Similarity\tFP_Is_Subset\n");
     int i=0;
     for (; i<hits.size(); ++i)
     {
@@ -130,7 +125,7 @@ public class sim2d
       String molname = hits.get(i).name;
       String sim = String.format("%.2f", hits.get(i).sim);
       String subset = hits.get(i).subset ? "1":"0";
-      fout_writer.write(molname+"\t"+sim+"\t"+subset+"\n");
+      fout_writer.write((output_smiles?(smi+"\t"):"")+molname+"\t"+sim+"\t"+subset+"\n");
       fout_writer.flush();
       if (i>=n_max_hits) break;
     }
@@ -159,6 +154,7 @@ public class sim2d
       +"    -n_max NMAX .......................... max db mols\n"
       +"    -n_max_hits NMAX_HITS ................ max hit mols\n"
       +"    -min_sim MIN_SIM ..................... minimum similarity\n"
+      +"    -output_smiles ....................... include SMILES in output\n"
       +"    -v ................................... verbose\n"
       +"    -h ................................... this help\n"
       +"\n"
@@ -175,6 +171,12 @@ public class sim2d
   private static Integer n_max_hits=10;
   private static Integer n_max=null;
   private static Float min_sim=0.0f;
+  private static Boolean output_smiles=false;
+
+  // java.util.concurrent.ExecutionException: java.lang.NullPointerException
+  // May be due to handling of variable "hits" returned from
+  // asynchronous thread.
+  private static volatile Vector<Sim2DHit> hits = null;
 
   /////////////////////////////////////////////////////////////////////////////
   private static void ParseCommand(String args[])
@@ -190,6 +192,7 @@ public class sim2d
       else if (args[i].equals("-min_sim")) min_sim=Float.parseFloat(args[++i]);
       else if (args[i].equals("-n_max")) n_max=Integer.parseInt(args[++i]);
       else if (args[i].equals("-n_max_hits")) n_max_hits=Integer.parseInt(args[++i]);
+      else if (args[i].equals("-output_smiles")) output_smiles=true;
       else if (args[i].equals("-v")) verbose=1;
       else if (args[i].equals("-h")) Help("");
       else Help("Unknown option: "+args[i]);
@@ -224,33 +227,31 @@ public class sim2d
     MolImporter molReader = new MolImporter(ifile);
 
     if (fptype.equalsIgnoreCase("path")) {
-      Vector<Sim2DHit> hits = Sim2D_1xN_Path_LaunchThread(molReader, molQ, n_max, n_max_hits, min_sim, verbose);
-      WriteHits(hits, fptype, n_max_hits, fout_writer, verbose);
+      hits = Sim2D_1xN_Path_LaunchThread(molReader, molQ, n_max, n_max_hits, min_sim, verbose);
     }
     else if (fptype.equalsIgnoreCase("ecfp")) {
-      Vector<Sim2DHit> hits = Sim2D_1xN_ECFP_LaunchThread(molReader, molQ, n_max, n_max_hits, min_sim, verbose);
-      WriteHits(hits, fptype, n_max_hits, fout_writer, verbose);
+      hits = Sim2D_1xN_ECFP_LaunchThread(molReader, molQ, n_max, n_max_hits, min_sim, verbose);
     }
     else if (fptype.equalsIgnoreCase("ecfp_cdk")) {
-      Vector<Sim2DHit> hits = Sim2D_1xN_ECFP_CDK_LaunchThread(molReader, molQ, n_max, n_max_hits, min_sim, verbose);
-      WriteHits(hits, fptype, n_max_hits, fout_writer, verbose);
+      hits = Sim2D_1xN_ECFP_CDK_LaunchThread(molReader, molQ, n_max, n_max_hits, min_sim, verbose);
     }
     else if (fptype.equalsIgnoreCase("smartsfile")) {
       if (smartsfile==null) {
         Help("SMARTS file required.");
       }
-      if (!(new File(smartsfile)).exists()) {
+      else if (!(new File(smartsfile)).exists()) {
         Help("SMARTS file not found: "+smartsfile);
       }
       if (verbose>0) {
         System.err.println("SMARTS file: "+smartsfile);
       }
-      Vector<Sim2DHit> hits = Sim2D_1xN_Smarts_LaunchThread(molReader, smartsfile, (new File(smartsfile)).getName(), molQ, n_max, n_max_hits, min_sim, verbose);
-      WriteHits(hits, (new File(smartsfile)).getName(), n_max_hits, fout_writer, verbose);
+      hits = Sim2D_1xN_Smarts_LaunchThread(molReader, smartsfile, (new File(smartsfile)).getName(), molQ, n_max, n_max_hits, min_sim, verbose);
+      fptype = (new File(smartsfile)).getName();
     }
     else {
       Help("Invalid fptype: "+fptype);
     }
+    WriteHits(hits, fptype, n_max_hits, output_smiles, fout_writer, verbose);
     fout_writer.close();
     System.exit(0);
   }
