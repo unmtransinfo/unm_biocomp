@@ -58,7 +58,8 @@ public class Sim2D_ECFP_CDK_1xNTask
   private Date t0;
   private Vector<Sim2DHit> hits;
   public Sim2D_ECFP_CDK_1xNTask(Molecule molQ,
-	ArrayList<Molecule> mols,MolImporter molReader,
+	ArrayList<Molecule> mols,
+	MolImporter molReader,
 	Integer diam,
 	Integer size,
 	Integer arom,Float alpha,Float beta,
@@ -79,17 +80,16 @@ public class Sim2D_ECFP_CDK_1xNTask
     this.n_max_hits=n_max_hits;
     this.sorthits=sorthits;
 
-    this.fper = new org.openscience.cdk.fingerprint.ExtendedFingerprinter(this.size,this.diam);
+    this.fper = new org.openscience.cdk.fingerprint.ExtendedFingerprinter(this.size, this.diam);
     this.smiQ = null;
     try {
-      this.smiQ = MolExporter.exportToFormat(this.molQ,"smiles:-a");
-      this.fpQ = cdk_utils.CalcFpFromSmiles(this.smiQ,this.fper);
+      this.smiQ = MolExporter.exportToFormat(this.molQ, "smiles:-a");
+      this.fpQ = cdk_utils.CalcFpFromSmiles(this.smiQ, this.fper);
     }
     catch (Exception e) { }
 
     this.taskstatus=new Status(this);
-    if (mols!=null) this.n_total=mols.size();
-    else this.n_total=0;
+    this.n_total = (mols!=null) ?  mols.size():0;
     this.n_done=0;
     this.t0 = new Date();
     hits = new Vector<Sim2DHit>();
@@ -98,9 +98,9 @@ public class Sim2D_ECFP_CDK_1xNTask
   public synchronized Vector<Sim2DHit> getHits() { return hits; }
   public synchronized Boolean call()
   {
-    for (int i=0;true;++i,++n_done)
+    for (int i=0;true;++i, ++n_done)
     {
-      if (n_max>0 && i==n_max) break;
+      if (n_max!=null && n_max>0 && i==n_max) break;
       Sim2DHit hit = new Sim2DHit();
       hit.i=i;
       Molecule mol;
@@ -121,7 +121,7 @@ public class Sim2D_ECFP_CDK_1xNTask
           mol.aromatize(arom);
         else
           mol.dearomatize();
-        try { hit.smiles=MolExporter.exportToFormat(mol,"smiles:-a"); }
+        try { hit.smiles=MolExporter.exportToFormat(mol, "smiles:-a"); }
         catch (Exception e) { hit.smiles=""; }
         hit.name=mol.getName();
         if (mol==null) break;
@@ -131,20 +131,20 @@ public class Sim2D_ECFP_CDK_1xNTask
       String smi = null;
       BitSet fp = null;
       try {
-        smi = MolExporter.exportToFormat(mol,"smiles:-a");
-        fp = cdk_utils.CalcFpFromSmiles(smi,this.fper);
+        smi = MolExporter.exportToFormat(mol, "smiles:-a");
+        fp = cdk_utils.CalcFpFromSmiles(smi, this.fper);
         hit.brightness = fp.cardinality();
         BitSet fpX = (BitSet)fpQ.clone();
         fpX.and(fp);
         hit.commonbitcount = fpX.cardinality();
         hit.subset = fpQ.equals(fpX);
         if (alpha!=null && beta!=null)
-          //hit.sim=Metrics.tversky((int[])fpQ.toLongArray(),(int[])fp.toLongArray(),alpha,beta);
-          hit.sim=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ,fp);
+          //hit.sim=Metrics.tversky((int[])fpQ.toLongArray(), (int[])fp.toLongArray(), alpha, beta);
+          hit.sim=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
         else
         {
-          //hit.sim=Metrics.tanimoto((int[])fpQ.toLongArray(),(int[])fp.toLongArray());
-          hit.sim=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ,fp);
+          //hit.sim=Metrics.tanimoto((int[])fpQ.toLongArray(), (int[])fp.toLongArray());
+          hit.sim=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
         }
       }
       catch (Exception e) {
@@ -167,10 +167,10 @@ public class Sim2D_ECFP_CDK_1xNTask
       long t=(new Date()).getTime()-t0.getTime();
       int m=(int)(t/60000L);
       int s=(int)((t/1000L)%60L);
-      String statstr=("["+String.format("%02d:%02d",m,s)+"]");
-      statstr+=(String.format(" %5d;",task.n_done));
+      String statstr=("["+String.format("%02d:%02d", m, s)+"]");
+      statstr+=(String.format(" %6d;", task.n_done));
       if (task.n_total>0)
-        statstr+=(String.format(" %.0f%%",100.0f*task.n_done/task.n_total));
+        statstr+=(String.format(" (%.0f%%)", 100.0f*task.n_done/task.n_total));
       return statstr;
     }
   }

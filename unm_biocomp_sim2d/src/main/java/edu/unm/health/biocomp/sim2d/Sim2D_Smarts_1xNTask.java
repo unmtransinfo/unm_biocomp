@@ -77,8 +77,7 @@ public class Sim2D_Smarts_1xNTask
     this.n_max_hits=n_max_hits;
     this.sorthits=sorthits;
     this.taskstatus=new Status(this);
-    if (mols!=null) this.n_total=mols.size();
-    else this.n_total=0;
+    this.n_total = (mols!=null) ? mols.size():0;
     this.n_done=0;
     this.t0 = new Date();
     hits = new Vector<Sim2DHit>();
@@ -89,7 +88,7 @@ public class Sim2D_Smarts_1xNTask
   {
     for (int i=0;true;++i,++n_done)
     {
-      if (n_max>0 && i==n_max) break;
+      if (n_max!=null && n_max>0 && i==n_max) break;
       Sim2DHit hit = new Sim2DHit();
       hit.i=i;
       Molecule mol;
@@ -158,10 +157,10 @@ public class Sim2D_Smarts_1xNTask
       long t=(new Date()).getTime()-t0.getTime();
       int m=(int)(t/60000L);
       int s=(int)((t/1000L)%60L);
-      String statstr=("["+String.format("%02d:%02d",m,s)+"]");
-      statstr+=(String.format(" %5d;",task.n_done));
+      String statstr=("["+String.format("%02d:%02d", m, s)+"]");
+      statstr+=(String.format(" %6d", task.n_done));
       if (task.n_total>0)
-        statstr+=(String.format(" %.0f%%",100.0f*task.n_done/task.n_total));
+        statstr+=(String.format(" (%.0f%%)", 100.0f*task.n_done/task.n_total));
       return statstr;
     }
   }

@@ -11,7 +11,7 @@ import java.net.InetAddress;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
-import java.util.concurrent.*;
+import java.util.concurrent.*; // ExecutorService, Executors
 import java.lang.Math;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -32,7 +32,7 @@ import chemaxon.descriptors.MDGeneratorException;
 
 import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
-import edu.unm.health.biocomp.util.threads.*;
+import edu.unm.health.biocomp.util.threads.*; //TaskUtils
 import edu.unm.health.biocomp.smarts.*;
 
 /**	Similarity searching and matrix computation by various methods.
