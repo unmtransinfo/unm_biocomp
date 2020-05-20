@@ -12,6 +12,7 @@ import chemaxon.descriptors.*; //CFParameters, ECFPParameters
 //NOTE: CDK classes specifed fully qualified (org.openscience.cdk)
 
 import edu.unm.health.biocomp.util.threads.*; //TaskUtils
+import edu.unm.health.biocomp.util.jre.*; //JREUtils
 import edu.unm.health.biocomp.smarts.*;	//SmartsFile
 import edu.unm.health.biocomp.fp.*;	//BinaryFP
 import edu.unm.health.biocomp.cdk.*;
@@ -205,20 +206,7 @@ public class sim2d
   public static void main(String[] args) throws Exception
   {
     ParseCommand(args);
-    if (verbose>0) {
-      String jre_ver=null;
-      Class c = Class.forName("java.lang.Runtime"); // JRE9+
-      Method methods[] = c.getMethods();
-      for (int i=0; i<methods.length; ++i) {
-        if (methods[i].getName() == "version") {
-          jre_ver = methods[i].invoke(c).toString();
-          break;
-        }
-      }
-      if (jre_ver==null) jre_ver = System.getProperty("java.version"); // JRE8-
-      System.err.println("JRE_VERSION: "+jre_ver);
-    }
-
+    if (verbose>0) System.err.println("JRE_VERSION: "+JREUtils.JREVersion());
     if (ifile==null) Help("Input file required.");
 
     File fout = (ofile!=null) ? (new File(ofile)) : null;
