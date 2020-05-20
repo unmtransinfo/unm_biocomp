@@ -1,6 +1,7 @@
 package edu.unm.health.biocomp.sim2d;
 
 import java.io.*;
+import java.lang.reflect.*; //Method
 import java.util.*; //BitSet
 import java.util.concurrent.*; // ExecutorService, Executors
 
@@ -204,7 +205,24 @@ public class sim2d
   public static void main(String[] args) throws Exception
   {
     ParseCommand(args);
-    if (verbose>0) System.err.println("Java Runtime.Version: "+(Runtime.version()));
+    if (verbose>0) {
+      String v=null;
+      Class c=null;
+      try { c = Class.forName("Runtime"); } catch (Exception e) { }
+      if (c!=null) {
+        Method methods[] = c.getMethods();
+        for (int i=0; i<methods.length; ++i) {
+          if (methods[i].getName() == "version") {
+            v = methods[i].invoke(Class.forName("Runtime")).toString();// JRE9+
+            break;
+          }
+        }
+      }
+      if (v==null) {
+        v = System.getProperty("java.version"); // JRE8-
+      }
+      System.err.println("Java Runtime.Version: "+v);
+    }
 
     if (ifile==null) Help("Input file required.");
 
