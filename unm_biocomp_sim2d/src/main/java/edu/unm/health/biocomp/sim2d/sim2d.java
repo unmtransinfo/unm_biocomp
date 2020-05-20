@@ -207,18 +207,15 @@ public class sim2d
     ParseCommand(args);
     if (verbose>0) {
       String jre_ver=null;
-      try {
-        Class c = Class.forName("java.lang.Runtime"); // JRE9+
-        Method methods[] = c.getMethods();
-        for (int i=0; i<methods.length; ++i) {
-          if (methods[i].getName() == "version") {
-            jre_ver = methods[i].invoke(c).toString();
-            break;
-          }
+      Class c = Class.forName("java.lang.Runtime"); // JRE9+
+      Method methods[] = c.getMethods();
+      for (int i=0; i<methods.length; ++i) {
+        if (methods[i].getName() == "version") {
+          jre_ver = methods[i].invoke(c).toString();
+          break;
         }
-      } catch (Exception e) {
-        jre_ver = System.getProperty("java.version"); // JRE8-
       }
+      if (jre_ver==null) jre_ver = System.getProperty("java.version"); // JRE8-
       System.err.println("JRE_VERSION: "+jre_ver);
     }
 
