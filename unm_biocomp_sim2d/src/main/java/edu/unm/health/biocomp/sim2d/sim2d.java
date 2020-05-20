@@ -133,12 +133,13 @@ public class sim2d
   }
 
   /////////////////////////////////////////////////////////////////////////////
+  private static String APPNAME = "SIM2D";
   private static String fptype="path";
 
   private static void Help(String msg)
   {
     System.err.println(msg+"\n"
-      +"sim2d - similarity using binary fingerprints\n"
+      +APPNAME+" - similarity using binary fingerprints\n"
       +"\n"
       +"usage: sim2d [options]\n"
       +"required:\n"
@@ -149,6 +150,7 @@ public class sim2d
       +"    -qmol QFILE .......................... query molecule\n"
       +"\n"
       +"options:\n"
+      +"    -o OFILE ............................. output hits (TSV)\n"
       +"    -fptype FPTYPE ....................... fingerprint type (path|ecfp|smartsfile) ["+fptype+"]\n"
       +"    -smartsfile SMARTSFILE ............... SMARTS file, for -fptype smartsfile, e.g. mdl166.sma, sunsetkeys.sma\n"
       +"    -n_max NMAX .......................... max db mols\n"
@@ -161,7 +163,6 @@ public class sim2d
     );
     System.exit(1);
   }
-  private static String APPNAME = "sim2d";
   private static int verbose=0;
   private static String ifile=null;
   private static String qsmi=null;
@@ -203,20 +204,21 @@ public class sim2d
   public static void main(String[] args) throws Exception
   {
     ParseCommand(args);
+    if (verbose>0) System.err.println("Java Runtime.Version: "+(Runtime.version()));
+
     if (ifile==null) Help("Input file required.");
 
     File fout = (ofile!=null) ? (new File(ofile)) : null;
     PrintWriter fout_writer = (fout!=null) ? (new PrintWriter(new BufferedWriter(new FileWriter(fout, false)))) : new PrintWriter(System.out);
 
-    MolImporter molReaderQ = null;
     Molecule molQ = null;
     if (qsmi!=null) {
       molQ = MolImporter.importMol(qsmi, "smiles:d");
     }
     else if (qfile!=null) {
-      molReaderQ = new MolImporter(new File(qfile), "smiles:d");
-      try { molQ=molReaderQ.read(); }
-      catch (MolFormatException e) { System.err.println(e.toString()); }
+      MolImporter molReaderQ = new MolImporter(new File(qfile), "smiles:d");
+      try { molQ = molReaderQ.read(); }
+      catch (MolFormatException e) { Help(e.toString()); }
     }
     else {
       Help("Input query required: -qsmi or -qmol.");
@@ -241,9 +243,6 @@ public class sim2d
       }
       else if (!(new File(smartsfile)).exists()) {
         Help("SMARTS file not found: "+smartsfile);
-      }
-      if (verbose>0) {
-        System.err.println("SMARTS file: "+smartsfile);
       }
       hits = Sim2D_1xN_Smarts_LaunchThread(molReader, smartsfile, (new File(smartsfile)).getName(), molQ, n_max, n_max_hits, min_sim, verbose);
       fptype = (new File(smartsfile)).getName();
