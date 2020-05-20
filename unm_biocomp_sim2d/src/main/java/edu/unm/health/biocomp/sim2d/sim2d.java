@@ -206,22 +206,20 @@ public class sim2d
   {
     ParseCommand(args);
     if (verbose>0) {
-      String v=null;
-      Class c=null;
-      try { c = Class.forName("Runtime"); } catch (Exception e) { }
-      if (c!=null) {
+      String jre_ver=null;
+      try {
+        Class c = Class.forName("java.lang.Runtime"); // JRE9+
         Method methods[] = c.getMethods();
         for (int i=0; i<methods.length; ++i) {
           if (methods[i].getName() == "version") {
-            v = methods[i].invoke(Class.forName("Runtime")).toString();// JRE9+
+            jre_ver = methods[i].invoke(c).toString();
             break;
           }
         }
+      } catch (Exception e) {
+        jre_ver = System.getProperty("java.version"); // JRE8-
       }
-      if (v==null) {
-        v = System.getProperty("java.version"); // JRE8-
-      }
-      System.err.println("Java Runtime.Version: "+v);
+      System.err.println("JRE_VERSION: "+jre_ver);
     }
 
     if (ifile==null) Help("Input file required.");
