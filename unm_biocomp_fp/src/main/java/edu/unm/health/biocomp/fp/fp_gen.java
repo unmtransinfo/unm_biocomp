@@ -32,7 +32,7 @@ public class fp_gen
       "      -i INFILE\n"+
       "  options:\n"+
       "      -o OUTFILE ............... SMILES or SDF, with FPs as bitstrings\n"+
-      "      -fp_type FPTYPE .......... (path|ecfp|smarts) ["+fptype+"]\n"+
+      "      -fptype FPTYPE ........... (path|ecfp|smarts) ["+fptype+"]\n"+
       "      -path_len PL ............. path length ["+path_len+"]\n"+
       "      -path_bondcount BC ....... path bondcount ["+path_bondcount+"]\n"+
       "      -path_bitsper BS ......... path bitsper ["+path_bitsper+"]\n"+
@@ -75,9 +75,9 @@ public class fp_gen
   public static void FPGenerate_Smarts(MolImporter molReader, String fpath, MolExporter molWriter) throws Exception
   {
     SmartsFile smaf = new SmartsFile();
-    smaf.parseFile(new File(fpath), false, (new File(fpath)).getName());
+    smaf.parseFile(new File(fpath), false, (new File(fpath)).getName().replaceFirst("\\..*$",""));
 
-    System.err.println("loaded smarts file: "+fpath+" ("+smaf.getRawtxt().length()+" bytes , "+smaf.size()+" smarts, "+smaf.getDefines().size()+" defines, "+smaf.getFailedsmarts().size()+" failed smarts)");
+    System.err.println("Loaded smarts file: "+fpath+" ("+smaf.getRawtxt().length()+" bytes; "+smaf.size()+" smarts; "+smaf.getDefines().size()+" defines; "+smaf.getFailedsmarts().size()+" failed smarts)");
 
     BinaryFP fp = new BinaryFP(smaf.size());
     Molecule mol=null;
