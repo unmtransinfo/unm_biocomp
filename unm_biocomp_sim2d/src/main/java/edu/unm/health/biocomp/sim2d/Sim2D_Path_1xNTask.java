@@ -12,19 +12,7 @@ import chemaxon.struc.Molecule;
 import chemaxon.struc.MoleculeGraph;
 import chemaxon.marvin.io.MolExportException;
 
-import chemaxon.descriptors.CDParameters;
-import chemaxon.descriptors.CFParameters;
-import chemaxon.descriptors.ChemicalFingerprint;
-import chemaxon.descriptors.MDGeneratorException;
-//import chemaxon.descriptors.ECFP;
-//import chemaxon.descriptors.ECFPGenerator;
-//import chemaxon.descriptors.ECFPParameters;
-
-import chemaxon.descriptors.Metrics;
-
-import edu.unm.health.biocomp.molfp.ConnectivityFingerprint;
-import edu.unm.health.biocomp.molfp.ECMolGraphInvariants;
-import edu.unm.health.biocomp.grouping.SimilarityMeasures;
+import chemaxon.descriptors.*; //CDParameters, CFParameters, ChemicalFingerprint, MDGeneratorException, Metrics
 
 import edu.unm.health.biocomp.fp.*;
 import edu.unm.health.biocomp.util.threads.*;

@@ -12,47 +12,32 @@ import chemaxon.marvin.io.MolExportException;
 import edu.unm.health.biocomp.smarts.*;	//SmartsFile
  
 /**	Static methods for fingerprint processing.
-	Note: sim2d_lib is dependent on fp_lib.
-	Note: fp_lib is dependent on smarts_lib.
-	Note: smarts_lib not dependent on fp_lib nor sim2d_lib.
-	Please avoid circular dependencies.
 */
 public class fp_utils
 {
   /////////////////////////////////////////////////////////////////////////////
   /**	Generate FPs, smarts based, for input mols.
   */
-  public static BinaryFP[] Mols2BinaryFPs(List<Molecule> mols,String smafpath)
+  public static BinaryFP[] Mols2BinaryFPs(List<Molecule> mols, String smafpath)
 	throws IOException
   {
     SmartsFile smaf = new SmartsFile();
     smaf = new SmartsFile();
-    try {
-      smaf.parseFile(new File(smafpath),false,smafpath);
-    }
-    catch (Exception e) {
-      System.err.println("problem parsing smartsfile: "+e.getMessage());
-    }
-    return Mols2BinaryFPs(mols,smaf);
+    try { smaf.parseFile(new File(smafpath), false, smafpath); }
+    catch (Exception e) { System.err.println("Problem parsing smartsfile: "+e.getMessage()); }
+    return Mols2BinaryFPs(mols, smaf);
   }
   /////////////////////////////////////////////////////////////////////////////
   /**	Generate FPs, smarts based, for input mols.
   */
-  public static BinaryFP[] Mols2BinaryFPs(List<Molecule> mols,SmartsFile smaf)
+  public static BinaryFP[] Mols2BinaryFPs(List<Molecule> mols, SmartsFile smaf)
   {
     BinaryFP [] fps = new BinaryFP[mols.size()];
     for (int i=0;i<mols.size();++i)
     {
       BinaryFP fp = new BinaryFP(smaf.size());
-      try { fp.generate(smaf,mols.get(i)); }
-      catch (SearchException e) {
-        System.err.println("bad FP: "+e.getMessage());
-        fp=null;
-      }
-      catch (Exception e) {
-        System.err.println("bad FP: "+e.getMessage());
-        fp=null;
-      }
+      try { fp.generate(smaf, mols.get(i)); }
+      catch (Exception e) { System.err.println("Bad FP: "+e.getMessage()); fp=null; }
       fps[i]=fp;
     }
     return fps;

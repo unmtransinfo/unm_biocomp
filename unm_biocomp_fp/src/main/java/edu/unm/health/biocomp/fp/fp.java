@@ -9,10 +9,6 @@ import chemaxon.struc.*; //Molecule
 import edu.unm.health.biocomp.smarts.*;	//SmartsFile
  
 /**	Test program for fingerprint processing.
-	Note: sim2d_lib is dependent on fp_lib.
-	Note: fp_lib is dependent on smarts_lib.
-	Note: smarts_lib not dependent on fp_lib nor sim2d_lib.
-	Please avoid circular dependencies.
 */
 public class fp
 {

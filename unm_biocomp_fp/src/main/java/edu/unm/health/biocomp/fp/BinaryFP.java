@@ -56,7 +56,7 @@ public class BinaryFP
     int mask = 1 << j;
     return ((bitarray[ii]&mask)!=0);
   }
-  public void setBit(int i,boolean val)
+  public void setBit(int i, boolean val)
   {
     if (i>size()) { return; }
     int ii = i / Integer.SIZE;	// which int?
@@ -67,17 +67,17 @@ public class BinaryFP
     else
       bitarray[ii] &= ~mask;
   }
-  public void setBit(int i,int val)
+  public void setBit(int i, int val)
   {
-    setBit(i,(val!=0));
+    setBit(i, (val!=0));
   }
   public float tanimoto(BinaryFP fp2)
   {
-    return (1.0f - Metrics.binaryTanimoto(bitarray,fp2.bitarray));
+    return (1.0f - Metrics.binaryTanimoto(bitarray, fp2.bitarray));
   }
-  public float tversky(BinaryFP fp2,float alpha,float beta)
+  public float tversky(BinaryFP fp2, float alpha, float beta)
   {
-    return (1.0f - Metrics.binaryTversky(bitarray,alpha,fp2.bitarray,beta));
+    return (1.0f - Metrics.binaryTversky(bitarray, alpha, fp2.bitarray, beta));
   }
   public int bitCount()
   {
@@ -102,7 +102,7 @@ public class BinaryFP
       setSize(str.length());
     for (int i=0;i<str.length();++i)
     {
-      setBit(i,str.charAt(i)=='1');
+      setBit(i, str.charAt(i)=='1');
     }
     return true;
   }
@@ -123,8 +123,8 @@ public class BinaryFP
     }
     return n;
   }
-  public boolean generate(SmartsFile smartsFile,Molecule mol)
-        throws SearchException,Exception
+  public boolean generate(SmartsFile smartsFile, Molecule mol)
+        throws SearchException, Exception
   {
     if (smartsFile.size()>size())
     {
@@ -136,7 +136,7 @@ public class BinaryFP
     {
       MolSearch search=smartsFile.getSearch(i);
       search.setTarget(mol);
-      setBit(i+1,search.isMatching());
+      setBit(i+1, search.isMatching());
     }
     return true;
   }
