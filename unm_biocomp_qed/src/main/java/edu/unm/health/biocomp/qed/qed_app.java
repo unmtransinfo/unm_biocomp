@@ -25,7 +25,7 @@ public class qed_app
   /////////////////////////////////////////////////////////////////////////////
   /**	Annotate mols with QED results.
   */
-  private static void QEDGenerate(QED qed,ArrayList<Molecule> mols,int verbose)
+  private static void QEDGenerate(QED qed, ArrayList<Molecule> mols, int verbose)
   {
     int n_fail=0;
     for (Molecule mol: mols)
@@ -60,7 +60,7 @@ public class qed_app
 
     for (Double score: scores)
     {
-      vals.set((int)Math.floor(score*10),vals.get((int)Math.floor(score*10))+1);
+      vals.set((int)Math.floor(score*10), vals.get((int)Math.floor(score*10))+1);
     }
 
     System.err.println("using: "+score_tag);
@@ -74,10 +74,7 @@ public class qed_app
   private static void Help(String msg)
   {
     System.err.println(msg+"\n"
-      +"qed_app - command line app for QED\n"
-      +"\n"
       +"QED = Quantitative Estimate of Drug-likeness (Bickerton et al.)\n"
-      +"\n"
       +"usage: qed_app [options]\n"
       +"  required:\n"
       +"    -i IFILE .................. input mols\n"
@@ -115,13 +112,13 @@ public class qed_app
     if (ifile==null) Help("-i required.");
     if (!(new File(ifile).exists())) Help("Non-existent input file: "+ifile);
 
-    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
-	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
-	|| !LicenseManager.isLicensed(LicenseManager.STANDARDIZER))
-    {
-      System.err.println("ERROR: ChemAxon license error; JCHEM + PREDICTOR_PLUGIN + STANDARDIZER required.");
-      System.exit(1);
-    }
+//    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
+//	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
+//	|| !LicenseManager.isLicensed(LicenseManager.STANDARDIZER))
+//    {
+//      System.err.println("ERROR: ChemAxon license error; JCHEM + PREDICTOR_PLUGIN + STANDARDIZER required.");
+//      System.exit(1);
+//    }
 
     MolImporter molReader = new MolImporter(ifile);
     QED qed = null;
@@ -143,17 +140,17 @@ public class qed_app
     }
     if (verbose>0)
     {
-      String desc=MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
+      String desc = MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
       System.err.println("input format:  "+molReader.getFormat()+" ("+desc+")");
       System.err.println("mols read:  "+mols.size());
     }
-    QEDGenerate(qed,mols,verbose);
+    QEDGenerate(qed, mols, verbose);
 
-    String ofmt="smiles:+n-a";
+    String ofmt = "smiles:+n-aT*";
     if (ofile!=null)
     {
       ofmt=MFileFormatUtil.getMostLikelyMolFormat(ofile);
-      if (ofmt.equals("smiles")) ofmt="smiles:+n-a"; //Kekule for compatibility
+      if (ofmt.equals("smiles")) ofmt="smiles:+n-aT*"; //Kekule for compatibility
     }
     if (mols.size()>0 && ofmt.matches("^.*smiles.*$"))
     {
@@ -164,9 +161,9 @@ public class qed_app
 
     MolExporter molWriter=null;
     if (ofile!=null)
-      molWriter = new MolExporter(new FileOutputStream(ofile),ofmt);
+      molWriter = new MolExporter(new FileOutputStream(ofile), ofmt);
     else
-      molWriter = new MolExporter(System.out,ofmt);
+      molWriter = new MolExporter(System.out, ofmt);
 
     if (verbose>1)
     {

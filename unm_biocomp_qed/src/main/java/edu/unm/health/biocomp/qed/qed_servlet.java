@@ -160,28 +160,28 @@ public class qed_servlet extends HttpServlet
   private boolean initialize(HttpServletRequest request,MultipartRequest mrequest)
       throws IOException,ServletException
   {
-    SERVLETNAME=this.getServletName();
-    outputs=new ArrayList<String>();
-    errors=new ArrayList<String>();
-    params=new HttpParams();
-    sizes_h=new LinkedHashMap<String,Integer>();
-    sizes_w=new LinkedHashMap<String,Integer>();
-    MOL2IMG_SERVLETURL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
+    SERVLETNAME = this.getServletName();
+    outputs = new ArrayList<String>();
+    errors = new ArrayList<String>();
+    params = new HttpParams();
+    sizes_h = new LinkedHashMap<String,Integer>();
+    sizes_w = new LinkedHashMap<String,Integer>();
+    MOL2IMG_SERVLETURL =( PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
-    String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
-    String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
-    String href=("http://medicine.unm.edu/informatics/");
+    String logo_htm ="< TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
+    String imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
+    String href = ("http://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
-    tiphtm=("JChem from ChemAxon Ltd.");
-    href=("http://www.chemaxon.com");
+    imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    tiphtm = ("JChem from ChemAxon Ltd.");
+    href = ("http://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
-    HISTOIMG_URL=(PROXY_PREFIX+CONTEXTPATH+"/histoimg");
+    HISTOIMG_URL = (PROXY_PREFIX+CONTEXTPATH+"/histoimg");
 
     //booleans:
     sizes_h.put("xs",96); sizes_w.put("xs",96);
@@ -263,14 +263,14 @@ public class qed_servlet extends HttpServlet
     } catch (Exception e) {
       errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
     }
-    LicenseManager.refresh();
-    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
-	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
-	|| !LicenseManager.isLicensed(LicenseManager.STANDARDIZER))
-    {
-      errors.add("ERROR: ChemAxon license error; JCHEM + PREDICTOR_PLUGIN + STANDARDIZER required.");
-      return false;
-    }
+//    LicenseManager.refresh();
+//    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
+//	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
+//	|| !LicenseManager.isLicensed(LicenseManager.STANDARDIZER))
+//    {
+//      errors.add("ERROR: ChemAxon license error; JCHEM + PREDICTOR_PLUGIN + STANDARDIZER required.");
+//      return false;
+//    }
 
     dout=new File(SCRATCHDIR);
     if (!dout.exists())
@@ -498,7 +498,7 @@ public class qed_servlet extends HttpServlet
     return mols;
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static void QEDResults_stats(ArrayList<Molecule> mols,HttpParams params,HttpServletResponse response)
+  private static void QEDResults_stats(ArrayList<Molecule> mols, HttpParams params, HttpServletResponse response)
       throws IOException, ServletException
   {
     String score_tag="WEIGHTED_QED";
@@ -520,7 +520,7 @@ public class qed_servlet extends HttpServlet
 
     for (Double score: scores)
     {
-      vals.set((int)Math.floor(score*10),vals.get((int)Math.floor(score*10))+1);
+      vals.set((int)Math.floor(score*10), vals.get((int)Math.floor(score*10))+1);
     }
 
     String histohtm;
@@ -537,8 +537,8 @@ public class qed_servlet extends HttpServlet
     //outputs.add("<BLOCKQUOTE>"+histohtm+"</BLOCKQUOTE>");
 
     String opts="&title=QED%20"+score_tag+"&fgcolor=x0088CC";
-    opts+="&yaxis="+URLEncoder.encode("frequency","UTF-8");
-    histohtm=HtmUtils.HistoImgHtm(vals,xmaxs,opts,400,200,HISTOIMG_URL,true,4,"go_zoom_chartimg");
+    opts+="&yaxis="+URLEncoder.encode("frequency", "UTF-8");
+    histohtm=HtmUtils.HistoImgHtm(vals, xmaxs, opts, 400, 200, HISTOIMG_URL, true, 4, "go_zoom_chartimg");
     outputs.add("<BLOCKQUOTE>"+histohtm+"</BLOCKQUOTE>");
 
     for (int i=0;i<vals.size();++i)
@@ -549,7 +549,7 @@ public class qed_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   // [ ] sort on QED scores?
   /////////////////////////////////////////////////////////////////////////////
-  private static void QEDResults(ArrayList<Molecule> mols,HttpParams params,HttpServletResponse response)
+  private static void QEDResults(ArrayList<Molecule> mols, HttpParams params, HttpServletResponse response)
       throws IOException, ServletException
   {
     int n_mol=0;
@@ -570,7 +570,7 @@ public class qed_servlet extends HttpServlet
 
     outputs.add("<B>qed (N="+mols.size()+"):</B>");
 
-    QEDResults_stats(mols,params,response);
+    QEDResults_stats(mols, params, response);
 
     // for download mols:
     if (params.isChecked("batchout"))
@@ -592,7 +592,7 @@ public class qed_servlet extends HttpServlet
         }
         try {
           File dout=new File(SCRATCHDIR);
-          fout=File.createTempFile(PREFIX,"_out."+params.getVal("outfmt"),dout);
+          fout=File.createTempFile(PREFIX, "_out."+params.getVal("outfmt"), dout);
         }
         catch (IOException e) {
           errors.add("ERROR: could not open temp file; check SCRATCHDIR: "+SCRATCHDIR);
@@ -600,7 +600,7 @@ public class qed_servlet extends HttpServlet
         }
         if (params.isChecked("verbose"))
           errors.add("Output format: "+ofmt);
-        molWriter=new MolExporter(new FileOutputStream(fout),ofmt);
+        molWriter=new MolExporter(new FileOutputStream(fout), ofmt);
       }
       for (Molecule mol: mols) { molWriter.write(mol); }
       molWriter.close();
@@ -628,7 +628,7 @@ public class qed_servlet extends HttpServlet
       thtm+="<TR>";
       if (params.isChecked("depict")) thtm+="<TH></TH>"; //1st col smiles
       thtm+="<TH>name</TH>"; //2nd col name
-      for (String molProp: molProps) thtm+="<TH>"+molProp.replaceAll("_"," ")+"</TH>";
+      for (String molProp: molProps) thtm+="<TH>"+molProp.replaceAll("_", " ")+"</TH>";
       thtm+="</TR>\n";
       for (Molecule mol:mols)
       {
@@ -637,7 +637,7 @@ public class qed_servlet extends HttpServlet
 
         if (params.isChecked("depict"))
         {
-          String imghtm=HtmUtils.Smi2ImgHtm(smiles,depopts,h,w,MOL2IMG_SERVLETURL,true,4,"go_zoom_smi2img");
+          String imghtm=HtmUtils.Smi2ImgHtm(smiles, depopts, h, w, MOL2IMG_SERVLETURL, true, 4, "go_zoom_smi2img");
           rhtm+=("<TD ALIGN=CENTER BGCOLOR=\"white\">"+imghtm+"</TD>\n");
         }
         rhtm+=("<TD ALIGN=CENTER BGCOLOR=\"white\">"+mol.getName()+"</TD>\n");
@@ -647,7 +647,7 @@ public class qed_servlet extends HttpServlet
           String molProp_str = mol.getProperty(molProp);
           if (molProp_str.matches("[-]?\\d+\\.\\d*$"))
           {
-            try { molProp_str=String.format("%.2f",Float.parseFloat(molProp_str)); }
+            try { molProp_str=String.format("%.2f", Float.parseFloat(molProp_str)); }
             catch (Exception e) { }
           }
           rhtm+="<TD ALIGN=\"center\" BGCOLOR=\"white\"><TT>"+molProp_str+"</TT></TD>";
@@ -666,8 +666,8 @@ public class qed_servlet extends HttpServlet
     }
 
     if (LOGFILE!=null) {
-      PrintWriter out_log=new PrintWriter(new BufferedWriter(new FileWriter(LOGFILE,true)));
-      out_log.printf("%s\t%s\t%d\n",DATESTR,REMOTEHOST,n_mol); 
+      PrintWriter out_log=new PrintWriter(new BufferedWriter(new FileWriter(LOGFILE, true)));
+      out_log.printf("%s\t%s\t%d\n", DATESTR, REMOTEHOST, n_mol); 
       out_log.close();
     }
   }
@@ -777,7 +777,7 @@ public class qed_servlet extends HttpServlet
     PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
-  public void doGet(HttpServletRequest request,HttpServletResponse response)
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException
   {
     doPost(request,response);
