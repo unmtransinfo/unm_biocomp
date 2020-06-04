@@ -168,7 +168,7 @@ public class qed_servlet extends HttpServlet
     sizes_w = new LinkedHashMap<String,Integer>();
     MOL2IMG_SERVLETURL =( PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
-    String logo_htm ="< TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
+    String logo_htm = "<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
     String imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
     String href = ("http://medicine.unm.edu/informatics/");
@@ -258,11 +258,11 @@ public class qed_servlet extends HttpServlet
       }
     }
 
-    try {
-      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-    } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
-    }
+//    try {
+//      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
+//    } catch (Exception e) {
+//      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+//    }
 //    LicenseManager.refresh();
 //    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
 //	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
