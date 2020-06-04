@@ -157,44 +157,44 @@ public class qed_servlet extends HttpServlet
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private boolean initialize(HttpServletRequest request,MultipartRequest mrequest)
-      throws IOException,ServletException
+  private boolean initialize(HttpServletRequest request, MultipartRequest mrequest)
+      throws IOException, ServletException
   {
     SERVLETNAME = this.getServletName();
     outputs = new ArrayList<String>();
     errors = new ArrayList<String>();
     params = new HttpParams();
-    sizes_h = new LinkedHashMap<String,Integer>();
-    sizes_w = new LinkedHashMap<String,Integer>();
+    sizes_h = new LinkedHashMap<String, Integer>();
+    sizes_w = new LinkedHashMap<String, Integer>();
     MOL2IMG_SERVLETURL =( PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
     String logo_htm = "<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
     String imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
     String href = ("http://medicine.unm.edu/informatics/");
-    logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD><TD>";
     imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm = ("JChem from ChemAxon Ltd.");
     href = ("http://www.chemaxon.com");
-    logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
     HISTOIMG_URL = (PROXY_PREFIX+CONTEXTPATH+"/histoimg");
 
     //booleans:
-    sizes_h.put("xs",96); sizes_w.put("xs",96);
-    sizes_h.put("s",160); sizes_w.put("s",160);
-    sizes_h.put("m",180); sizes_w.put("m",260);
-    sizes_h.put("l",280); sizes_w.put("l",380);
-    sizes_h.put("xl",480); sizes_w.put("xl",640);
+    sizes_h.put("xs", 96); sizes_w.put("xs", 96);
+    sizes_h.put("s", 160); sizes_w.put("s", 160);
+    sizes_h.put("m", 180); sizes_w.put("m", 260);
+    sizes_h.put("l", 280); sizes_w.put("l", 380);
+    sizes_h.put("xl", 480); sizes_w.put("xl", 640);
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date());
     DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
     Random rand = new Random();
-    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
+    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d", rand.nextInt(1000));
 
     //Create webapp-specific log dir if necessary:
     File dout = new File(LOGDIR);
@@ -212,7 +212,7 @@ public class qed_servlet extends HttpServlet
     {
       try {
         LOGFILE.createNewFile();
-      LOGFILE.setWritable(true,true);
+      LOGFILE.setWritable(true, true);
       PrintWriter out_log = new PrintWriter(LOGFILE);
       out_log.println("date\tip\tN"); 
       out_log.flush();
@@ -247,30 +247,16 @@ public class qed_servlet extends HttpServlet
         }
         if (n_lines>2)
         {
-          calendar.set(Integer.parseInt(startdate.substring(0,4)),
-                   Integer.parseInt(startdate.substring(4,6))-1,
-                   Integer.parseInt(startdate.substring(6,8)),
-                   Integer.parseInt(startdate.substring(8,10)),
-                   Integer.parseInt(startdate.substring(10,12)),0);
-          DateFormat df = DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
+          calendar.set(Integer.parseInt(startdate.substring(0, 4)),
+                   Integer.parseInt(startdate.substring(4, 6))-1,
+                   Integer.parseInt(startdate.substring(6, 8)),
+                   Integer.parseInt(startdate.substring(8, 10)),
+                   Integer.parseInt(startdate.substring(10, 12)), 0);
+          DateFormat df = DateFormat.getDateInstance(DateFormat.FULL, Locale.US);
           errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
         }
       }
     }
-
-//    try {
-//      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-//    } catch (Exception e) {
-//      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
-//    }
-//    LicenseManager.refresh();
-//    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
-//	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
-//	|| !LicenseManager.isLicensed(LicenseManager.STANDARDIZER))
-//    {
-//      errors.add("ERROR: ChemAxon license error; JCHEM + PREDICTOR_PLUGIN + STANDARDIZER required.");
-//      return false;
-//    }
 
     dout=new File(SCRATCHDIR);
     if (!dout.exists())
@@ -292,7 +278,7 @@ public class qed_servlet extends HttpServlet
     {
       String key=(String)e.nextElement();
       if (mrequest.getParameter(key)!=null)
-        params.setVal(key,mrequest.getParameter(key));
+        params.setVal(key, mrequest.getParameter(key));
     }
 
     if (params.isChecked("verbose"))
@@ -305,7 +291,7 @@ public class qed_servlet extends HttpServlet
 
     String fname="infile";
     File ifile=mrequest.getFile(fname);
-    String intxt=params.getVal("intxt").replaceFirst("[\\s]+$","");
+    String intxt=params.getVal("intxt").replaceFirst("[\\s]+$", "");
     byte[] inbytes=new byte[1024];
     if (ifile!=null)
     {
@@ -319,14 +305,14 @@ public class qed_servlet extends HttpServlet
         {
           asize*=2;
           byte[] tmp=new byte[asize];
-          System.arraycopy(inbytes,0,tmp,0,size);
+          System.arraycopy(inbytes, 0, tmp, 0, size);
           inbytes=tmp;
         }
         inbytes[size]=(byte)b;
         ++size; 
       }
       byte[] tmp=new byte[size];
-      System.arraycopy(inbytes,0,tmp,0,size);
+      System.arraycopy(inbytes, 0, tmp, 0, size);
       inbytes=tmp;
     }
     else if (intxt.length()>0)
@@ -352,7 +338,7 @@ public class qed_servlet extends HttpServlet
       String molfmt_auto=MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
       if (orig_fname!=null && molfmt_auto!=null)
       {
-        molReader=new MolImporter(new ByteArrayInputStream(inbytes),molfmt_auto);
+        molReader=new MolImporter(new ByteArrayInputStream(inbytes), molfmt_auto);
       }
       else
       {
@@ -362,10 +348,10 @@ public class qed_servlet extends HttpServlet
     else
     {
       String ifmt=params.getVal("molfmt");
-      molReader=new MolImporter(new ByteArrayInputStream(inbytes),ifmt);
+      molReader=new MolImporter(new ByteArrayInputStream(inbytes), ifmt);
     }
     String fmt=molReader.getFormat();
-    params.setVal("molfmt_auto",fmt);
+    params.setVal("molfmt_auto", fmt);
 
     if (ifile!=null) ifile.delete();
 
@@ -377,13 +363,13 @@ public class qed_servlet extends HttpServlet
       {
         intxt=Base64Encoder.encode(inbytes);
         if (params.getVal("molfmt").equals("automatic"))
-          params.setVal("molfmt","cdx");
+          params.setVal("molfmt", "cdx");
       }
       else
       {
-        intxt=new String(inbytes,"utf-8");
+        intxt=new String(inbytes, "utf-8");
       }
-      params.setVal("intxt",intxt);
+      params.setVal("intxt", intxt);
     }
 
     try {
@@ -397,7 +383,7 @@ public class qed_servlet extends HttpServlet
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private static String FormHtm(MultipartRequest mrequest,HttpServletResponse response)
+  private static String FormHtm(MultipartRequest mrequest, HttpServletResponse response)
       throws IOException
   {
     String molfmt_menu="<SELECT NAME=\"molfmt\">\n";
@@ -408,7 +394,7 @@ public class qed_servlet extends HttpServlet
       molfmt_menu+=("<OPTION VALUE=\""+fmt+"\">"+desc+"\n");
     }
     molfmt_menu+=("</SELECT>\n");
-    molfmt_menu=molfmt_menu.replace(params.getVal("molfmt")+"\">",params.getVal("molfmt")+"\" SELECTED>\n");
+    molfmt_menu=molfmt_menu.replace(params.getVal("molfmt")+"\">", params.getVal("molfmt")+"\" SELECTED>\n");
 
     String size_menu="<SELECT NAME=\"size\">\n";
     for (String key:sizes_h.keySet())
@@ -416,7 +402,7 @@ public class qed_servlet extends HttpServlet
       size_menu+=("<OPTION VALUE=\""+key+"\">"+key+" - "+sizes_h.get(key)+"x"+sizes_w.get(key)+"\n");
     }
     size_menu+="</SELECT>\n";
-    size_menu=size_menu.replace("\""+params.getVal("size")+"\">","\""+params.getVal("size")+"\" SELECTED>\n");
+    size_menu=size_menu.replace("\""+params.getVal("size")+"\">", "\""+params.getVal("size")+"\" SELECTED>\n");
 
     String outfmt_smi=""; String outfmt_sdf="";
     if (params.getVal("outfmt").equals("smi")) outfmt_smi="CHECKED";

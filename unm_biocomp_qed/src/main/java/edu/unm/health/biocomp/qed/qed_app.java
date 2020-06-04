@@ -15,9 +15,6 @@ import edu.unm.health.biocomp.util.*;
 
 /**	QED: Quantitative Estimate of Drug-likeness (Bickerton, et al.).
 	Command-line app.
-
-	@author Jeremy J Yang
-	@author Oleg Ursu (QED.java)
 */
 public class qed_app
 {
@@ -111,14 +108,6 @@ public class qed_app
     ParseCommand(args);
     if (ifile==null) Help("-i required.");
     if (!(new File(ifile).exists())) Help("Non-existent input file: "+ifile);
-
-//    if (!LicenseManager.isLicensed(LicenseManager.JCHEM)
-//	|| !LicenseManager.isLicensed(LicenseManager.PREDICTOR_PLUGIN)
-//	|| !LicenseManager.isLicensed(LicenseManager.STANDARDIZER))
-//    {
-//      System.err.println("ERROR: ChemAxon license error; JCHEM + PREDICTOR_PLUGIN + STANDARDIZER required.");
-//      System.exit(1);
-//    }
 
     MolImporter molReader = new MolImporter(ifile);
     QED qed = null;

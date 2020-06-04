@@ -6,33 +6,19 @@ import static java.lang.Math.log;
 import java.io.*;
 import java.util.*;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*; // CommandLine, CommandLineParser, HelpFormatter, OptionBuilder, Options, ParseException, PosixParser
 
-import chemaxon.formats.MolExporter;
-import chemaxon.formats.MolFormatException;
-import chemaxon.formats.MolImporter;
+import chemaxon.formats.*; // MolExporter, MolFormatException, MolImporter
 import chemaxon.license.LicenseException;
-import chemaxon.marvin.calculations.HBDAPlugin;
-import chemaxon.marvin.calculations.TPSAPlugin;
-import chemaxon.marvin.calculations.TopologyAnalyserPlugin;
-import chemaxon.marvin.calculations.logPPlugin;
+import chemaxon.struc.Molecule;
+import chemaxon.sss.search.*; // SearchException, StandardizedMolSearch
+import chemaxon.marvin.calculations.*; // HBDAPlugin, TPSAPlugin, TopologyAnalyserPlugin, logPPlugin
 import chemaxon.marvin.io.MolExportException;
 import chemaxon.marvin.plugin.PluginException;
-import chemaxon.reaction.Standardizer;
-import chemaxon.reaction.StandardizerException;
-import chemaxon.sss.search.SearchException;
-import chemaxon.sss.search.StandardizedMolSearch;
-import chemaxon.struc.Molecule;
+import chemaxon.reaction.*; // Standardizer, StandardizerException
 
 /**
  * @author Oleg Ursu
- *
  */
 public class QED {
   
@@ -178,7 +164,6 @@ public class QED {
    * @throws MolExportException 
    */
   public static void main(String[] args) throws Exception {
-    // TODO Auto-generated method stub
     QED runner = new QED();
     if(!runner.processCommandLine(args)) {
       return;
@@ -190,30 +175,16 @@ public class QED {
   public boolean processCommandLine(String[] args) {
     CommandLineParser parser = new PosixParser();
     Options opt = new Options();
-    opt.addOption(OptionBuilder.withLongOpt("input-file")
-                   .isRequired()
-                   .hasArg()
-                   .withArgName("Use specified input file")
-                   .create("i"));
-    opt.addOption(OptionBuilder.withLongOpt("output-file")
-                   .isRequired()
-                   .hasArg()
-                   .withArgName("Use specified file output file")
-                   .create("o"));
-    opt.addOption(OptionBuilder.withLongOpt("output-format")
-                   .hasArg()
-                   .withArgName("Use specified output file format, [Default SMILES]")
-                   .create("f"));
-    opt.addOption(OptionBuilder.withLongOpt("alerts-file")
-                      .hasArg()
-                      .withArgName("Use specified alerts file")
-                      .create("a"));
-    opt.addOption(OptionBuilder.withLongOpt("verbose")
-                      .withArgName("Be verbose")
-                      .create("v"));
-    opt.addOption(OptionBuilder.withLongOpt("skip-on-error")
-                      .withArgName("Continue to next molecule on error, [Default false]")
-                      .create("g"));
+    opt.addOption(OptionBuilder.withLongOpt("input-file").isRequired().hasArg()
+                   .withArgName("Use specified input file").create("i"));
+    opt.addOption(OptionBuilder.withLongOpt("output-file").isRequired().hasArg()
+                   .withArgName("Use specified file output file").create("o"));
+    opt.addOption(OptionBuilder.withLongOpt("output-format").hasArg()
+                   .withArgName("Use specified output file format, [Default SMILES]").create("f"));
+    opt.addOption(OptionBuilder.withLongOpt("alerts-file").hasArg()
+                      .withArgName("Use specified alerts file").create("a"));
+    opt.addOption(OptionBuilder.withLongOpt("verbose").withArgName("Be verbose").create("v"));
+    opt.addOption(OptionBuilder.withLongOpt("skip-on-error").withArgName("Continue to next molecule on error, [Default false]").create("g"));
     opt.addOption("h", "help", false, "show this help");
     HelpFormatter helpFormater = new HelpFormatter();
     try {
