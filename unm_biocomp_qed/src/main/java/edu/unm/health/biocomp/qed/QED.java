@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.cli.*; // CommandLine, CommandLineParser, HelpFormatter, OptionBuilder, Options, ParseException, PosixParser
+import org.apache.commons.cli.Option.*; // Builder
 
 import chemaxon.formats.*; // MolExporter, MolFormatException, MolImporter
 import chemaxon.license.LicenseException;
@@ -23,138 +24,22 @@ import chemaxon.reaction.*; // Standardizer, StandardizerException
 public class QED {
   
   public static final HashMap<String, HashMap<String, Double>> PARAMS = new HashMap<String, HashMap<String,Double>>();
-  
   public static final HashMap<String, Double> UNWEIGHTS = new HashMap<String, Double>();
-  
   public static final HashMap<String, Double> WEIGHTS = new HashMap<String, Double>();
-  
-  static {
-    
-    // ADS parameter sets for 8 molecular properties
-    
-    HashMap<String, Double> MW = new HashMap<String, Double>();
-    MW.put("A",2.817065973);
-    MW.put("B",392.5754953);
-    MW.put("C",290.7489764);
-    MW.put("D",2.419764353);
-    MW.put("E",49.22325677);
-    MW.put("F",65.37051707);
-    MW.put("DMAX",104.98055614);
-    PARAMS.put("MW", MW);
-    
-    HashMap<String, Double> LOGP = new HashMap<String, Double>();
-    LOGP.put("A",3.172690585);
-    LOGP.put("B",137.8624751);
-    LOGP.put("C",2.534937431);
-    LOGP.put("D",4.581497897);
-    LOGP.put("E",0.822739154);
-    LOGP.put("F",0.576295591);
-    LOGP.put("DMAX",131.31866035);
-    PARAMS.put("LOGP", LOGP);
-    
-    HashMap<String, Double> HBA = new HashMap<String, Double>();
-    HBA.put("A",2.948620388);
-    HBA.put("B",160.4605972);
-    HBA.put("C",3.615294657);
-    HBA.put("D",4.435986202);
-    HBA.put("E",0.290141953);
-    HBA.put("F",1.300669958);
-    HBA.put("DMAX",148.77630464);
-    PARAMS.put("HBA", HBA);
-    
-    HashMap<String, Double> HBD = new HashMap<String, Double>();
-    HBD.put("A",1.618662227);
-    HBD.put("B",1010.051101);
-    HBD.put("C",0.985094388);
-    HBD.put("D",0.000000000001);
-    HBD.put("E",0.713820843);
-    HBD.put("F",0.920922555);
-    HBD.put("DMAX",258.16326158);
-    PARAMS.put("HBD", HBD);
-    
-    HashMap<String, Double> PSA = new HashMap<String, Double>();
-    PSA.put("A",1.876861559);
-    PSA.put("B",125.2232657);
-    PSA.put("C",62.90773554);
-    PSA.put("D",87.83366614);
-    PSA.put("E",12.01999824);
-    PSA.put("F",28.51324732);
-    PSA.put("DMAX",104.56861672);
-    PARAMS.put("PSA", PSA);
-    
-    HashMap<String, Double> ROTB = new HashMap<String, Double>();
-    ROTB.put("A",0.01);
-    ROTB.put("B",272.4121427);
-    ROTB.put("C",2.558379970);
-    ROTB.put("D",1.565547684);
-    ROTB.put("E",1.271567166);
-    ROTB.put("F",2.758063707);
-    ROTB.put("DMAX",105.44204028);
-    PARAMS.put("ROTB", ROTB);
-    
-    HashMap<String, Double> AROM = new HashMap<String, Double>();
-    AROM.put("A",3.217788970);
-    AROM.put("B",957.7374108);
-    AROM.put("C",2.274627939);
-    AROM.put("D",0.000000000001);
-    AROM.put("E",1.317690384);
-    AROM.put("F",0.375760881);
-    AROM.put("DMAX",312.33726097);
-    PARAMS.put("AROM", AROM);
-    
-    HashMap<String, Double> ALERTS = new HashMap<String, Double>();
-    ALERTS.put("A",0.01);
-    ALERTS.put("B",1199.094025);
-    ALERTS.put("C",-0.09002883);
-    ALERTS.put("D",0.000000000001);
-    ALERTS.put("E",0.185904477);
-    ALERTS.put("F",0.875193782);
-    ALERTS.put("DMAX",417.72531400);
-    PARAMS.put("ALERTS", ALERTS);
-    
-    UNWEIGHTS.put("MW",1.0);
-    UNWEIGHTS.put("LOGP",1.0);
-    UNWEIGHTS.put("HBA",1.0);
-    UNWEIGHTS.put("HBD",1.0);
-    UNWEIGHTS.put("PSA",1.0);
-    UNWEIGHTS.put("ROTB",1.0);
-    UNWEIGHTS.put("AROM",1.0);
-    UNWEIGHTS.put("ALERTS",1.0);
-    
-    WEIGHTS.put("MW",0.66);
-    WEIGHTS.put("LOGP",0.46);
-    WEIGHTS.put("HBA",0.05);
-    WEIGHTS.put("HBD",0.61);
-    WEIGHTS.put("PSA",0.06);
-    WEIGHTS.put("ROTB",0.65);
-    WEIGHTS.put("AROM",0.48);
-    WEIGHTS.put("ALERTS",0.95);
-    
-  }
   
   private String inputFileName;
   private String outputFileName;
   private String outputFormat = "smiles";
   private String alertsFileName = null;
-  
   private logPPlugin logPCalculator;
-  
   private HashMap<String, Double> desirabilityFunctions = new HashMap<String, Double>();
-  
   private Standardizer std;
-  
   private ArrayList<Molecule> alerts;
-
   private StandardizedMolSearch ms;
-  
   private TopologyAnalyserPlugin topoPlugin;
-  
   private TPSAPlugin tpsaCalculator;
-  
   private HBDAPlugin hbdaCalculator = new HBDAPlugin();
-  
   private boolean verbose = false;
-  
   private boolean skipOnError = false;
   
   /**
@@ -165,54 +50,43 @@ public class QED {
    */
   public static void main(String[] args) throws Exception {
     QED runner = new QED();
-    if(!runner.processCommandLine(args)) {
-      return;
-    }
+    if (!runner.processCommandLine(args)) { return; }
     runner.run();
   }
   
   @SuppressWarnings("static-access")
   public boolean processCommandLine(String[] args) {
     CommandLineParser parser = new PosixParser();
-    Options opt = new Options();
-    opt.addOption(OptionBuilder.withLongOpt("input-file").isRequired().hasArg()
-                   .withArgName("Use specified input file").create("i"));
-    opt.addOption(OptionBuilder.withLongOpt("output-file").isRequired().hasArg()
-                   .withArgName("Use specified file output file").create("o"));
-    opt.addOption(OptionBuilder.withLongOpt("output-format").hasArg()
-                   .withArgName("Use specified output file format, [Default SMILES]").create("f"));
-    opt.addOption(OptionBuilder.withLongOpt("alerts-file").hasArg()
-                      .withArgName("Use specified alerts file").create("a"));
-    opt.addOption(OptionBuilder.withLongOpt("verbose").withArgName("Be verbose").create("v"));
-    opt.addOption(OptionBuilder.withLongOpt("skip-on-error").withArgName("Continue to next molecule on error, [Default false]").create("g"));
-    opt.addOption("h", "help", false, "show this help");
+    Options opts = new Options();
+    opts.addOption(Option.builder("i").longOpt("ifile").required().hasArg()
+      .argName("IFILE").desc("Input file").build());
+    opts.addOption(Option.builder("o").longOpt("ofile").required().hasArg()
+      .argName("OFILE").desc("Output file").build());
+    opts.addOption(Option.builder("f").longOpt("ofmt").hasArg()
+      .argName("OFMT").desc("Output format (smiles|sdf) [smiles]").build());
+    opts.addOption(Option.builder("a").longOpt("alertsfile").hasArg()
+      .argName("AFILE").desc("Alerts file (smarts)").build());
+    opts.addOption(Option.builder("g").longOpt("skip_on_error")
+      .hasArg(false).desc("Continue on error [false]").build());
+    opts.addOption("v", "verbose", false, "Verbose.");
+    opts.addOption("h", "help", false, "Show this help.");
     HelpFormatter helpFormater = new HelpFormatter();
     try {
-      CommandLine cmd = parser.parse(opt, args);
+      CommandLine cmd = parser.parse(opts, args);
       inputFileName = cmd.getOptionValue("i");
       outputFileName = cmd.getOptionValue("o");
-      if(cmd.hasOption("f")) {
+      if (cmd.hasOption("f")) {
         outputFormat = cmd.getOptionValue("f");
         outputFormat = outputFormat.toLowerCase();
-        if(outputFormat.equals("smi")) {
-          outputFormat = "smiles";
-        }
+        if (outputFormat.equals("smi")) { outputFormat = "smiles"; }
       }
-      if(cmd.hasOption("a")) {
-        alertsFileName = cmd.getOptionValue("a");
-      }
-      if(cmd.hasOption("v")) {
-        verbose = true;
-      }
-      if(cmd.hasOption("g")) {
-        skipOnError = true;
-      }
-      if(cmd.hasOption("h")) {
-        throw new ParseException("Help requested");
-      }
+      if (cmd.hasOption("a")) { alertsFileName = cmd.getOptionValue("a"); }
+      if (cmd.hasOption("v")) { verbose = true; }
+      if (cmd.hasOption("g")) { skipOnError = true; }
+      if (cmd.hasOption("h")) { throw new ParseException("Help requested"); }
     } catch (ParseException ex) {
       System.err.println(ex.getMessage());
-      helpFormater.printHelp("QED", opt);
+      helpFormater.printHelp("QED", "", opts, "QED: Quantitative Estimate of Drug-likeness (Bickerton, et al.)", true);
       return false;
     }
     return true;
@@ -243,16 +117,117 @@ public class QED {
     desirabilityFunctions.put("ROTB", Double.valueOf(0.0));
     desirabilityFunctions.put("AROM", Double.valueOf(0.0));
     desirabilityFunctions.put("ALERTS", Double.valueOf(0.0));
-    if(verbose) {
+    if (verbose) {
       System.out.println("QED initialized");
     }
+  }
+  
+  static {
+    // ADS parameter sets for 8 molecular properties
+    HashMap<String, Double> MW = new HashMap<String, Double>();
+    MW.put("A", 2.817065973);
+    MW.put("B", 392.5754953);
+    MW.put("C", 290.7489764);
+    MW.put("D", 2.419764353);
+    MW.put("E", 49.22325677);
+    MW.put("F", 65.37051707);
+    MW.put("DMAX", 104.98055614);
+    PARAMS.put("MW", MW);
+    
+    HashMap<String, Double> LOGP = new HashMap<String, Double>();
+    LOGP.put("A", 3.172690585);
+    LOGP.put("B", 137.8624751);
+    LOGP.put("C", 2.534937431);
+    LOGP.put("D", 4.581497897);
+    LOGP.put("E", 0.822739154);
+    LOGP.put("F", 0.576295591);
+    LOGP.put("DMAX", 131.31866035);
+    PARAMS.put("LOGP", LOGP);
+    
+    HashMap<String, Double> HBA = new HashMap<String, Double>();
+    HBA.put("A", 2.948620388);
+    HBA.put("B", 160.4605972);
+    HBA.put("C", 3.615294657);
+    HBA.put("D", 4.435986202);
+    HBA.put("E", 0.290141953);
+    HBA.put("F", 1.300669958);
+    HBA.put("DMAX", 148.77630464);
+    PARAMS.put("HBA", HBA);
+    
+    HashMap<String, Double> HBD = new HashMap<String, Double>();
+    HBD.put("A", 1.618662227);
+    HBD.put("B", 1010.051101);
+    HBD.put("C", 0.985094388);
+    HBD.put("D", 0.000000000001);
+    HBD.put("E", 0.713820843);
+    HBD.put("F", 0.920922555);
+    HBD.put("DMAX", 258.16326158);
+    PARAMS.put("HBD", HBD);
+    
+    HashMap<String, Double> PSA = new HashMap<String, Double>();
+    PSA.put("A", 1.876861559);
+    PSA.put("B", 125.2232657);
+    PSA.put("C", 62.90773554);
+    PSA.put("D", 87.83366614);
+    PSA.put("E", 12.01999824);
+    PSA.put("F", 28.51324732);
+    PSA.put("DMAX", 104.56861672);
+    PARAMS.put("PSA", PSA);
+    
+    HashMap<String, Double> ROTB = new HashMap<String, Double>();
+    ROTB.put("A", 0.01);
+    ROTB.put("B", 272.4121427);
+    ROTB.put("C", 2.558379970);
+    ROTB.put("D", 1.565547684);
+    ROTB.put("E", 1.271567166);
+    ROTB.put("F", 2.758063707);
+    ROTB.put("DMAX", 105.44204028);
+    PARAMS.put("ROTB", ROTB);
+    
+    HashMap<String, Double> AROM = new HashMap<String, Double>();
+    AROM.put("A", 3.217788970);
+    AROM.put("B", 957.7374108);
+    AROM.put("C", 2.274627939);
+    AROM.put("D", 0.000000000001);
+    AROM.put("E", 1.317690384);
+    AROM.put("F", 0.375760881);
+    AROM.put("DMAX", 312.33726097);
+    PARAMS.put("AROM", AROM);
+    
+    HashMap<String, Double> ALERTS = new HashMap<String, Double>();
+    ALERTS.put("A", 0.01);
+    ALERTS.put("B", 1199.094025);
+    ALERTS.put("C", -0.09002883);
+    ALERTS.put("D", 0.000000000001);
+    ALERTS.put("E", 0.185904477);
+    ALERTS.put("F", 0.875193782);
+    ALERTS.put("DMAX", 417.72531400);
+    PARAMS.put("ALERTS", ALERTS);
+    
+    UNWEIGHTS.put("MW", 1.0);
+    UNWEIGHTS.put("LOGP", 1.0);
+    UNWEIGHTS.put("HBA", 1.0);
+    UNWEIGHTS.put("HBD", 1.0);
+    UNWEIGHTS.put("PSA", 1.0);
+    UNWEIGHTS.put("ROTB", 1.0);
+    UNWEIGHTS.put("AROM", 1.0);
+    UNWEIGHTS.put("ALERTS", 1.0);
+    
+    WEIGHTS.put("MW", 0.66);
+    WEIGHTS.put("LOGP", 0.46);
+    WEIGHTS.put("HBA", 0.05);
+    WEIGHTS.put("HBD", 0.61);
+    WEIGHTS.put("PSA", 0.06);
+    WEIGHTS.put("ROTB", 0.65);
+    WEIGHTS.put("AROM", 0.48);
+    WEIGHTS.put("ALERTS", 0.95);
   }
   
   public String[] getMolPropKeys(Molecule mol) {
     String[] keys = new String[mol.properties().size() + 18];
     System.arraycopy(mol.properties().getKeys(), 0, keys, 0, keys.length - 18);
     int i = keys.length - 18;
-    for(String str : WEIGHTS.keySet()) {
+    for (String str : WEIGHTS.keySet()) {
       keys[i++] = str;
       keys[i++] = str + "_DES";
     }
@@ -304,7 +279,7 @@ public class QED {
     mol.setProperty("ALERTS", Integer.toString(alerts));
     double unweightedNumerator = 0.0;
     double weightedNumerator = 0.0;
-    for(Map.Entry<String, Double> df : desirabilityFunctions.entrySet()) {
+    for (Map.Entry<String, Double> df : desirabilityFunctions.entrySet()) {
       unweightedNumerator += UNWEIGHTS.get(df.getKey()) * log(df.getValue());
       weightedNumerator += WEIGHTS.get(df.getKey()) * log(df.getValue());
       //mol.properties().set(df.getKey() + "_DES", new MDoubleProp(df.getValue()));
@@ -320,7 +295,7 @@ public class QED {
   
   private double sum(Collection<Double> collection) {
     double sum = 0.0;
-    for(Double d : collection) {
+    for (Double d : collection) {
       sum += d;
     }
     return sum;
@@ -331,13 +306,13 @@ public class QED {
     MolExporter writer = null;
     Molecule mol;
     try {
-      if(alertsFileName == null) {
+      if (alertsFileName == null) {
         loadDefaultAlerts();
       } else {
         loadAlertsFromFile(alertsFileName);
       }
-      if(verbose) {
-        if(alertsFileName != null) {
+      if (verbose) {
+        if (alertsFileName != null) {
           System.out.println(alerts.size() + " alerts loaded from " + alertsFileName);
         } else {
           System.out.println(alerts.size() + " default alerts loaded");
@@ -353,19 +328,16 @@ public class QED {
         std.standardize(cloneMol);
         calc(cloneMol);
       } catch (SearchException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
-        if(!skipOnError) {
+        if (!skipOnError) {
           return;
         }
       } catch (LicenseException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
         return;
       } catch (PluginException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
-        if(!skipOnError) {
+        if (!skipOnError) {
           return;
         }
       }
@@ -379,48 +351,41 @@ public class QED {
           std.standardize(cloneMol);
           calc(cloneMol);
         } catch (SearchException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
-          if(!skipOnError) {
+          if (!skipOnError) {
             return;
           }
         } catch (LicenseException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
           return;
         } catch (PluginException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
-          if(!skipOnError) {
+          if (!skipOnError) {
             return;
           }
         }
         replaceMolProps(cloneMol, mol);
         writer.write(mol);
-        if(verbose && count % 100 == 0) {
+        if (verbose && count % 100 == 0) {
           System.out.println(count + " records processed");
         }
       }
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } finally {
-      if(reader != null) {
+      if (reader != null) {
         try {
           reader.close();
         } catch (IOException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
-      if(writer != null) {
+      if (writer != null) {
         try {
           writer.close();
         } catch (MolExportException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         } catch (IOException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
@@ -430,19 +395,17 @@ public class QED {
   public int alertCount(Molecule mol) {
     ms.setTarget(mol);
     int count = 0;
-    for(Molecule query : alerts) {
+    for (Molecule query : alerts) {
       ms.setQuery(query);
       try {
-        if(ms.isMatching()) {
+        if (ms.isMatching()) {
           count++;
         }
       } catch (SearchException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
         try {
           System.err.println(MolExporter.exportToFormat(query, "mrv"));
         } catch (IOException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         }
       }
@@ -452,7 +415,7 @@ public class QED {
   
   private void replaceMolProps(Molecule src, Molecule dest) {
     dest.properties().clear();
-    for(String propName : src.properties().getKeys()) {
+    for (String propName : src.properties().getKeys()) {
       dest.properties().set(propName, src.properties().get(propName));
     }
   }
@@ -468,7 +431,7 @@ public class QED {
   }
   
   public void loadAlertsFromFile(File file) {
-    if(file == null) {
+    if (file == null) {
       throw new UnsupportedOperationException("NULL input file");
     }
     BufferedReader reader = null;
@@ -477,28 +440,26 @@ public class QED {
       alerts.clear();
       reader = new BufferedReader(new FileReader(file));
       while((line = reader.readLine()) != null) {
-        if(line.startsWith("#")) {
+        if (line.startsWith("#")) {
           continue;
         }
         String[] tokens = line.split("\\s+");
         alerts.add(MolImporter.importMol(tokens[0], "smarts:d"));
       }
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } finally {
-      if(reader != null) {
+      if (reader != null) {
         try {
           reader.close();
         } catch (IOException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
     }
   }
   public void loadAlertsFromFile(String fname) {
-    if(fname == null) {
+    if (fname == null) {
       throw new UnsupportedOperationException("NULL input file");
     }
     loadAlertsFromFile(new File(fname));
