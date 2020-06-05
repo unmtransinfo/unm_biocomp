@@ -1,10 +1,10 @@
 package edu.unm.health.biocomp.qed;
 
-import static java.lang.Math.exp;
-import static java.lang.Math.log;
-
 import java.io.*;
 import java.util.*;
+import java.lang.Math;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
 
 import org.apache.commons.cli.*; // CommandLine, CommandLineParser, HelpFormatter, OptionBuilder, Options, ParseException, PosixParser
 import org.apache.commons.cli.Option.*; // Builder
@@ -27,12 +27,12 @@ public class QED {
   public static final HashMap<String, Double> UNWEIGHTS = new HashMap<String, Double>();
   public static final HashMap<String, Double> WEIGHTS = new HashMap<String, Double>();
   
-  private String inputFileName;
-  private String outputFileName;
-  private String outputFormat = "smiles";
-  private String alertsFileName = null;
+  private String ifile = null;
+  private String ofile = null;
+  private String ofmt = "smiles";
+  private String afile = null;
   private logPPlugin logPCalculator;
-  private HashMap<String, Double> desirabilityFunctions = new HashMap<String, Double>();
+  private HashMap<String, Double> meritFuncs = new HashMap<String, Double>();
   private Standardizer std;
   private ArrayList<Molecule> alerts;
   private StandardizedMolSearch ms;
@@ -60,10 +60,10 @@ public class QED {
     Options opts = new Options();
     opts.addOption(Option.builder("i").longOpt("ifile").required().hasArg()
       .argName("IFILE").desc("Input file").build());
-    opts.addOption(Option.builder("o").longOpt("ofile").required().hasArg()
+    opts.addOption(Option.builder("o").longOpt("ofile").hasArg()
       .argName("OFILE").desc("Output file").build());
     opts.addOption(Option.builder("f").longOpt("ofmt").hasArg()
-      .argName("OFMT").desc("Output format (smiles|sdf) [smiles]").build());
+      .argName("OFMT").desc("Output format (smiles|sdf) ["+ofmt+"]").build());
     opts.addOption(Option.builder("a").longOpt("alertsfile").hasArg()
       .argName("AFILE").desc("Alerts file (smarts)").build());
     opts.addOption(Option.builder("g").longOpt("skip_on_error")
@@ -73,20 +73,20 @@ public class QED {
     HelpFormatter helpFormater = new HelpFormatter();
     try {
       CommandLine cmd = parser.parse(opts, args);
-      inputFileName = cmd.getOptionValue("i");
-      outputFileName = cmd.getOptionValue("o");
+      ifile = cmd.getOptionValue("i");
+      if (cmd.hasOption("o")) ofile = cmd.getOptionValue("o");
       if (cmd.hasOption("f")) {
-        outputFormat = cmd.getOptionValue("f");
-        outputFormat = outputFormat.toLowerCase();
-        if (outputFormat.equals("smi")) { outputFormat = "smiles"; }
+        ofmt = cmd.getOptionValue("f");
+        ofmt = ofmt.toLowerCase();
+        if (ofmt.matches("^(smi|SMI)$")) ofmt = "smiles:+n-aT*"; //Kekule for compatibility
       }
-      if (cmd.hasOption("a")) { alertsFileName = cmd.getOptionValue("a"); }
+      if (cmd.hasOption("a")) { afile = cmd.getOptionValue("a"); }
       if (cmd.hasOption("v")) { verbose = true; }
       if (cmd.hasOption("g")) { skipOnError = true; }
       if (cmd.hasOption("h")) { throw new ParseException("Help requested"); }
-    } catch (ParseException ex) {
-      System.err.println(ex.getMessage());
-      helpFormater.printHelp("QED", "", opts, "QED: Quantitative Estimate of Drug-likeness (Bickerton, et al.)", true);
+    } catch (ParseException e) {
+      System.err.println(e.getMessage());
+      helpFormater.printHelp("QED", "QED: Quantitative Estimate of Drug-likeness", opts, "Ref: Bickerton, et al. (2012)", true);
       return false;
     }
     return true;
@@ -109,14 +109,14 @@ public class QED {
     hbdaCalculator = new HBDAPlugin();
     hbdaCalculator.setExcludeHalogens(true);
     hbdaCalculator.setExcludeSulfur(true);
-    desirabilityFunctions.put("MW", Double.valueOf(0.0));
-    desirabilityFunctions.put("LOGP", Double.valueOf(0.0));
-    desirabilityFunctions.put("HBA", Double.valueOf(0.0));
-    desirabilityFunctions.put("HBD", Double.valueOf(0.0));
-    desirabilityFunctions.put("PSA", Double.valueOf(0.0));
-    desirabilityFunctions.put("ROTB", Double.valueOf(0.0));
-    desirabilityFunctions.put("AROM", Double.valueOf(0.0));
-    desirabilityFunctions.put("ALERTS", Double.valueOf(0.0));
+    meritFuncs.put("MW", Double.valueOf(0.0));
+    meritFuncs.put("LOGP", Double.valueOf(0.0));
+    meritFuncs.put("HBA", Double.valueOf(0.0));
+    meritFuncs.put("HBD", Double.valueOf(0.0));
+    meritFuncs.put("PSA", Double.valueOf(0.0));
+    meritFuncs.put("ROTB", Double.valueOf(0.0));
+    meritFuncs.put("AROM", Double.valueOf(0.0));
+    meritFuncs.put("ALERTS", Double.valueOf(0.0));
     if (verbose) {
       System.out.println("QED initialized");
     }
@@ -238,91 +238,92 @@ public class QED {
   
   public void calc(Molecule mol) throws PluginException, SearchException, IOException {
     double mw = mol.getMass();
-    desirabilityFunctions.put("MW", Double.valueOf(ads(mw, PARAMS.get("MW").get("A"), PARAMS.get("MW").get("B"), PARAMS.get("MW").get("C"), PARAMS.get("MW").get("D"), PARAMS.get("MW").get("E"), PARAMS.get("MW").get("F"), PARAMS.get("MW").get("DMAX"))));
-    //mol.properties().set("MW", new MDoubleProp(mw));
+    meritFuncs.put("MW", Double.valueOf(ads(mw, PARAMS.get("MW").get("A"), PARAMS.get("MW").get("B"), PARAMS.get("MW").get("C"), PARAMS.get("MW").get("D"), PARAMS.get("MW").get("E"), PARAMS.get("MW").get("F"), PARAMS.get("MW").get("DMAX"))));
     mol.setProperty("MW", Double.toString(mw));
     logPCalculator.setMolecule(mol);
     logPCalculator.run();
     double logp = logPCalculator.getlogPTrue();
-    desirabilityFunctions.put("LOGP", Double.valueOf(ads(logp, PARAMS.get("LOGP").get("A"), PARAMS.get("LOGP").get("B"), PARAMS.get("LOGP").get("C"), PARAMS.get("LOGP").get("D"), PARAMS.get("LOGP").get("E"), PARAMS.get("LOGP").get("F"), PARAMS.get("LOGP").get("DMAX"))));
-    //mol.properties().set("LOGP", new MDoubleProp(logp));
+    meritFuncs.put("LOGP", Double.valueOf(ads(logp, PARAMS.get("LOGP").get("A"), PARAMS.get("LOGP").get("B"), PARAMS.get("LOGP").get("C"), PARAMS.get("LOGP").get("D"), PARAMS.get("LOGP").get("E"), PARAMS.get("LOGP").get("F"), PARAMS.get("LOGP").get("DMAX"))));
     mol.setPropertyObject("LOGP", Double.toString(logp));
     hbdaCalculator.setMolecule(mol);
     hbdaCalculator.run();
     int hba = hbdaCalculator.getAcceptorAtomCount();
-    desirabilityFunctions.put("HBA", Double.valueOf(ads(hba, PARAMS.get("HBA").get("A"), PARAMS.get("HBA").get("B"), PARAMS.get("HBA").get("C"), PARAMS.get("HBA").get("D"), PARAMS.get("HBA").get("E"), PARAMS.get("HBA").get("F"), PARAMS.get("HBA").get("DMAX"))));
-    //mol.properties().set("HBA", new MIntegerProp(hba));
+    meritFuncs.put("HBA", Double.valueOf(ads(hba, PARAMS.get("HBA").get("A"), PARAMS.get("HBA").get("B"), PARAMS.get("HBA").get("C"), PARAMS.get("HBA").get("D"), PARAMS.get("HBA").get("E"), PARAMS.get("HBA").get("F"), PARAMS.get("HBA").get("DMAX"))));
     mol.setProperty("HBA", Integer.toString(hba));
     int hbd = hbdaCalculator.getDonorAtomCount();
-    desirabilityFunctions.put("HBD", Double.valueOf(ads(hbd, PARAMS.get("HBD").get("A"), PARAMS.get("HBD").get("B"), PARAMS.get("HBD").get("C"), PARAMS.get("HBD").get("D"), PARAMS.get("HBD").get("E"), PARAMS.get("HBD").get("F"), PARAMS.get("HBD").get("DMAX"))));
-    //mol.properties().set("HBD", new MIntegerProp(hbd));
+    meritFuncs.put("HBD", Double.valueOf(ads(hbd, PARAMS.get("HBD").get("A"), PARAMS.get("HBD").get("B"), PARAMS.get("HBD").get("C"), PARAMS.get("HBD").get("D"), PARAMS.get("HBD").get("E"), PARAMS.get("HBD").get("F"), PARAMS.get("HBD").get("DMAX"))));
     mol.setProperty("HBD", Integer.toString(hbd));
     tpsaCalculator.setMolecule(mol);
     tpsaCalculator.run();
     double psa = tpsaCalculator.getSurfaceArea();
-    desirabilityFunctions.put("PSA", Double.valueOf(ads(psa, PARAMS.get("PSA").get("A"), PARAMS.get("PSA").get("B"), PARAMS.get("PSA").get("C"), PARAMS.get("PSA").get("D"), PARAMS.get("PSA").get("E"), PARAMS.get("PSA").get("F"), PARAMS.get("PSA").get("DMAX"))));
-    //mol.properties().set("PSA", new MDoubleProp(psa));
+    meritFuncs.put("PSA", Double.valueOf(ads(psa, PARAMS.get("PSA").get("A"), PARAMS.get("PSA").get("B"), PARAMS.get("PSA").get("C"), PARAMS.get("PSA").get("D"), PARAMS.get("PSA").get("E"), PARAMS.get("PSA").get("F"), PARAMS.get("PSA").get("DMAX"))));
     mol.setProperty("PSA", Double.toString(psa));
     topoPlugin.setMolecule(mol);
     topoPlugin.run();
     int rotb = topoPlugin.getRotatableBondCount();
-    desirabilityFunctions.put("ROTB", Double.valueOf(ads(rotb, PARAMS.get("ROTB").get("A"), PARAMS.get("ROTB").get("B"), PARAMS.get("ROTB").get("C"), PARAMS.get("ROTB").get("D"), PARAMS.get("ROTB").get("E"), PARAMS.get("ROTB").get("F"), PARAMS.get("ROTB").get("DMAX"))));
-    //mol.properties().set("ROTB", new MIntegerProp(rotb));
+    meritFuncs.put("ROTB", Double.valueOf(ads(rotb, PARAMS.get("ROTB").get("A"), PARAMS.get("ROTB").get("B"), PARAMS.get("ROTB").get("C"), PARAMS.get("ROTB").get("D"), PARAMS.get("ROTB").get("E"), PARAMS.get("ROTB").get("F"), PARAMS.get("ROTB").get("DMAX"))));
     mol.setProperty("ROTB", Integer.toString(rotb));
     int arom = topoPlugin.getAromaticRingCount();
-    desirabilityFunctions.put("AROM", Double.valueOf(ads(arom, PARAMS.get("AROM").get("A"), PARAMS.get("AROM").get("B"), PARAMS.get("AROM").get("C"), PARAMS.get("AROM").get("D"), PARAMS.get("AROM").get("E"), PARAMS.get("AROM").get("F"), PARAMS.get("AROM").get("DMAX"))));
-    // mol.properties().set("AROM", new MIntegerProp(arom));
+    meritFuncs.put("AROM", Double.valueOf(ads(arom, PARAMS.get("AROM").get("A"), PARAMS.get("AROM").get("B"), PARAMS.get("AROM").get("C"), PARAMS.get("AROM").get("D"), PARAMS.get("AROM").get("E"), PARAMS.get("AROM").get("F"), PARAMS.get("AROM").get("DMAX"))));
     mol.setProperty("AROM", Integer.toString(arom));
     int alerts = alertCount(mol);
-    desirabilityFunctions.put("ALERTS", Double.valueOf(ads(alerts, PARAMS.get("ALERTS").get("A"), PARAMS.get("ALERTS").get("B"), PARAMS.get("ALERTS").get("C"), PARAMS.get("ALERTS").get("D"), PARAMS.get("ALERTS").get("E"), PARAMS.get("ALERTS").get("F"), PARAMS.get("ALERTS").get("DMAX"))));
-    //mol.properties().set("ALERTS", new MIntegerProp(alerts));
+    meritFuncs.put("ALERTS", Double.valueOf(ads(alerts, PARAMS.get("ALERTS").get("A"), PARAMS.get("ALERTS").get("B"), PARAMS.get("ALERTS").get("C"), PARAMS.get("ALERTS").get("D"), PARAMS.get("ALERTS").get("E"), PARAMS.get("ALERTS").get("F"), PARAMS.get("ALERTS").get("DMAX"))));
     mol.setProperty("ALERTS", Integer.toString(alerts));
     double unweightedNumerator = 0.0;
     double weightedNumerator = 0.0;
-    for (Map.Entry<String, Double> df : desirabilityFunctions.entrySet()) {
+    for (Map.Entry<String, Double> df : meritFuncs.entrySet()) {
       unweightedNumerator += UNWEIGHTS.get(df.getKey()) * log(df.getValue());
       weightedNumerator += WEIGHTS.get(df.getKey()) * log(df.getValue());
-      //mol.properties().set(df.getKey() + "_DES", new MDoubleProp(df.getValue()));
       mol.setProperty(df.getKey() + "_DES", df.getValue().toString());
     }
     double qedUW = exp(unweightedNumerator/sum(UNWEIGHTS.values()));
     double qedW = exp(weightedNumerator/sum(WEIGHTS.values()));
-    //mol.properties().set("UNWEIGHTED_QED", new MDoubleProp(qedUW));
     mol.setProperty("UNWEIGHTED_QED", Double.toString(qedUW));
-    //mol.properties().set("WEIGHTED_QED", new MDoubleProp(qedW));
     mol.setProperty("WEIGHTED_QED", Double.toString(qedW));
   }
   
   private double sum(Collection<Double> collection) {
     double sum = 0.0;
-    for (Double d : collection) {
-      sum += d;
-    }
+    for (Double d: collection) { sum += d; }
     return sum;
   }
   
   public void run() {
-    MolImporter reader = null;
-    MolExporter writer = null;
+    MolImporter molReader = null;
+    MolExporter molWriter = null;
     Molecule mol;
+    int n_mol = 0;
+    if (ofile!=null)
+    {
+      ofmt = MFileFormatUtil.getMostLikelyMolFormat(ofile);
+      if (ofmt.equals("smiles")) ofmt="smiles:+n-aT*"; //Kekule for compatibility
+    }
     try {
-      if (alertsFileName == null) {
+      if (afile == null) {
         loadDefaultAlerts();
       } else {
-        loadAlertsFromFile(alertsFileName);
+        loadAlertsFromFile(afile);
       }
       if (verbose) {
-        if (alertsFileName != null) {
-          System.out.println(alerts.size() + " alerts loaded from " + alertsFileName);
+        if (afile != null) {
+          System.out.println(alerts.size() + " alerts loaded from " + afile);
         } else {
           System.out.println(alerts.size() + " default alerts loaded");
         }
       }
-      int count = 0;
-      reader = new MolImporter(new FileInputStream(inputFileName));
-      mol = reader.read();
+      molReader = new MolImporter(new FileInputStream(ifile));
+      if (verbose)
+      {
+        String desc = MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
+        System.err.println("Input format:  "+molReader.getFormat()+" ("+desc+")");
+      }
+      mol = molReader.read();
+      n_mol++;
       String[] keys = getMolPropKeys(mol);
-      writer = new MolExporter(new FileOutputStream(outputFileName), outputFormat, true, keys);
+      if (ofile!=null)
+        molWriter = new MolExporter(new FileOutputStream(ofile), ofmt, true, keys);
+      else
+        molWriter = new MolExporter(System.out, ofmt, true, keys);
       Molecule cloneMol = mol.cloneMolecule();
       try {
         std.standardize(cloneMol);
@@ -342,10 +343,9 @@ public class QED {
         }
       }
       replaceMolProps(cloneMol, mol);
-      writer.write(mol);
-      count++;
-      while((mol = reader.read()) != null) {
-        count++;
+      molWriter.write(mol);
+      while((mol = molReader.read()) != null) {
+        n_mol++;
         cloneMol = mol.cloneMolecule();
         try {
           std.standardize(cloneMol);
@@ -365,30 +365,31 @@ public class QED {
           }
         }
         replaceMolProps(cloneMol, mol);
-        writer.write(mol);
-        if (verbose && count % 100 == 0) {
-          System.out.println(count + " records processed");
+        molWriter.write(mol);
+        if (verbose && n_mol % 100 == 0) {
+          System.out.println(n_mol + " mols processed");
         }
       }
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
-      if (reader != null) {
+      if (molReader != null) {
         try {
-          reader.close();
+          molReader.close();
         } catch (IOException e) {
           e.printStackTrace();
         }
       }
-      if (writer != null) {
+      if (molWriter != null) {
         try {
-          writer.close();
+          molWriter.close();
         } catch (MolExportException e) {
           e.printStackTrace();
         } catch (IOException e) {
           e.printStackTrace();
         }
       }
+      System.out.println(n_mol + " mols processed");
     }
   }
   
@@ -413,10 +414,10 @@ public class QED {
     return count;
   }
   
-  private void replaceMolProps(Molecule src, Molecule dest) {
-    dest.properties().clear();
-    for (String propName : src.properties().getKeys()) {
-      dest.properties().set(propName, src.properties().get(propName));
+  private void replaceMolProps(Molecule molA, Molecule molB) {
+    molB.properties().clear();
+    for (String propName : molA.properties().getKeys()) {
+      molB.properties().set(propName, molA.properties().get(propName));
     }
   }
   
@@ -434,12 +435,12 @@ public class QED {
     if (file == null) {
       throw new UnsupportedOperationException("NULL input file");
     }
-    BufferedReader reader = null;
+    BufferedReader bufrdr = null;
     String line;
     try {
       alerts.clear();
-      reader = new BufferedReader(new FileReader(file));
-      while((line = reader.readLine()) != null) {
+      bufrdr = new BufferedReader(new FileReader(file));
+      while((line = bufrdr.readLine()) != null) {
         if (line.startsWith("#")) {
           continue;
         }
@@ -449,9 +450,9 @@ public class QED {
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
-      if (reader != null) {
+      if (bufrdr != null) {
         try {
-          reader.close();
+          bufrdr.close();
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -585,5 +586,20 @@ public class QED {
   public int numAlerts()
   {
     return alerts.size();
+  }
+
+  private static void ScoreStats(String scorename, ArrayList<Double> scores) throws IOException
+  { 
+    ArrayList<Integer> vals = new ArrayList<Integer>(Arrays.asList(0,0,0,0,0,0,0,0,0,0));
+    ArrayList<Double> xmaxs = new ArrayList<Double>(Arrays.asList(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0));
+    
+    for (Double score: scores)
+    { 
+      vals.set((int)Math.floor(score*10), vals.get((int)Math.floor(score*10))+1);   
+    }
+    for (int i=0;i<vals.size();++i)
+    { 
+      System.err.println(String.format("%s score range: [%3.1f , %3.1f): %3d mols", scorename, 0.1*i, 0.1*(i+1), vals.get(i)));
+    }
   }
 }
