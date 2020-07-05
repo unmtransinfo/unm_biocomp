@@ -34,7 +34,6 @@ public class tautomers_servlet extends HttpServlet
 {
   private static String SERVLETNAME=null;
   private static String CONTEXTPATH=null;
-  private static String LOGDIR=null;	// configured in web.xml
   private static String APPNAME=null;   // configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
   private static Integer MAX_POST_SIZE=10*1024*1024; // configured in web.xml
@@ -52,7 +51,6 @@ public class tautomers_servlet extends HttpServlet
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
   private static String DATESTR=null;
-  private static File LOGFILE=null;
   private static String color1="#EEEEEE";
   private static String MOL2IMG_SERVLETURL=null;
   private static String PROXY_PREFIX=null; // configured in web.xml
@@ -170,71 +168,6 @@ public class tautomers_servlet extends HttpServlet
     DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
     Random rand = new Random();
     PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
-
-    //Create webapp-specific log dir if necessary:
-    File dout = new File(LOGDIR);
-    if (!dout.exists())
-    {
-      boolean ok = dout.mkdir();
-      System.err.println("LOGDIR creation "+(ok?"succeeded":"failed")+": "+LOGDIR);
-      if (!ok)
-      {
-        errors.add("ERROR: could not create LOGDIR (logging disabled): "+LOGDIR);
-      }
-    }
-    LOGFILE = new File(LOGDIR+"/"+SERVLETNAME+".log");
-    if (!LOGFILE.exists())
-    {
-      try {
-        LOGFILE.createNewFile();
-        LOGFILE.setWritable(true,true);
-        PrintWriter out_log = new PrintWriter(LOGFILE);
-        out_log.println("date\tip\tN"); 
-        out_log.flush();
-        out_log.close();
-      }
-      catch (Exception e)
-      {
-        errors.add("ERROR: Cannot create LOGFILE (logging disabled):"+e.getMessage());
-        LOGFILE = null;
-      }
-    }
-    else if (!LOGFILE.canWrite())
-    {
-      errors.add("ERROR: LOGFILE not writable (logging disabled).");
-      LOGFILE = null;
-    }
-    if (LOGFILE!=null) {
-      BufferedReader buff = new BufferedReader(new FileReader(LOGFILE));
-      if (buff==null)
-      {
-        errors.add("ERROR: Cannot open LOGFILE (logging disabled).");
-        LOGFILE = null;
-      }
-      else
-      {
-        int n_lines=0;
-        String line=null;
-        String startdate=null;
-        while ((line=buff.readLine())!=null)
-        {
-          ++n_lines;
-          String[] fields = Pattern.compile("\\t").split(line);
-          if (n_lines==2) startdate = fields[0];
-        }
-        buff.close(); //Else can result in error: "Too many open files"
-        if (n_lines>2)
-        {
-          calendar.set(Integer.parseInt(startdate.substring(0,4)),
-                   Integer.parseInt(startdate.substring(4,6))-1,
-                   Integer.parseInt(startdate.substring(6,8)),
-                   Integer.parseInt(startdate.substring(8,10)),
-                   Integer.parseInt(startdate.substring(10,12)),0);
-          DateFormat df = DateFormat.getDateInstance(DateFormat.FULL,Locale.US);
-          errors.add("since "+df.format(calendar.getTime())+", times used: "+(n_lines-1));
-        }
-      }
-    }
 
     try {
       LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
@@ -438,7 +371,7 @@ public class tautomers_servlet extends HttpServlet
     try { oext=MFileFormatUtil.getFormat(ofmt).getExtensions()[0]; }
     catch (Exception e) { oext=params.getVal("ofmt"); }
     try {
-      File dout=new File(SCRATCHDIR);
+      File dout = new File(SCRATCHDIR);
       if (!dout.exists())
       {
         boolean ok=dout.mkdir();
@@ -506,12 +439,6 @@ public class tautomers_servlet extends HttpServlet
       "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
       "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\"><B>Download "+fname+" ("+file_utils.NiceBytes(fout.length())+")</B></BUTTON></FORM>\n");
     outputs.add("<BLOCKQUOTE>"+bhtm+"<BR>\n<I>(Output file contains query molecules and associated tautomers.)</I></BLOCKQUOTE>");
-
-    if (LOGFILE!=null) {
-      PrintWriter out_log=new PrintWriter(new BufferedWriter(new FileWriter(LOGFILE,true)));
-      out_log.printf("%s\t%s\t%d\n",DATESTR,REMOTEHOST,n_mols_in);
-      out_log.close();
-    }
 
     return tresults;
   }
@@ -678,8 +605,6 @@ public class tautomers_servlet extends HttpServlet
       throw new ServletException("Please supply UPLOADDIR parameter");
     SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    LOGDIR=conf.getInitParameter("LOGDIR");
-    if (LOGDIR==null) LOGDIR="/tmp"+CONTEXTPATH+"_logs";
     try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
     PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");

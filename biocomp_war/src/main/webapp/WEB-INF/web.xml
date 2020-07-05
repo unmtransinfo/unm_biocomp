@@ -42,8 +42,6 @@
       <param-value>10485760</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
       <param-value>/tomcat</param-value></init-param>
   </servlet>
@@ -59,8 +57,6 @@
       <param-value>Depict</param-value> </init-param>
     <init-param> <param-name>UPLOADDIR</param-name>
       <param-value>/tmp</param-value> </init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value> </init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
@@ -78,8 +74,6 @@
       <param-value>CDKDepict</param-value> </init-param>
     <init-param> <param-name>UPLOADDIR</param-name>
       <param-value>/tmp</param-value> </init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value> </init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
@@ -101,8 +95,6 @@
       <param-value>10485760</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
     <init-param><param-name>ENABLE_NOLIMIT</param-name>
@@ -128,8 +120,6 @@
       <param-value>10485760</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
     <init-param><param-name>ENABLE_NOLIMIT</param-name>
@@ -162,8 +152,6 @@
       <param-value>true</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
       <param-value>/tomcat</param-value></init-param>
   </servlet>
@@ -190,8 +178,6 @@
       <param-value>true</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
       <param-value>/tomcat</param-value></init-param>
   </servlet>
@@ -207,8 +193,6 @@
       <param-value>Tautomers</param-value> </init-param>
     <init-param> <param-name>UPLOADDIR</param-name>
       <param-value>/tmp</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value></init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
@@ -226,8 +210,6 @@
       <param-value>React</param-value> </init-param>
     <init-param> <param-name>UPLOADDIR</param-name>
       <param-value>/tmp</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value></init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
@@ -245,8 +227,6 @@
       <param-value>MCS</param-value> </init-param>
     <init-param> <param-name>UPLOADDIR</param-name>
       <param-value>/tmp</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>100</param-value></init-param>
     <init-param> <param-name>DEMOSMIFILE</param-name>
@@ -272,8 +252,6 @@
       <param-value>true</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
@@ -297,8 +275,6 @@
       <param-value>true</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
     <init-param> <param-name>PROXY_PREFIX</param-name>
@@ -338,8 +314,6 @@
       <param-value>10485760</param-value></init-param>
     <init-param> <param-name>SCRATCHDIR</param-name>
       <param-value>/tmp/scratch</param-value></init-param>
-    <init-param> <param-name>LOGDIR</param-name>
-      <param-value>${catalina.home}/logs</param-value></init-param>
     <init-param> <param-name>N_MAX</param-name>
       <param-value>1000</param-value> </init-param>
     <init-param> <param-name>DEMOSMIFILE</param-name>
