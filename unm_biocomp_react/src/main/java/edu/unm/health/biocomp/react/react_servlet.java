@@ -35,6 +35,7 @@ public class react_servlet extends HttpServlet
   private static String SERVERNAME=null;
   private static String SERVLETNAME=null;
   private static String CONTEXTPATH=null;
+  private static String APPNAME=null;	// configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
   private static int N_MAX=100; // configured in web.xml
   private static ServletContext CONTEXT=null;
@@ -55,38 +56,38 @@ public class react_servlet extends HttpServlet
   public void doPost(HttpServletRequest request,HttpServletResponse response)
       throws IOException,ServletException
   {
-    SERVERNAME=request.getServerName();
-    if (SERVERNAME.equals("localhost")) SERVERNAME=InetAddress.getLocalHost().getHostAddress();
-    REMOTEHOST=request.getHeader("X-Forwarded-For"); // client (original)
+    SERVERNAME = request.getServerName();
+    if (SERVERNAME.equals("localhost")) SERVERNAME = InetAddress.getLocalHost().getHostAddress();
+    REMOTEHOST = request.getHeader("X-Forwarded-For"); // client (original)
     if (REMOTEHOST!=null)
     {
-      String[] addrs=Pattern.compile(",").split(REMOTEHOST);
-      if (addrs.length>0) REMOTEHOST=addrs[addrs.length-1];
+      String[] addrs = Pattern.compile(",").split(REMOTEHOST);
+      if (addrs.length>0) REMOTEHOST = addrs[addrs.length-1];
     }
     else
     {
-      REMOTEHOST=request.getRemoteAddr(); // client (may be proxy)
+      REMOTEHOST = request.getRemoteAddr(); // client (may be proxy)
     }
 
-    CONTEXTPATH=request.getContextPath();
-    rb=ResourceBundle.getBundle("LocalStrings",request.getLocale());
+    CONTEXTPATH = request.getContextPath();
+    rb=ResourceBundle.getBundle("LocalStrings", request.getLocale());
 
     MultipartRequest mrequest=null;
     if (request.getMethod().equalsIgnoreCase("POST"))
     {
-      try { mrequest=new MultipartRequest(request,UPLOADDIR,10*1024*1024,"ISO-8859-1",new DefaultFileRenamePolicy()); }
+      try { mrequest = new MultipartRequest(request, UPLOADDIR, 10*1024*1024, "ISO-8859-1", new DefaultFileRenamePolicy()); }
       catch (IOException lEx) {
-        this.getServletContext().log("not a valid MultipartRequest",lEx); }
+        this.getServletContext().log("not a valid MultipartRequest", lEx); }
     }
 
     // main logic:
     ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js",PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
-    boolean ok=initialize(request,mrequest);
+    boolean ok = initialize(request, mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
-      out=response.getWriter();
+      out = response.getWriter();
       out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
       out.println(HtmUtils.FooterHtm(errors,true));
       return;
@@ -96,65 +97,65 @@ public class react_servlet extends HttpServlet
       if (mrequest.getParameter("react").equals("TRUE"))
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
-        out.println(FormHtm(mrequest,response));
-        ArrayList<ArrayList<Molecule> > rxnmols = react_utils.ReactMols(MOLS,params.getVal("smirks"),params.isChecked("recurse"),params.isChecked("verbose"));
+        out.println(FormHtm(mrequest, response));
+        ArrayList<ArrayList<Molecule> > rxnmols = react_utils.ReactMols(MOLS, params.getVal("smirks"), params.isChecked("recurse"), params.isChecked("verbose"));
         ReactOutput(rxnmols,params.isChecked("verbose"));
         out.println(HtmUtils.OutputHtm(outputs));
-        out.println(HtmUtils.FooterHtm(errors,true));
+        out.println(HtmUtils.FooterHtm(errors, true));
       }
     }
     else
     {
-      String help=request.getParameter("help");	// GET param
+      String help = request.getParameter("help");	// GET param
       if (help!=null)	// GET method, help=TRUE
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(HelpHtm());
-        out.println(HtmUtils.FooterHtm(errors,true));
+        out.println(HtmUtils.FooterHtm(errors, true));
       }
       else	// GET method, initial invocation of servlet w/ no params
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.println(HtmUtils.HeaderHtm(SERVLETNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
-        out.println(FormHtm(mrequest,response));
-        out.println("<SCRIPT>go_reset(window.document.mainform)</SCRIPT>");
-        out.println(HtmUtils.FooterHtm(errors,true));
+        out.println(FormHtm(mrequest, response));
+        out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
+        out.println(HtmUtils.FooterHtm(errors, true));
       }
     }
   }
   /////////////////////////////////////////////////////////////////////////////
-  private boolean initialize(HttpServletRequest request,MultipartRequest mrequest)
-      throws IOException,ServletException
+  private boolean initialize(HttpServletRequest request, MultipartRequest mrequest)
+      throws IOException, ServletException
   {
-    SERVLETNAME=this.getServletName();
-    outputs=new ArrayList<String>();
-    errors=new ArrayList<String>();
-    params=new HttpParams();
-    MOLS=new ArrayList<Molecule>();
-    MOL2IMG_SERVLETURL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
+    SERVLETNAME = this.getServletName();
+    outputs = new ArrayList<String>();
+    errors = new ArrayList<String>();
+    params = new HttpParams();
+    MOLS = new ArrayList<Molecule>();
+    MOL2IMG_SERVLETURL = (PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
-    errors.add("<A HREF=\"http://medicine.unm.edu/informatics/\">"+
-      "<IMG BORDER=0 SRC=\""+HtmUtils.ImageURL("biocomp_logo_only.gif",request)+"\"></A>"+
-      SERVLETNAME+" web app from UNM Translational Informatics.");
-    errors.add("<A HREF=\"http://www.chemaxon.com\">"+
-      "<IMG BORDER=0 SRC=\""+HtmUtils.ImageURL("chemaxon_powered_100px.png",request)+"\"></A>\n"+
-          "JChem from ChemAxon Ltd.");
+    String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
+    String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
+    String href=("http://medicine.unm.edu/informatics/");
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
+    logo_htm+="</TD><TD>";
+    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    tiphtm=("JChem from ChemAxon Ltd.");
+    href=("http://www.chemaxon.com");
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
+    logo_htm+="</TD></TR></TABLE>";
+    errors.add(logo_htm);
 
-    Calendar calendar=Calendar.getInstance();
+    Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date());
     DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
 
-    try {
-      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-    } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
-    }
-    LicenseManager.refresh();
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM) || !LicenseManager.isLicensed(LicenseManager.REACTOR))
     {
       errors.add("ERROR: ChemAxon license error; JCHEM + REACTOR required.");
@@ -167,7 +168,7 @@ public class react_servlet extends HttpServlet
 
     for (Enumeration e=mrequest.getParameterNames(); e.hasMoreElements(); )
     {
-      String key=(String)e.nextElement();
+      String key = (String)e.nextElement();
       if (mrequest.getParameter(key)!=null)
         params.setVal(key,mrequest.getParameter(key));
     }
@@ -177,20 +178,14 @@ public class react_servlet extends HttpServlet
       errors.add("server: "+CONTEXT.getServerInfo()+" [API:"+CONTEXT.getMajorVersion()+"."+CONTEXT.getMinorVersion()+"]");
       errors.add("ServletName: "+this.getServletName());
     }
-    LicenseManager.refresh();
-    if (!(new Reactor()).isLicensed())
-    {
-      errors.add("Warning: Reactor license not found.");
-      return false;
-    }
 
     String fname="infile";
-    File ifile=mrequest.getFile(fname);
-    String intxt=params.getVal("intxt").replaceFirst("[\\s]+$","");
-    byte[] inbytes=new byte[1024];
+    File ifile = mrequest.getFile(fname);
+    String intxt = params.getVal("intxt").replaceFirst("[\\s]+$","");
+    byte[] inbytes = new byte[1024];
     if (ifile!=null)
     {
-      FileInputStream fis=new FileInputStream(ifile);
+      FileInputStream fis = new FileInputStream(ifile);
       int asize=inbytes.length;
       int size=0;
       int b;
@@ -199,23 +194,23 @@ public class react_servlet extends HttpServlet
         if (size+1>asize)
         {
           asize*=2;
-          byte[] tmp=new byte[asize];
-          System.arraycopy(inbytes,0,tmp,0,size);
+          byte[] tmp = new byte[asize];
+          System.arraycopy(inbytes, 0, tmp, 0, size);
           inbytes=tmp;
         }
-        inbytes[size]=(byte)b;
+        inbytes[size] = (byte)b;
         ++size; 
       }
-      byte[] tmp=new byte[size];
-      System.arraycopy(inbytes,0,tmp,0,size);
+      byte[] tmp = new byte[size];
+      System.arraycopy(inbytes, 0, tmp, 0, size);
       inbytes=tmp;
     }
     else if (intxt.length()>0)
     {
       if (params.getVal("molfmt").equals("cdx"))
-        inbytes=Base64Decoder.decodeToBytes(intxt);
+        inbytes = Base64Decoder.decodeToBytes(intxt);
       else
-        inbytes=intxt.getBytes("utf-8");
+        inbytes = intxt.getBytes("utf-8");
     }
     else
     {
@@ -226,35 +221,35 @@ public class react_servlet extends HttpServlet
     MolImporter molReader=null;
     if (params.getVal("molfmt").equals("automatic"))
     {
-      String orig_fname=mrequest.getOriginalFileName(fname);
-      String molfmt_auto=MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
+      String orig_fname = mrequest.getOriginalFileName(fname);
+      String molfmt_auto = MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
       if (orig_fname!=null && molfmt_auto!=null)
-        molReader=new MolImporter(new ByteArrayInputStream(inbytes),molfmt_auto);
+        molReader = new MolImporter(new ByteArrayInputStream(inbytes),molfmt_auto);
       else
-        molReader=new MolImporter(new ByteArrayInputStream(inbytes));
+        molReader = new MolImporter(new ByteArrayInputStream(inbytes));
     }
     else
     {
-      molReader=new MolImporter(new ByteArrayInputStream(inbytes),params.getVal("molfmt"));
+      molReader = new MolImporter(new ByteArrayInputStream(inbytes),params.getVal("molfmt"));
     }
     String fmt=molReader.getFormat();
-    params.setVal("molfmt_auto",fmt);
+    params.setVal("molfmt_auto", fmt);
 
     if (ifile!=null) ifile.delete();
 
-    MFileFormat mffmt=MFileFormatUtil.getFormat(fmt);
+    MFileFormat mffmt = MFileFormatUtil.getFormat(fmt);
 
     if (params.isChecked("file2txt"))
     {
       if (mffmt==MFileFormat.CDX) //binary
       {
-        intxt=Base64Encoder.encode(inbytes);
+        intxt = Base64Encoder.encode(inbytes);
         if (params.getVal("molfmt").equals("automatic"))
-          params.setVal("molfmt","cdx");
+          params.setVal("molfmt", "cdx");
       }
       else
       {
-        intxt=new String(inbytes,"utf-8");
+        intxt = new String(inbytes,"utf-8");
       }
       params.setVal("intxt",intxt);
     }
@@ -263,7 +258,7 @@ public class react_servlet extends HttpServlet
     int n_failed=0;
     while (true)
     {
-      try { m=molReader.read(); }
+      try { m = molReader.read(); }
       catch (MolFormatException e)
       {
         errors.add("ERROR: MolImporter failed: "+e.getMessage());
@@ -277,13 +272,13 @@ public class react_servlet extends HttpServlet
     molReader.close();
 
     //Check SMIRKS:
-    MolHandler rxnHandler=new MolHandler();
+    MolHandler rxnHandler = new MolHandler();
     try { rxnHandler.setMolecule(params.getVal("smirks")); }
     catch (MolFormatException e) {
       errors.add("ERROR: "+e.getMessage());
       return false;
     }
-    Molecule rxn=rxnHandler.getMolecule();
+    Molecule rxn = rxnHandler.getMolecule();
     if (!rxn.isReaction())
     {
       errors.add("ERROR: invalid reaction (!isReaction()).");
@@ -306,7 +301,7 @@ public class react_servlet extends HttpServlet
     return true;
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static String FormHtm(MultipartRequest mrequest,HttpServletResponse response)
+  private static String FormHtm(MultipartRequest mrequest, HttpServletResponse response)
       throws IOException
   {
     String molfmt_menu="<SELECT NAME=\"molfmt\">\n";
@@ -324,7 +319,7 @@ public class react_servlet extends HttpServlet
      +("<INPUT TYPE=HIDDEN NAME=\"react\">\n")
      +("<TABLE WIDTH=\"100%\"><TR><TD><H1>"+SERVLETNAME+"</H1></TD><TD>- reactions via SMIRKS</TD>\n")
      +("<TD ALIGN=RIGHT>\n")
-     +("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+response.encodeURL(SERVLETNAME)+"?help=TRUE','helpwin','width=600,height=400,scrollbars=1,resizable=1')\"><B>help</B></BUTTON>\n")
+     +("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+response.encodeURL(SERVLETNAME)+"?help=TRUE','helpwin','width=600,height=400,scrollbars=1,resizable=1')\"><B>Help</B></BUTTON>\n")
      +("<BUTTON TYPE=BUTTON onClick=\"window.location.replace('"+response.encodeURL(SERVLETNAME)+"')\"><B>Reset</B></BUTTON>\n")
      +("</TD></TR></TABLE>\n")
      +("<HR>\n")
@@ -357,7 +352,7 @@ public class react_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   /**	
   */
-  private static void ReactOutput(ArrayList<ArrayList<Molecule> > rxns,Boolean verbose)
+  private static void ReactOutput(ArrayList<ArrayList<Molecule> > rxns, Boolean verbose)
       throws IOException
   {
     int h=300;
@@ -375,10 +370,10 @@ public class react_servlet extends HttpServlet
     {
       ++n_mol;
       Molecule mol=MOLS.get(n_mol-1);
-      Molecule[] reactants=mol.cloneMolecule().convertToFrags();
+      Molecule[] reactants = mol.cloneMolecule().convertToFrags();
       if (verbose)
       {
-        errors.add("mol ["+n_mol+"]: "+MolExporter.exportToFormat(mol,"smiles"));
+        errors.add("mol ["+n_mol+"]: "+MolExporter.exportToFormat(mol, "smiles"));
         int i_r=0;
         for (Molecule reac: reactants) {
           ++i_r;
@@ -390,8 +385,8 @@ public class react_servlet extends HttpServlet
       for (Molecule rxn: rxns_this)
       {
         ++i_x;
-        String rxnsmi=MolExporter.exportToFormat(rxn,"smiles:u");
-        String imghtm=HtmUtils.Smi2ImgHtm(rxnsmi,depopts,h,w,MOL2IMG_SERVLETURL,true,4,"go_zoom_smi2img");
+        String rxnsmi=MolExporter.exportToFormat(rxn, "smiles:u");
+        String imghtm=HtmUtils.Smi2ImgHtm(rxnsmi, depopts, h, w, MOL2IMG_SERVLETURL, true, 4, "go_zoom_smi2img");
         thtm+=("<TR><TD>"+imghtm+"</TD></TR>\n");
         if (verbose) errors.add("&nbsp; reaction ["+i_x+"]: "+rxnsmi);
       }
@@ -406,7 +401,7 @@ public class react_servlet extends HttpServlet
   private static String JavaScript()
   {
     return(
-"function go_reset(form)"+
+"function go_init(form)"+
 "{\n"+
 "  form.file2txt.checked=true;\n"+
 "  form.smirks.value='';\n"+
@@ -444,7 +439,7 @@ public class react_servlet extends HttpServlet
   private static String HelpHtm()
   {
     return (
-    "<B>"+SERVLETNAME+" help</B><P>\n"+
+    "<B>"+SERVLETNAME+" Help</B><P>\n"+
     "<P>\n"+
     "Reactants must be submitted as reactant mixtures represented by\n"+
     "dot-disconnected smiles.  Reactants need not be in order\n"+
@@ -505,21 +500,21 @@ public class react_servlet extends HttpServlet
   public void init(ServletConfig conf) throws ServletException
   {
     super.init(conf);
-    CONTEXT=getServletContext();
-    CONTEXTPATH=CONTEXT.getContextPath();
-    //CONFIG=conf;
-    // read servlet parameters (from web.xml):
+    CONTEXT = getServletContext();
+    CONTEXTPATH = CONTEXT.getContextPath();
+    try { APPNAME = conf.getInitParameter("APPNAME"); }
+    catch (Exception e) { APPNAME=this.getServletName(); }
     UPLOADDIR=conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null)
       throw new ServletException("Please supply UPLOADDIR parameter");
-    try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
+    try { N_MAX = Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
-    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
+    PROXY_PREFIX = ((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
-  public void doGet(HttpServletRequest request,HttpServletResponse response)
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException
   {
-    doPost(request,response);
+    doPost(request, response);
   }
 }
