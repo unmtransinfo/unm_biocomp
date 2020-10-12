@@ -235,7 +235,6 @@ public class sim2d_servlet extends HttpServlet
         out=response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
         t.put("JCHEM_LICENSE_OK",(LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
-        t.put("JCHEM_MOLSEARCH_LICENSE_OK",(((new MolSearch()).isLicensed())?"True":"False"));
         out.print(HtmUtils.TestTxt(APPNAME,t));
       }
       else if (downloadfile!=null && downloadfile.length()>0) // POST param

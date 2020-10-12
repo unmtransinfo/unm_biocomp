@@ -222,14 +222,9 @@ public class ro5_servlet extends HttpServlet
     try {
       LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
     } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage()+"; not found at: "+CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
     }
     LicenseManager.refresh();
-    if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
-    {
-      errors.add("ERROR: ChemAxon license error; JCHEM required.");
-      return false;
-    }
 
     if (mrequest==null) return true;
 
