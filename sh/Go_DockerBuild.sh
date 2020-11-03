@@ -1,14 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 ###
 #
-set -e
-#
 cwd=$(pwd)
-#
-sudo docker version
-#
-INAME="biocomp"
-TAG="v0.0.1-SNAPSHOT"
 #
 T0=$(date +%s)
 #
@@ -16,11 +9,16 @@ if [ ! -d "${cwd}/conf/chemaxon" ]; then
 	mkdir -p "${cwd}/conf/chemaxon"
 fi
 #
-if [ -f ~/.chemaxon/license.cxl ]; then
-	cp ~/.chemaxon/license.cxl ${cwd}/conf/chemaxon
+if [ -f $HOME/.chemaxon/license.cxl ]; then
+	cp $HOME/.chemaxon/license.cxl ${cwd}/conf/chemaxon
 else
-	echo "No ChemAxon license found at ~/.chemaxon/license.cxl"
+	echo "No ChemAxon license found at $HOME/.chemaxon/license.cxl"
 fi
+#
+sudo docker version
+#
+INAME="biocomp"
+TAG="latest"
 #
 ###
 # Build image from Dockerfile.

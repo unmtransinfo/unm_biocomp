@@ -6,13 +6,13 @@ set -e
 #
 cwd=$(pwd)
 #
-VTAG="v0.0.1-SNAPSHOT"
+VTAG="v0.9.0"
 #
 ###
 # Tomcat
 INAME="biocomp"
 #
-DOCKERPORT=9091
+DOCKERPORT=9095
 APPPORT=8080
 #
 sudo docker run -dit \
@@ -25,6 +25,6 @@ sudo docker container logs "${INAME}_container"
 ###
 sudo docker container ls -a
 #
-printf "Tomcat Web Application Manager: http://localhost:%s/manager/html\n" "${DOCKERPORT}"
-printf "BIOCOMP Web Application: http://localhost:%s/${INAME}\n" "${DOCKERPORT}"
+printf "Tomcat Web Application Manager: http://localhost:${DOCKERPORT}/manager/html\n"
+printf "BIOCOMP Web Application: http://localhost:${DOCKERPORT}/${INAME}\n"
 #

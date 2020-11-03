@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 ###
 #
 INAME="biocomp"
 CNAME="${INAME}_container"
 #
-TAG=v0.0.1-SNAPSHOT
+TAG="v0.9.0"
 #
 ###
 # Stop and clean up.

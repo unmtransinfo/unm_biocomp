@@ -105,7 +105,7 @@ Copy your ChemAxon license to `/biocomp_war/src/main/webapp/.chemaxon/license.cx
 for inclusion in the WAR.
 
 From the Docker engine host, the applications are accessible via
-<http://localhost:9091/biocomp/>.
+<http://localhost:9095/biocomp/>.
 
 See:
 
