@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4">
+
+  <display-name>UNM TID Web Apps</display-name>
+  <description>UNM Translational Informatics Division Web Apps</description>
+
+  <servlet>
+    <servlet-name>mol2img</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.depict.mol2img_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>mol2img</servlet-name>
+    <url-pattern>/mol2img</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>cdkmol2img</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.cdk.cdkmol2img_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cdkmol2img</servlet-name>
+    <url-pattern>/cdkmol2img</url-pattern>
+  </servlet-mapping>
+
+  <!-- NOW HANDLED BY JAVA ANNOTATIONS: hscaf -->
+
+  <servlet>
+    <servlet-name>convert</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.convert.convert_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Convert</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>2000</param-value></init-param>
+    <init-param> <param-name>N_MAX_LINES</param-name>
+      <param-value>10000</param-value></init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>convert</servlet-name>
+    <url-pattern>/convert</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>depict</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.depict.depict_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Depict</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>depict</servlet-name>
+    <url-pattern>/depict</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>cdkdepict</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.cdk.cdkdepict_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>CDKDepict</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cdkdepict</servlet-name>
+    <url-pattern>/cdkdepict</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>descriptors</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.descriptors.descriptors_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Descriptors</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>1000</param-value> </init-param>
+    <init-param><param-name>ENABLE_NOLIMIT</param-name>
+      <param-value>true</param-value></init-param>
+    <init-param> <param-name>BB_ROOT</param-name>
+      <param-value>/home/app/clogp/</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>descriptors</servlet-name>
+    <url-pattern>/descriptors</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>logp</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.descriptors.logp_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>LogP</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>1000</param-value> </init-param>
+    <init-param><param-name>ENABLE_NOLIMIT</param-name>
+      <param-value>true</param-value></init-param>
+    <init-param> <param-name>BB_ROOT</param-name>
+      <param-value>/home/app/clogp/</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>logp</servlet-name>
+    <url-pattern>/logp</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>sim2d</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.sim2d.sim2d_servlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Sim2D</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100000</param-value> </init-param>
+    <init-param> <param-name>N_MAX_MATRIX</param-name>
+      <param-value>300</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param><param-name>ENABLE_NOLIMIT</param-name>
+      <param-value>true</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>sim2d</servlet-name>
+      <url-pattern>/sim2d</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>smartsfilter</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.smarts.smartsfilter_servlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>SmartsFilter</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>5000</param-value> </init-param>
+    <init-param> <param-name>N_MAX_VIEW</param-name>
+      <param-value>100</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param><param-name>ENABLE_NOLIMIT</param-name>
+      <param-value>true</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>smartsfilter</servlet-name>
+    <url-pattern>/smartsfilter</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>tautomers</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.tautomer.tautomers_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Tautomers</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>tautomers</servlet-name>
+    <url-pattern>/tautomers</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>react</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.react.react_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>React</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>react</servlet-name>
+    <url-pattern>/react</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>mcs</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.mcs.mcs_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>MCS</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100</param-value></init-param>
+    <init-param> <param-name>DEMOSMIFILE</param-name>
+      <param-value>mcs_demo.smi</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>mcs</servlet-name>
+    <url-pattern>/mcs</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ro5</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.ro5.ro5_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Ro5</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param><param-name>ENABLE_NOLIMIT</param-name>
+      <param-value>true</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>1000</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ro5</servlet-name>
+    <url-pattern>/ro5</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>qed</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.qed.qed_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>QED</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param><param-name>ENABLE_NOLIMIT</param-name>
+      <param-value>true</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>1000</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>qed</servlet-name>
+    <url-pattern>/qed</url-pattern>
+  </servlet-mapping>
+
+  <!-- barchartimg and histoimg used by ro5 -->
+  <servlet>
+    <servlet-name>barchartimg</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.freechart.barchartimg_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>barchartimg</servlet-name>
+    <url-pattern>/barchartimg</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>histoimg</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.freechart.histoimg_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>histoimg</servlet-name>
+    <url-pattern>/histoimg</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>molcloud</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.molcloud.molcloud_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>MolCloud</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>1000</param-value> </init-param>
+    <init-param> <param-name>DEMOSMIFILE</param-name>
+      <param-value>molcloud_demo.smi</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>molcloud</servlet-name>
+    <url-pattern>/molcloud</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>showimg</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.molcloud.showimg_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>showimg</servlet-name>
+    <url-pattern>/showimg</url-pattern>
+  </servlet-mapping>
+
+</web-app>

@@ -1,5 +1,5 @@
 #
-FROM ubuntu:18.10
+FROM ubuntu:20.04
 WORKDIR /home/app
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
@@ -34,10 +34,19 @@ RUN echo "=== Done installing Tomcat."
 ###
 # WAR should auto-deploy, but seems we must manually unzip.
 COPY biocomp_war/target/biocomp_war-0.0.1-SNAPSHOT.war /usr/share/tomcat9/webapps/biocomp.war
-#RUN i=0; while [ ! -d /usr/share/tomcat9/webapps/carlsbad ]; do sleep 1; i=$(($i+1)); printf "%d. Waiting for auto-deploy...\n" "$i"; done
+#RUN i=0; while [ ! -d /usr/share/tomcat9/webapps/biocomp ]; do sleep 1; i=$(($i+1)); printf "%d. Waiting for auto-deploy...\n" "$i"; done
 RUN cd /usr/share/tomcat9/webapps; mkdir biocomp; cd biocomp; unzip ../biocomp.war
+RUN chown -R tomcat /usr/share/tomcat9/webapps/biocomp
 RUN ls -laR /usr/share/tomcat9/webapps
 RUN echo "=== Done installing application BIOCOMP."
+#
+###
+# web.xml has db access credentials.
+RUN mkdir -p /home/app/conf/biocomp
+COPY conf/biocomp/web.xml /home/app/conf/biocomp
+RUN cp /home/app/conf/biocomp/web.xml /usr/share/tomcat9/webapps/biocomp/WEB-INF
+RUN chown tomcat /usr/share/tomcat9/webapps/biocomp/WEB-INF/web.xml
+RUN echo "=== Done configuring application BIOCOMP."
 #
 ###
 # Needed? Tomcat run by root, apparently.
@@ -45,8 +54,11 @@ RUN /usr/share/tomcat9/bin/catalina.sh start
 RUN echo "=== Done starting Tomcat."
 #
 ###
-RUN mkdir /root/.chemaxon
-COPY conf/chemaxon/license.cxl /root/.chemaxon
+# psql useful for testing.
+RUN apt-get install -y postgresql-client-12
+COPY conf/postgresql/.pgpass /home/app
+RUN chmod 600 /home/app/.pgpass
+RUN echo "=== Done installing Postgresql (client)."
 #
 ###
 CMD ["/usr/share/tomcat9/bin/catalina.sh", "run"]

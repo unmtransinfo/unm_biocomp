@@ -1,35 +1,34 @@
 #!/bin/sh
 ###
+# Prerequisites:
+#  unzip $HOME/archives/JSME_2013-10-13.zip -d biocomp_war/src/main/webapp
+#  mv biocomp_war/src/main/webapp/JSME_2013-10-13 biocomp_war/src/main/webapp/jsme 
+#  mvn clean install
+###
 #
 set -e
 #
 cwd=$(pwd)
 #
-sudo docker version
+if [ $(whoami) != "root" ]; then
+	echo "${0} should be run as root or via sudo."
+	exit
+fi
+#
+docker version
 #
 INAME="biocomp"
-TAG="v0.0.1-SNAPSHOT"
+TAG="latest"
+#TAG="v0.0.1"
 #
 T0=$(date +%s)
-#
-if [ ! -d "${cwd}/conf/chemaxon" ]; then
-	mkdir -p "${cwd}/conf/chemaxon"
-fi
-#
-if [ -f ~/.chemaxon/license.cxl ]; then
-	cp ~/.chemaxon/license.cxl ${cwd}/conf/chemaxon
-else
-	echo "No ChemAxon license found at ~/.chemaxon/license.cxl"
-fi
 #
 ###
 # Build image from Dockerfile.
 dockerfile="${cwd}/Dockerfile"
-sudo docker build -f ${dockerfile} -t ${INAME}:${TAG} .
-#
-rm ${cwd}/conf/chemaxon/license.cxl
+docker build -f ${dockerfile} -t ${INAME}:${TAG} .
 #
 printf "Elapsed time: %ds\n" "$[$(date +%s) - ${T0}]"
 #
-sudo docker images
+docker images
 #
