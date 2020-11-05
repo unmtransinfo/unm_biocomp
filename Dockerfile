@@ -14,6 +14,7 @@ RUN apt-get install -y curl
 RUN echo "=== Done installing Ubuntu."
 #
 ###
+RUN apt-get update
 RUN apt-get install -y openjdk-8-jdk
 RUN apt-cache policy openjdk-8-jdk
 RUN java -version

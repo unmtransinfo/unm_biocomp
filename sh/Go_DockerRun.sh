@@ -26,10 +26,10 @@ docker run -dit --name "${INAME}_container" -p ${DOCKERPORT}:${APPPORT} ${IMG_UI
 ###
 # Install ChemAxon license.cxl
 docker exec ${INAME}_container mkdir -p /usr/share/tomcat9/webapps/biocomp/.chemaxon
-LICFILE="~tomcat/.chemaxon/license.cxl"
+LICFILE="/var/lib/tomcat9/.chemaxon/license.cxl"
 if [ -e "${LICFILE}" ]; then
 	docker cp ${LICFILE} ${INAME}_container:/usr/share/tomcat9/webapps/biocomp/.chemaxon
-	docker exec chown -R tomcat /usr/share/tomcat9/webapps/biocomp/.chemaxon
+	docker exec ${INAME}_container chown -R tomcat /usr/share/tomcat9/webapps/biocomp/.chemaxon
 else
 	printf "ERROR: ChemAxon license file not found: "${LICFILE}"\n"
 	printf "ChemAxon license file must be installed manually.\n"
