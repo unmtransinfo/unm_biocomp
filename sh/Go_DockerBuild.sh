@@ -1,12 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 ###
 # Prerequisites:
 #  unzip $HOME/archives/JSME_2013-10-13.zip -d biocomp_war/src/main/webapp
 #  mv biocomp_war/src/main/webapp/JSME_2013-10-13 biocomp_war/src/main/webapp/jsme 
 #  mvn clean install
 ###
-#
-set -e
 #
 cwd=$(pwd)
 #
@@ -22,6 +20,8 @@ TAG="latest"
 #TAG="v0.0.1"
 #
 T0=$(date +%s)
+#
+sudo docker version
 #
 ###
 # Build image from Dockerfile.
