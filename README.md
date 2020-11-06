@@ -16,7 +16,7 @@ Ro5, Sim2D and SmartsFilter.
 
 * Java 8
 * Maven 3.5+
-* ChemAxon (14.7.7.0, 19.3.0)
+* ChemAxon 19.3.0+
 * Access to [ChemAxon Maven repository](https://hub.chemaxon.com)
 (see [documentation](https://docs.chemaxon.com/display/docs/Public+Repository))
   * Requires API key.
@@ -101,15 +101,8 @@ See example commmands in [README_APPS.md](doc/README_APPS.md)
 
 ## Docker
 
-Copy your ChemAxon license to `/biocomp_war/src/main/webapp/.chemaxon/license.cxl` 
-for inclusion in the WAR.
-
-From the Docker engine host, the applications are accessible via
-<http://localhost:9095/biocomp/>.
-
-See:
-
 * [Dockerfile](Dockerfile)
 * [Go\_DockerBuild.sh](sh/Go_DockerBuild.sh)
 * [Go\_DockerRun.sh](sh/Go_DockerRun.sh)
-* [Go\_DockerClean.sh](sh/Go_DockerClean.sh)
+* From Docker engine host, applications accessible via <http://localhost:9095/biocomp/>.
+* ChemAxon license must be copied into running container.
