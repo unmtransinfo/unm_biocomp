@@ -8,6 +8,10 @@ import java.util.*;
 import java.util.regex.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.apache.http.*; //HttpEntity,
+import org.apache.http.client.*; //HttpClient,
+import org.apache.http.client.methods.*; //HttpGet,
+import org.apache.http.impl.client.*; //HttpClientBuilder,
 
 import chemaxon.formats.*;
 import chemaxon.util.MolHandler;
@@ -26,6 +30,26 @@ import edu.unm.health.biocomp.cdk.*; //cdk_utils
 */
 public class ro5_utils
 {
+  public static final String DEMO_DATAFILE_URL="http://unmtid-shinyapps.net/download/structures.smiles";
+  public static String ReadFileUrl2String(String fileurl)
+      throws Exception
+  {
+    HttpClient client = HttpClientBuilder.create().build();
+    HttpGet request = new HttpGet(fileurl);     
+    HttpResponse response = client.execute(request);
+    HttpEntity entity = response.getEntity();
+    if (entity == null) { return null; }
+    InputStream is = entity.getContent(); // Create an InputStream with the response
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+    StringBuilder sb = new StringBuilder();
+    String line = null;
+    while ((line = reader.readLine())!=null) // Read line by line
+      sb.append(line + "\n");
+    String resString = sb.toString(); // Result is here
+    is.close(); // Close the stream
+    resString = resString.replaceAll("[@/\\\\]", ""); //Backslashes cause http problems.
+    return resString;
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   /**	Generate Ro5 calculations.
@@ -79,7 +103,7 @@ public class ro5_utils
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private static void Test(MolImporter molReader,int vmax,int verbose)
+  private static void Test(MolImporter molReader, int vmax, int verbose)
 	throws Exception
   {
     ArrayList<Molecule> mols = new ArrayList<Molecule>();
@@ -89,15 +113,13 @@ public class ro5_utils
       try {
         if ((mol=molReader.read())==null) break;
       }
-      catch (IOException e)
-      {
+      catch (IOException e) {
         System.err.println(e.toString());
       }
       mols.add(mol);
     }
-
     Ro5Results results = Ro5_Calculate(mols);
-    System.out.println(Ro5_ResultsTxt(results,mols,vmax));
+    System.out.println(Ro5_ResultsTxt(results, mols, vmax));
     System.err.println("n_mol = "+mols.size());
   }
 
@@ -245,7 +267,7 @@ public class ro5_utils
 
     if (test)
     {
-      Test(molReader,vmax,verbose);
+      Test(molReader, vmax, verbose);
     }
     else
     {

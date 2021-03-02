@@ -37,7 +37,7 @@ public class ro5_servlet extends HttpServlet
   private static String APPNAME=null;	// configured in web.xml
   private static String UPLOADDIR=null;	// configured in web.xml
   private static String SCRATCHDIR=null; // configured in web.xml
-  private static Integer N_MAX=100;	// configured in web.xml
+  private static Integer N_MAX=1000;	// configured in web.xml
   private static Integer MAX_POST_SIZE=null;	// configured in web.xml
   private static int scratch_retire_sec=3600;
   private static PrintWriter out=null;
@@ -163,9 +163,7 @@ public class ro5_servlet extends HttpServlet
         out=response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response));
-        out.println("<SCRIPT LANGUAGE=\"JavaScript\">");
-        out.println("go_reset(window.document.mainform);");
-        out.println("</SCRIPT>");
+        out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
         out.println(HtmUtils.FooterHtm(errors,true));
       }
     }
@@ -183,24 +181,18 @@ public class ro5_servlet extends HttpServlet
     String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
     String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
-    String href=("http://medicine.unm.edu/informatics/");
+    String href=("https://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
     imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
     tiphtm=("JChem from ChemAxon Ltd.");
-    href=("http://www.chemaxon.com");
+    href=("https://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
-
-    //logo_htm+="</TD><TD>";
-    //imghtm=("<IMG BORDER=0 HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/eADMET_logo.png\">");
-    //tiphtm=("ALOGPS from VCCLAB and eADMET.");
-    //href=("http://www.eadmet.com");
-    //logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
 
     logo_htm+="</TD><TD>";
     imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/cdk_logo.png\">");
     tiphtm=("CDK");
-    href=("http://sourceforge.net/projects/cdk/");
+    href=("https://sourceforge.net/projects/cdk/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
 
     logo_htm+="</TD></TR></TABLE>";
@@ -377,6 +369,7 @@ public class ro5_servlet extends HttpServlet
     +("<TABLE WIDTH=\"100%\"><TR><TD><H2>"+APPNAME+"</H2></TD><TD>- Lipinsky Rule of 5 analysis\n")
     +("<TD ALIGN=RIGHT>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+response.encodeURL(SERVLETNAME)+"?help=TRUE','helpwin','width=600,height=400,scrollbars=1,resizable=1')\"><B>Help</B></BUTTON>\n")
+    +("<BUTTON TYPE=BUTTON onClick=\"go_demo(this.form)\"><B>Demo</B></BUTTON>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"window.location.replace('"+response.encodeURL(SERVLETNAME)+"')\"><B>Reset</B></BUTTON>\n")
     +("</TD></TR></TABLE>\n")
     +("<HR>\n")
@@ -396,7 +389,6 @@ public class ro5_servlet extends HttpServlet
     +("&nbsp;<INPUT TYPE=RADIO NAME=\"vmax\" VALUE=\"3\" "+vmax_3+">3")
     +("<HR>\n")
     +("<B>output:</B><BR>\n")
-    +("<INPUT TYPE=CHECKBOX NAME=\"batchout\" VALUE=\"CHECKED\" "+params.getVal("batchout")+">batch<BR>\n")
     +("&nbsp;&nbsp;<INPUT TYPE=RADIO NAME=\"outfmt\" VALUE=\"smiles\" "+outfmt_smiles+">smiles")
     +("&nbsp;&nbsp;<INPUT TYPE=CHECKBOX NAME=\"smiheader\" VALUE=\"CHECKED\" "+params.getVal("smiheader")+">+header<BR>\n")
     +("&nbsp;&nbsp;<INPUT TYPE=RADIO NAME=\"outfmt\" VALUE=\"sdf\" "+outfmt_sdf+">sdf<BR>\n")
@@ -581,39 +573,38 @@ public class ro5_servlet extends HttpServlet
     File fout=null;
     MolExporter molWriter_fail=null;
     File fout_fail=null;
-    if (params.isChecked("batchout"))
+
+    ofmt=params.getVal("outfmt");
+    if (params.getVal("outfmt").equals("smiles"))
     {
-      ofmt=params.getVal("outfmt");
-      if (params.getVal("outfmt").equals("smiles"))
-      {
-        ofmt+=":u"; //unique-smi
-        ofmt+="-a";
-        if (params.isChecked("smiheader"))
-          ofmt+="Tmol_name:";
-        else
-          ofmt+="-T";
-        for (String field:dataFields)
-          ofmt+=(field+":");
-      }
-      try {
-        File dout = new File(SCRATCHDIR);
-        if (!dout.exists())
-        {
-          boolean ok=dout.mkdir();
-          System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
-        }
-        fout=File.createTempFile(PREFIX,"_pass."+params.getVal("outfmt"),dout);
-        fout_fail=File.createTempFile(PREFIX,"_fail."+params.getVal("outfmt"),dout);
-      }
-      catch (IOException e) {
-        errors.add("ERROR: cannot open file; check SCRATCHDIR: "+SCRATCHDIR);
-        return htm;
-      }
-      try {
-        molWriter=new MolExporter(new FileOutputStream(fout),ofmt);
-        molWriter_fail=new MolExporter(new FileOutputStream(fout_fail),ofmt);
-      } catch (IOException e) { errors.add("ERROR: "+e.toString()); }
+      ofmt+=":u"; //unique-smi
+      ofmt+="-a";
+      if (params.isChecked("smiheader"))
+        ofmt+="Tmol_name:";
+      else
+        ofmt+="-T";
+      for (String field:dataFields)
+        ofmt+=(field+":");
     }
+    try {
+      File dout = new File(SCRATCHDIR);
+      if (!dout.exists())
+      {
+        boolean ok=dout.mkdir();
+        System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
+      }
+      fout=File.createTempFile(PREFIX,"_pass."+params.getVal("outfmt"),dout);
+      fout_fail=File.createTempFile(PREFIX,"_fail."+params.getVal("outfmt"),dout);
+    }
+    catch (IOException e) {
+      errors.add("ERROR: cannot open file; check SCRATCHDIR: "+SCRATCHDIR);
+      return htm;
+    }
+    try {
+      molWriter=new MolExporter(new FileOutputStream(fout),ofmt);
+      molWriter_fail=new MolExporter(new FileOutputStream(fout_fail),ofmt);
+    } catch (IOException e) { errors.add("ERROR: "+e.toString()); }
+    
 
     thtm="";
     if (params.isChecked("viewout_detail")) 
@@ -625,7 +616,7 @@ public class ro5_servlet extends HttpServlet
       thtm+=("<TH>Ro5 violations</TH></TR>\n");
     }
 
-    int N_MAX_VIEW=1000;
+    int N_MAX_VIEW=100;
     for (int i_mol=0;i_mol<mols.size();++i_mol)
     {
       Molecule mol=mols.get(i_mol);
@@ -634,11 +625,11 @@ public class ro5_servlet extends HttpServlet
       int viols=result.violations();
       try {
         if (viols>1)
-          if (params.isChecked("batchout")) { molWriter_fail.write(mol); }
+          molWriter_fail.write(mol);
         else if (viols==1)
-          if (params.isChecked("batchout")) { molWriter.write(mol); }
+          molWriter.write(mol);
         else
-          if (params.isChecked("batchout")) { molWriter.write(mol); }
+          molWriter.write(mol);
       } catch (IOException e) { errors.add("ERROR: "+e.toString()); }
 
       if (params.isChecked("viewout_detail")) 
@@ -659,49 +650,39 @@ public class ro5_servlet extends HttpServlet
         }
         String bgcolor="#FFFFFF";
         String[] colors = { "#AAFFAA","#FAF000","#FFAAAA","#FFAAAA","#FFAAAA" };
-
         bgcolor=(result.isViolationMwt()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+String.format("%.2f",result.getMwt())+"</TT></TD>\n");
-
         bgcolor=(result.isViolationHbd()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+result.getHbd()+"</TT></TD>\n");
-
         bgcolor=(result.isViolationHba()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+result.getHba()+"</TT></TD>\n");
-
         bgcolor=(result.isViolationLogp()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+String.format("%.2f",result.getLogp())+"</TT></TD>\n");
-
         rhtm+=("<TD ALIGN=CENTER BGCOLOR=\""+colors[viols]+"\">"+viols+"</TD>\n");
-
         rhtm+="</TR>\n";
-        if (i_mol+1<N_MAX_VIEW) { thtm+=rhtm; }
+        if (i_mol<N_MAX_VIEW) { thtm+=rhtm; }
       }
     }
     thtm+=("</TABLE>");
 
-    if (params.isChecked("batchout"))
-    {
-      String fname=(SERVLETNAME+"_pass."+params.getVal("outfmt"));
-      String bhtm_pass=("&nbsp;"+
-      "<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">\n"+
-      "<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">\n"+
-      "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
-      "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">"+
-      "download "+fname+" ("+file_utils.NiceBytes(fout.length())+")</BUTTON>"+
-      "<I>(passed mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
+    String fname=(SERVLETNAME+"_pass."+params.getVal("outfmt"));
+    String bhtm_pass=("&nbsp;"+
+    "<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">\n"+
+    "<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">\n"+
+    "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
+    "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">download "+fname+" ("+file_utils.NiceBytes(fout.length())+")</BUTTON>"+
+    "<I>(passed mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
 
-      fname=(SERVLETNAME+"_fail."+params.getVal("outfmt"));
-      String bhtm_fail=("&nbsp;"+
-      "<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">\n"+
-      "<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout_fail.getAbsolutePath()+"\">\n"+
-      "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
-      "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">"+
-      "download "+fname+" ("+file_utils.NiceBytes(fout_fail.length())+")</BUTTON>"+
-      "<I>(failed mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
+    fname=(SERVLETNAME+"_fail."+params.getVal("outfmt"));
+    String bhtm_fail=("&nbsp;"+
+    "<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">\n"+
+    "<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout_fail.getAbsolutePath()+"\">\n"+
+    "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
+    "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">download "+fname+" ("+file_utils.NiceBytes(fout_fail.length())+")</BUTTON>"+
+    "<I>(failed mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
 
-      htm+=("<H3>Downloads:</H3><BLOCKQUOTE>"+bhtm_pass+"<BR>\n"+bhtm_fail+"</BLOCKQUOTE>\n");
-    }
+    htm+=("<H3>Downloads:</H3><BLOCKQUOTE>"+bhtm_pass+"<BR>\n"+bhtm_fail+"</BLOCKQUOTE>\n");
+
     if (params.isChecked("viewout_detail")) 
     {
       htm+=("<H3>Detail:</H3>\n");
@@ -714,8 +695,12 @@ public class ro5_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   private static String JavaScript()
   {
-    return(
-"function go_reset(form)"+
+    String DEMO_DATASET="";
+    try { DEMO_DATASET = ro5_utils.ReadFileUrl2String(ro5_utils.DEMO_DATAFILE_URL); }
+    catch (Exception e) { errors.add("ERROR: failed to read: "+ro5_utils.DEMO_DATAFILE_URL+"; "+e.toString()); }
+    String js = (
+"var DEMO_DATASET=`"+DEMO_DATASET+"`;\n"+
+"function go_init(form)\n"+
 "{\n"+
 "  form.file2txt.checked=false;\n"+
 "  form.depict.checked=true;\n"+
@@ -730,16 +715,12 @@ public class ro5_servlet extends HttpServlet
 "    if (form.vmax[i].value=='1')\n"+
 "      form.vmax[i].checked=true;\n"+
 "  form.viewout_detail.checked=false;\n"+
-"  form.batchout.checked=true;\n"+
 "  form.smiheader.checked=true;\n"+
 "  form.verbose.checked=false;\n"+
 "  //form.vverbose.checked=false;\n"+
 "  for (i=0;i<form.outfmt.length;++i)\n"+ //radio
 "    if (form.outfmt[i].value=='smiles')\n"+
 "      form.outfmt[i].checked=true;\n"+
-"  for (i=0;i<form.viewmode.length;++i)\n"+ //radio
-"    if (form.viewmode[i].value=='detail')\n"+
-"      form.viewmode[i].checked=true;\n"+
 "}\n"+
 "function checkform(form)\n"+
 "{\n"+
@@ -749,13 +730,12 @@ public class ro5_servlet extends HttpServlet
 "  }\n"+
 "  return true;\n"+
 "}\n"+
-"//function fix_verbose(form,v)\n"+
-"//{\n"+
-"//  if (v==2&&form.vverbose.checked)\n"+
-"//    form.verbose.checked=true;\n"+
-"//  else if (v==1&&!form.verbose.checked)\n"+
-"//    form.vverbose.checked=false;\n"+
-"//}\n"+
+"function go_demo(form)\n"+
+"{\n"+
+"  go_init(form);\n"+
+"  form.intxt.value=DEMO_DATASET;\n"+
+"  go_ro5(form);\n"+
+"}\n"+
 "function go_ro5(form)\n"+
 "{\n"+
 "  if (!checkform(form)) return;\n"+
@@ -763,6 +743,7 @@ public class ro5_servlet extends HttpServlet
 "  form.submit()\n"+
 "}\n"
     );
+    return js;
   }
   /////////////////////////////////////////////////////////////////////////////
   private static String HelpHtm()
@@ -812,6 +793,8 @@ public class ro5_servlet extends HttpServlet
     "The output can be downloaded in SDF or SMI format.\n"+
     "In SMI format, the data is appended in tab-separated fields.\n"+
     "<P>\n"+
+    "Demo dataset from DrugCentral.\n"+
+    "<P>\n"+
     "Configured with <UL>\n"+
     "<LI> N_MAX = "+N_MAX+"\n"+
     "</UL>\n"+
@@ -820,7 +803,7 @@ public class ro5_servlet extends HttpServlet
     "<P>\n"+
     "authors:\n"+
     "<UL>\n"+
-    "<LI> Jeremy Yang (web app)\n"+
+    "<LI> Jeremy Yang\n"+
     "<LI> Oleg Ursu (HBD/HBA code)\n"+
     "</UL>\n"+
     "<P>\n"+
