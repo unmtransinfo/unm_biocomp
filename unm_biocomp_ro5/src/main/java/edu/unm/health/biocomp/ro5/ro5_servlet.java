@@ -24,13 +24,11 @@ import edu.unm.health.biocomp.util.http.*;
 
 /**	Lipinsky Rule of 5 analysis.
 	See Help() for list of descriptors.
-
 	@author Jeremy J Yang
 */
 public class ro5_servlet extends HttpServlet
 {
   private static ResourceBundle rb=null;
-  //private static ServletConfig CONFIG=null;
   private static String SERVLETNAME=null;
   private static ServletContext CONTEXT=null;
   private static String CONTEXTPATH=null;
@@ -109,58 +107,57 @@ public class ro5_servlet extends HttpServlet
         response.setContentType("text/html");
         out=response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
-        out.println(FormHtm(mrequest,response));
+        out.println(FormHtm(mrequest, response));
         Date t_0 = new Date();
         Ro5Results results=null;
         try {
           results=ro5_utils.Ro5_Calculate(mols);
-          outputs.add(Ro5_ResultsHtm(mols,results,params,response));
+          outputs.add(Ro5_ResultsHtm(mols, results, params, response));
           errors.add("LOGP calculated by: "+results.getLogpProgram());
         }
         catch (Exception e) { errors.add("ERROR: "+e.toString()); }//catches LicenseException
 
-        errors.add(SERVLETNAME+": elapsed time: "+time_utils.TimeDeltaStr(t_0,new Date()));
+        errors.add(SERVLETNAME+": elapsed time: "+time_utils.TimeDeltaStr(t_0, new Date()));
         out.print(HtmUtils.OutputHtm(outputs));
-        out.print(HtmUtils.FooterHtm(errors,true));
-        HtmUtils.PurgeScratchDirs(Arrays.asList(SCRATCHDIR),scratch_retire_sec,false,".",(HttpServlet) this);
+        out.print(HtmUtils.FooterHtm(errors, true));
+        HtmUtils.PurgeScratchDirs(Arrays.asList(SCRATCHDIR), scratch_retire_sec, false, ".", (HttpServlet) this);
       }
     }
     else
     {
-      String downloadtxt=request.getParameter("downloadtxt"); // POST param
-      String downloadfile=request.getParameter("downloadfile"); // POST param
+      String downloadtxt = request.getParameter("downloadtxt"); // POST param
+      String downloadfile = request.getParameter("downloadfile"); // POST param
       if (request.getParameter("help")!=null)	// GET method, help=TRUE
       {
         response.setContentType("text/html");
         out=response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(HelpHtm());
-        out.println(HtmUtils.FooterHtm(errors,true));
+        out.println(HtmUtils.FooterHtm(errors, true));
       }
       else if (request.getParameter("test")!=null)	// GET method, test=TRUE
       {
         response.setContentType("text/plain");
         out=response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
-        t.put("JCHEM_LICENSE_OK",(LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
-        out.print(HtmUtils.TestTxt(APPNAME,t));
+        t.put("JCHEM_LICENSE_OK", (LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
+        out.print(HtmUtils.TestTxt(APPNAME, t));
       }
       else if (downloadtxt!=null && downloadtxt.length()>0) // POST param
       {
         ServletOutputStream ostream=response.getOutputStream();
-        HtmUtils.DownloadString(response,ostream,request.getParameter("downloadtxt"),
+        HtmUtils.DownloadString(response, ostream, request.getParameter("downloadtxt"), 
           request.getParameter("fname"));
       }
       else if (downloadfile!=null && downloadfile.length()>0) // POST param
       {
         ServletOutputStream ostream=response.getOutputStream();
-        HtmUtils.DownloadFile(response,ostream,downloadfile,
-          request.getParameter("fname"));
+        HtmUtils.DownloadFile(response, ostream, downloadfile, request.getParameter("fname"));
       }
       else	// GET method, initial invocation of servlet w/ no params
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
@@ -389,13 +386,10 @@ public class ro5_servlet extends HttpServlet
     +("&nbsp;<INPUT TYPE=RADIO NAME=\"vmax\" VALUE=\"3\" "+vmax_3+">3")
     +("<HR>\n")
     +("<B>output:</B><BR>\n")
-    +("&nbsp;&nbsp;<INPUT TYPE=RADIO NAME=\"outfmt\" VALUE=\"smiles\" "+outfmt_smiles+">smiles")
-    +("&nbsp;&nbsp;<INPUT TYPE=CHECKBOX NAME=\"smiheader\" VALUE=\"CHECKED\" "+params.getVal("smiheader")+">+header<BR>\n")
-    +("&nbsp;&nbsp;<INPUT TYPE=RADIO NAME=\"outfmt\" VALUE=\"sdf\" "+outfmt_sdf+">sdf<BR>\n")
-    +("<INPUT TYPE=CHECKBOX NAME=\"viewout_detail\" VALUE=\"CHECKED\" "+params.getVal("viewout_detail")+">expanded view<BR>\n")
-    +("&nbsp;&nbsp;<INPUT TYPE=CHECKBOX NAME=\"depict\" VALUE=\"CHECKED\" "+params.getVal("depict")+">depict\n")
-    +("&nbsp;&nbsp;<INPUT TYPE=CHECKBOX NAME=\"depict_arom\" VALUE=\"CHECKED\" "+params.getVal("depict_arom")+">+arom<BR>\n")
-    +("&nbsp;&nbsp;<INPUT TYPE=CHECKBOX NAME=\"histo_show\" VALUE=\"CHECKED\" "+params.getVal("histo_show")+">histograms\n")
+    +("<INPUT TYPE=RADIO NAME=\"outfmt\" VALUE=\"smiles\" "+outfmt_smiles+">smiles/TSV")
+    +("<INPUT TYPE=RADIO NAME=\"outfmt\" VALUE=\"sdf\" "+outfmt_sdf+">sdf<BR>\n")
+    +("<INPUT TYPE=CHECKBOX NAME=\"viewout_detail\" VALUE=\"CHECKED\" "+params.getVal("viewout_detail")+">detailed view\n")
+    +("<INPUT TYPE=CHECKBOX NAME=\"viewout_fails_only\" VALUE=\"CHECKED\" "+params.getVal("viewout_fails_only")+">fails only<BR>\n")
     +("<HR>\n")
     +("<B>misc:</B><BR>\n")
     +("<INPUT TYPE=CHECKBOX NAME=\"verbose\" VALUE=\"CHECKED\" "+params.getVal("verbose")+">verbose")
@@ -525,19 +519,13 @@ public class ro5_servlet extends HttpServlet
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private static String Ro5_ResultsHtm(ArrayList<Molecule> mols,
-	Ro5Results results,HttpParams params,HttpServletResponse response)
+  private static String Ro5_ResultsHtm(ArrayList<Molecule> mols, Ro5Results results, HttpParams params, HttpServletResponse response)
   {
-
     String htm="";
     int w_dep=96;
     int h_dep=96;
-    String depopts=("mode=cow");
-    depopts+=("&imgfmt=png");
-    if (params.isChecked("depict_arom")) depopts+=("&arom_gen=true");
-    else depopts+=("&kekule=true");
-
-    String[] dataFields={ "mwt","hbd","hba","logp" };
+    String depopts=("mode=cow&imgfmt=png&kekule=true");
+    String[] dataFields={ "MWT", "HBD", "HBA", "LOGP", "Ro5_violations", "Ro5_result" };
 
     Integer vmax = null;
     try { vmax = Integer.parseInt(params.getVal("vmax")); }
@@ -548,140 +536,103 @@ public class ro5_servlet extends HttpServlet
     for (Ro5Result result: results)
     {
       int viols=result.violations();
-      if (viols>vmax)
-        ++n_fail;
+      if (viols>vmax) ++n_fail;
       ++vdist[viols];
     }
-    for (int i=0;i<=4;++i)
+    for (int i=0; i<=4; ++i)
       errors.add("&nbsp; "+i+" Ro5-violation mols: "+vdist[i]);
-
     htm+=("<H2>Results:</H2>\n");
     String thtm="<TABLE CELLSPACING=\"3\" CELLPADDING=\"3\" WIDTH=\"20%\">\n";
     thtm+=("<TR><TD ALIGN=\"right\">mols processed:</TD><TD BGCOLOR=\"white\">"+mols.size()+"</TD></TR>\n");
     thtm+=("<TR><TD ALIGN=\"right\">mols passed:</TD><TD BGCOLOR=\"white\">"+(mols.size()-n_fail)+"</TD></TR>\n");
     thtm+=("<TR><TD ALIGN=\"right\">mols failed:</TD><TD BGCOLOR=\"white\">"+n_fail+"</TD></TR>\n");
-    thtm+=("<TR><TD COLSPAN=\"2\">(Where failure defined as violations &gt; "+vmax+".)</TD></TR>\n");
+    thtm+=("<TR><TD COLSPAN=\"2\">(Failure criterion: violations &gt; "+vmax+".)</TD></TR>\n");
     thtm+="</TABLE>\n";
     htm+=("<BLOCKQUOTE>"+thtm+"</BLOCKQUOTE>\n");
 
     try {
-      htm+=("<BLOCKQUOTE>"+Ro5_ResultsSummaryHtm(results,params,response)+"</BLOCKQUOTE>\n");
+      htm+=("<BLOCKQUOTE>"+Ro5_ResultsSummaryHtm(results, params, response)+"</BLOCKQUOTE>\n");
     } catch (IOException e) { errors.add("ERROR: "+e.toString()); }
 
     // for download mols:
     MolExporter molWriter=null;
     File fout=null;
-    MolExporter molWriter_fail=null;
-    File fout_fail=null;
 
-    ofmt=params.getVal("outfmt");
+    ofmt = params.getVal("outfmt");
     if (params.getVal("outfmt").equals("smiles"))
-    {
-      ofmt+=":u"; //unique-smi
-      ofmt+="-a";
-      if (params.isChecked("smiheader"))
-        ofmt+="Tmol_name:";
-      else
-        ofmt+="-T";
-      for (String field:dataFields)
-        ofmt+=(field+":");
-    }
+      ofmt+=":-aT*";
     try {
       File dout = new File(SCRATCHDIR);
       if (!dout.exists())
       {
-        boolean ok=dout.mkdir();
+        boolean ok = dout.mkdir();
         System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
       }
-      fout=File.createTempFile(PREFIX,"_pass."+params.getVal("outfmt"),dout);
-      fout_fail=File.createTempFile(PREFIX,"_fail."+params.getVal("outfmt"),dout);
+      fout = File.createTempFile(PREFIX, "_pass."+params.getVal("outfmt"), dout);
     }
     catch (IOException e) {
       errors.add("ERROR: cannot open file; check SCRATCHDIR: "+SCRATCHDIR);
       return htm;
     }
     try {
-      molWriter=new MolExporter(new FileOutputStream(fout),ofmt);
-      molWriter_fail=new MolExporter(new FileOutputStream(fout_fail),ofmt);
+      molWriter = new MolExporter(new FileOutputStream(fout), ofmt);
     } catch (IOException e) { errors.add("ERROR: "+e.toString()); }
-    
 
     thtm="";
     if (params.isChecked("viewout_detail")) 
     {
       thtm+=("<TABLE CELLPADDING=2 CELLSPACING=2>\n");
-      thtm+=("<TR>\n<TH>&nbsp;</TH><TH>&nbsp;</TH>\n");
-      if (params.isChecked("depict")) thtm+=("<TH>&nbsp;</TH>\n");
-      for (String field:dataFields) { thtm+=("<TH>"+field+"</TH>\n"); }
-      thtm+=("<TH>Ro5 violations</TH></TR>\n");
+      thtm+=("<TR><TH>&nbsp;</TH><TH>&nbsp;</TH><TH>&nbsp;</TH>");
+      for (String field:dataFields) { thtm+=("<TH>"+field+"</TH>"); }
+      thtm+=("</TR>\n");
     }
-
     int N_MAX_VIEW=100;
-    for (int i_mol=0;i_mol<mols.size();++i_mol)
+    int i_view=0;
+    for (int i_mol=0; i_mol<mols.size(); ++i_mol)
     {
-      Molecule mol=mols.get(i_mol);
-      Ro5Result result=results.get(i_mol);
-
-      int viols=result.violations();
-      try {
-        if (viols>1)
-          molWriter_fail.write(mol);
-        else if (viols==1)
-          molWriter.write(mol);
-        else
-          molWriter.write(mol);
-      } catch (IOException e) { errors.add("ERROR: "+e.toString()); }
-
+      Molecule mol = mols.get(i_mol);
+      Ro5Result result = results.get(i_mol);
+      Integer viols = result.violations();
+      mol.setProperty("ro5_violations", Integer.toString(viols));
+      mol.setProperty("ro5_result", ((viols>vmax)?"FAIL":"PASS"));
+      try { molWriter.write(mol); }
+      catch (IOException e) { errors.add("ERROR: "+e.toString()); }
       if (params.isChecked("viewout_detail")) 
       {
-        String rhtm=("<TR><TD ALIGN=RIGHT VALIGN=TOP>"+(i_mol+1)+". </TD>");
-        if (params.isChecked("depict"))
-        {
-          rhtm+=("<TD BGCOLOR=\"white\" ALIGN=CENTER>");
-          String imghtm=HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,SMI2IMG_URL,true,4,"go_zoom_smi2img");
-          rhtm+=(imghtm+"</TD>\n");
-          rhtm+=("<TD BGCOLOR=\"white\"><TT>"+result.getName()+"</TT></TD>\n");
-        }
-        else
-        {
-          rhtm+=("<TD BGCOLOR=\"white\">");
-          String imghtm=HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,SMI2IMG_URL,false,4,null);
-          rhtm+=("<TT>"+HtmUtils.HtmTipper(result.getName(),imghtm,w_dep,"white")+"</TT></TD>\n");
-        }
+        if (i_view>=N_MAX_VIEW) continue;
+        if (params.isChecked("viewout_fails_only") && viols<=vmax) continue;
+        String rhtm = ("<TR><TD ALIGN=RIGHT VALIGN=TOP>"+(i_mol+1)+". </TD>");
+        rhtm+=("<TD BGCOLOR=\"white\" ALIGN=CENTER>");
+        String imghtm = HtmUtils.Smi2ImgHtm(result.getSmiles(),depopts,h_dep,w_dep,SMI2IMG_URL,true,4,"go_zoom_smi2img");
+        rhtm+=(imghtm+"</TD>\n");
+        rhtm+=("<TD BGCOLOR=\"white\"><TT>"+result.getName()+"</TT></TD>\n");
         String bgcolor="#FFFFFF";
-        String[] colors = { "#AAFFAA","#FAF000","#FFAAAA","#FFAAAA","#FFAAAA" };
-        bgcolor=(result.isViolationMwt()?colors[viols]:"#FFFFFF");
+        String[] colors = { "#AAFFAA", "#FAF000", "#FFAAAA", "#FFAAAA", "#FFAAAA" };
+        bgcolor = (result.isViolationMwt()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+String.format("%.2f",result.getMwt())+"</TT></TD>\n");
-        bgcolor=(result.isViolationHbd()?colors[viols]:"#FFFFFF");
+        bgcolor = (result.isViolationHbd()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+result.getHbd()+"</TT></TD>\n");
-        bgcolor=(result.isViolationHba()?colors[viols]:"#FFFFFF");
+        bgcolor = (result.isViolationHba()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+result.getHba()+"</TT></TD>\n");
-        bgcolor=(result.isViolationLogp()?colors[viols]:"#FFFFFF");
+        bgcolor = (result.isViolationLogp()?colors[viols]:"#FFFFFF");
         rhtm+=("<TD BGCOLOR=\""+bgcolor+"\" ALIGN=CENTER><TT>"+String.format("%.2f",result.getLogp())+"</TT></TD>\n");
         rhtm+=("<TD ALIGN=CENTER BGCOLOR=\""+colors[viols]+"\">"+viols+"</TD>\n");
+        rhtm+=("<TD ALIGN=CENTER BGCOLOR=\""+((viols>vmax)?"#FFAAAA":"#AAFFAA")+"\">"+((viols>vmax)?"FAIL":"PASS")+"</TD>\n");
         rhtm+="</TR>\n";
-        if (i_mol<N_MAX_VIEW) { thtm+=rhtm; }
+        thtm+=rhtm;
+        i_view+=1;
       }
     }
     thtm+=("</TABLE>");
 
-    String fname=(SERVLETNAME+"_pass."+params.getVal("outfmt"));
-    String bhtm_pass=("&nbsp;"+
+    String fname = (SERVLETNAME+"_results."+params.getVal("outfmt"));
+    String bhtm = ("&nbsp;"+
     "<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">\n"+
     "<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">\n"+
     "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
-    "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">download "+fname+" ("+file_utils.NiceBytes(fout.length())+")</BUTTON>"+
-    "<I>(passed mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
-
-    fname=(SERVLETNAME+"_fail."+params.getVal("outfmt"));
-    String bhtm_fail=("&nbsp;"+
-    "<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">\n"+
-    "<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout_fail.getAbsolutePath()+"\">\n"+
-    "<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">\n"+
-    "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">download "+fname+" ("+file_utils.NiceBytes(fout_fail.length())+")</BUTTON>"+
-    "<I>(failed mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
-
-    htm+=("<H3>Downloads:</H3><BLOCKQUOTE>"+bhtm_pass+"<BR>\n"+bhtm_fail+"</BLOCKQUOTE>\n");
+    "<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\"><B>Download "+fname+" ("+file_utils.NiceBytes(fout.length())+")</B></BUTTON>"+
+    " <I>(mols + data in "+params.getVal("outfmt")+" format)</I></FORM>");
+    htm+=("<H3>Downloads:</H3><BLOCKQUOTE>"+bhtm+"</BLOCKQUOTE>\n");
 
     if (params.isChecked("viewout_detail")) 
     {
@@ -703,9 +654,6 @@ public class ro5_servlet extends HttpServlet
 "function go_init(form)\n"+
 "{\n"+
 "  form.file2txt.checked=false;\n"+
-"  form.depict.checked=true;\n"+
-"  form.histo_show.checked=true;\n"+
-"  form.depict_arom.checked=false;\n"+
 "  form.intxt.value='';\n"+
 "  var i;\n"+
 "  for (i=0;i<form.molfmt.length;++i)\n"+
@@ -715,9 +663,8 @@ public class ro5_servlet extends HttpServlet
 "    if (form.vmax[i].value=='1')\n"+
 "      form.vmax[i].checked=true;\n"+
 "  form.viewout_detail.checked=false;\n"+
-"  form.smiheader.checked=true;\n"+
+"  form.viewout_fails_only.checked=true;\n"+
 "  form.verbose.checked=false;\n"+
-"  //form.vverbose.checked=false;\n"+
 "  for (i=0;i<form.outfmt.length;++i)\n"+ //radio
 "    if (form.outfmt[i].value=='smiles')\n"+
 "      form.outfmt[i].checked=true;\n"+
@@ -818,7 +765,6 @@ public class ro5_servlet extends HttpServlet
     super.init(conf);
     CONTEXT=getServletContext();
     CONTEXTPATH=CONTEXT.getContextPath();
-    //CONFIG=conf;
     try { APPNAME=conf.getInitParameter("APPNAME"); }
     catch (Exception e) { APPNAME=this.getServletName(); }
     UPLOADDIR=conf.getInitParameter("UPLOADDIR");
