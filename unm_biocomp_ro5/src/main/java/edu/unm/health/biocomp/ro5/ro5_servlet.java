@@ -46,7 +46,7 @@ public class ro5_servlet extends HttpServlet
   private static byte[] inbytes=null;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static String PREFIX=null;
+  private static String TMPFILE_PREFIX=null;
   private static String ofmt="";
   private static String color1="#EEEEEE";
   private static String SMI2IMG_URL=null;
@@ -64,22 +64,22 @@ public class ro5_servlet extends HttpServlet
     REMOTEHOST=request.getHeader("X-Forwarded-For"); // client (original)
     if (REMOTEHOST!=null)
     {
-      String[] addrs=java.util.regex.Pattern.compile(",").split(REMOTEHOST);
-      if (addrs.length>0) REMOTEHOST=addrs[addrs.length-1];
+      String[] addrs = java.util.regex.Pattern.compile(",").split(REMOTEHOST);
+      if (addrs.length>0) REMOTEHOST = addrs[addrs.length-1];
     }
     else
     {
-      // REMOTEHOST=request.getRemoteHost(); // client (may be proxy)
-      REMOTEHOST=request.getRemoteAddr(); // client (may be proxy)
+      // REMOTEHOST = request.getRemoteHost(); // client (may be proxy)
+      REMOTEHOST = request.getRemoteAddr(); // client (may be proxy)
     }
-    rb=ResourceBundle.getBundle("LocalStrings",request.getLocale());
+    rb = ResourceBundle.getBundle("LocalStrings",request.getLocale());
 
     MultipartRequest mrequest=null;
     if (request.getMethod().equalsIgnoreCase("POST"))
     {
       try
       {
-        mrequest=new MultipartRequest(request,UPLOADDIR,MAX_POST_SIZE,"ISO-8859-1",
+        mrequest = new MultipartRequest(request,UPLOADDIR,MAX_POST_SIZE,"ISO-8859-1",
                                     new DefaultFileRenamePolicy());
       }
       catch (IOException lEx) {
@@ -90,11 +90,11 @@ public class ro5_servlet extends HttpServlet
     // main logic:
     ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js",PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
-    boolean ok=initialize(request,mrequest);
+    boolean ok = initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
-      out=response.getWriter();
+      out = response.getWriter();
       out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
@@ -104,13 +104,13 @@ public class ro5_servlet extends HttpServlet
       if (mrequest.getParameter("ro5").equals("TRUE"))
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest, response));
         Date t_0 = new Date();
         Ro5Results results=null;
         try {
-          results=ro5_utils.Ro5_Calculate(mols);
+          results = ro5_utils.Ro5_Calculate(mols);
           outputs.add(Ro5_ResultsHtm(mols, results, params, response));
           errors.add("LOGP calculated by: "+results.getLogpProgram());
         }
@@ -129,7 +129,7 @@ public class ro5_servlet extends HttpServlet
       if (request.getParameter("help")!=null)	// GET method, help=TRUE
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors, true));
@@ -137,20 +137,20 @@ public class ro5_servlet extends HttpServlet
       else if (request.getParameter("test")!=null)	// GET method, test=TRUE
       {
         response.setContentType("text/plain");
-        out=response.getWriter();
+        out = response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
         t.put("JCHEM_LICENSE_OK", (LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
         out.print(HtmUtils.TestTxt(APPNAME, t));
       }
       else if (downloadtxt!=null && downloadtxt.length()>0) // POST param
       {
-        ServletOutputStream ostream=response.getOutputStream();
+        ServletOutputStream ostream = response.getOutputStream();
         HtmUtils.DownloadString(response, ostream, request.getParameter("downloadtxt"), 
           request.getParameter("fname"));
       }
       else if (downloadfile!=null && downloadfile.length()>0) // POST param
       {
-        ServletOutputStream ostream=response.getOutputStream();
+        ServletOutputStream ostream = response.getOutputStream();
         HtmUtils.DownloadFile(response, ostream, downloadfile, request.getParameter("fname"));
       }
       else	// GET method, initial invocation of servlet w/ no params
@@ -174,21 +174,21 @@ public class ro5_servlet extends HttpServlet
     params = new HttpParams();
     mols = new ArrayList<Molecule>();
 
-    String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
-    String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
-    String href=("https://medicine.unm.edu/informatics/");
+    String logo_htm = "<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
+    String imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
+    String href = ("https://medicine.unm.edu/informatics/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
-    tiphtm=("JChem from ChemAxon Ltd.");
-    href=("https://www.chemaxon.com");
+    imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    tiphtm = ("JChem from ChemAxon Ltd.");
+    href = ("https://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
 
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/cdk_logo.png\">");
+    imghtm = ("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/cdk_logo.png\">");
     tiphtm=("CDK");
-    href=("https://sourceforge.net/projects/cdk/");
+    href = ("https://sourceforge.net/projects/cdk/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
 
     logo_htm+="</TD></TR></TABLE>";
@@ -199,6 +199,12 @@ public class ro5_servlet extends HttpServlet
     HISTOIMG_URL = (PROXY_PREFIX+CONTEXTPATH+"/histoimg");
 
     inbytes = new byte[1024];
+
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    String DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+    Random rand = new Random();
+    TMPFILE_PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
     //License required for "Structure Search".
     try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
@@ -230,13 +236,13 @@ public class ro5_servlet extends HttpServlet
       errors.add("server: "+CONTEXT.getServerInfo()+" [API:"+CONTEXT.getMajorVersion()+"."+CONTEXT.getMinorVersion()+"]");
     }
 
-    String fname="infile";
-    File file=mrequest.getFile(fname);
-    String intxt=params.getVal("intxt").replaceFirst("[\\s]+$","");
+    String fname = "infile";
+    File file = mrequest.getFile(fname);
+    String intxt = params.getVal("intxt").replaceFirst("[\\s]+$","");
     if (file!=null)
     {
-      FileInputStream fis=new FileInputStream(file);
-      int asize=inbytes.length;
+      FileInputStream fis = new FileInputStream(file);
+      int asize = inbytes.length;
       int size=0;
       int b;
       while ((b=fis.read())>=0)
@@ -244,20 +250,20 @@ public class ro5_servlet extends HttpServlet
         if (size+1>asize)
         {
           asize*=2;
-          byte[] tmp=new byte[asize];
+          byte[] tmp = new byte[asize];
           System.arraycopy(inbytes,0,tmp,0,size);
           inbytes=tmp;
         }
-        inbytes[size]=(byte)b;
+        inbytes[size] = (byte)b;
         ++size; 
       }
-      byte[] tmp=new byte[size];
+      byte[] tmp = new byte[size];
       System.arraycopy(inbytes,0,tmp,0,size);
       inbytes=tmp;
     }
     else if (intxt.length()>0)
     {
-      inbytes=intxt.getBytes("utf-8");
+      inbytes = intxt.getBytes("utf-8");
     }
     else
     {
@@ -270,7 +276,7 @@ public class ro5_servlet extends HttpServlet
 
     if (params.isChecked("file2txt"))
     {
-      intxt=new String(inbytes,"utf-8");
+      intxt = new String(inbytes,"utf-8");
       params.setVal("intxt",intxt);
     }
 
@@ -279,21 +285,17 @@ public class ro5_servlet extends HttpServlet
     MolImporter molReader=null;
     if (params.getVal("molfmt").equals("automatic"))
     {
-      String orig_fname=mrequest.getOriginalFileName(fname);
-      String ifmt_auto=MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
+      String orig_fname = mrequest.getOriginalFileName(fname);
+      String ifmt_auto = MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
       if (orig_fname!=null && ifmt_auto!=null)
-      {
-        molReader=new MolImporter(new ByteArrayInputStream(inbytes),ifmt_auto);
-      }
+        molReader = new MolImporter(new ByteArrayInputStream(inbytes),ifmt_auto);
       else
-      {
-        molReader=new MolImporter(new ByteArrayInputStream(inbytes));
-      }
+        molReader = new MolImporter(new ByteArrayInputStream(inbytes));
     }
     else
     {
-      String ifmt=params.getVal("molfmt");
-      molReader=new MolImporter(new ByteArrayInputStream(inbytes),ifmt);
+      String ifmt = params.getVal("molfmt");
+      molReader = new MolImporter(new ByteArrayInputStream(inbytes),ifmt);
     }
     // ofmt=molReader.getFormat();	// for output
 
@@ -302,7 +304,7 @@ public class ro5_servlet extends HttpServlet
     while (true)
     {
       try {
-        mol=molReader.read();
+        mol = molReader.read();
       }
       catch (MolFormatException e)
       {
@@ -324,7 +326,7 @@ public class ro5_servlet extends HttpServlet
     molReader.close();
     if (params.isChecked("verbose"))
     {
-      String desc=MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
+      String desc = MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
       errors.add("input format:  "+molReader.getFormat()+" ("+desc+")");
       errors.add("mols read:  "+mols.size());
     }
@@ -335,15 +337,15 @@ public class ro5_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   private static String FormHtm(MultipartRequest mrequest,HttpServletResponse response)
   {
-    String molfmt_menu="<SELECT NAME=\"molfmt\">\n";
+    String molfmt_menu = "<SELECT NAME=\"molfmt\">\n";
     molfmt_menu+=("<OPTION VALUE=\"automatic\">automatic\n");
     for (String fmt: MFileFormatUtil.getMolfileFormats())
     {
-      String desc=MFileFormatUtil.getFormat(fmt).getDescription();
+      String desc = MFileFormatUtil.getFormat(fmt).getDescription();
       molfmt_menu+=("<OPTION VALUE=\""+fmt+"\">"+desc+"\n");
     }
     molfmt_menu+=("</SELECT>");
-    molfmt_menu=molfmt_menu.replace("\""+params.getVal("molfmt")+"\">",
+    molfmt_menu = molfmt_menu.replace("\""+params.getVal("molfmt")+"\">",
 				"\""+params.getVal("molfmt")+"\" SELECTED>");
 
     String vmax_0=""; String vmax_1=""; String vmax_2=""; String vmax_3="";
@@ -522,8 +524,8 @@ public class ro5_servlet extends HttpServlet
     String htm="";
     int w_dep=96;
     int h_dep=96;
-    String depopts=("mode=cow&imgfmt=png&kekule=true");
-    String[] dataFields={ "MWT", "HBD", "HBA", "LOGP", "Ro5_violations", "Ro5_result" };
+    String depopts = ("mode=cow&imgfmt=png&kekule=true");
+    String[] dataFields = { "MWT", "HBD", "HBA", "LOGP", "Ro5_violations", "Ro5_result" };
 
     Integer vmax = null;
     try { vmax = Integer.parseInt(params.getVal("vmax")); }
@@ -533,14 +535,14 @@ public class ro5_servlet extends HttpServlet
     int n_fail=0;
     for (Ro5Result result: results)
     {
-      int viols=result.violations();
+      int viols = result.violations();
       if (viols>vmax) ++n_fail;
       ++vdist[viols];
     }
     for (int i=0; i<=4; ++i)
       errors.add("&nbsp; "+i+" Ro5-violation mols: "+vdist[i]);
     htm+=("<H2>Results:</H2>\n");
-    String thtm="<TABLE CELLSPACING=\"3\" CELLPADDING=\"3\" WIDTH=\"20%\">\n";
+    String thtm = "<TABLE CELLSPACING=\"3\" CELLPADDING=\"3\" WIDTH=\"20%\">\n";
     thtm+=("<TR><TD ALIGN=\"right\">mols processed:</TD><TD BGCOLOR=\"white\">"+mols.size()+"</TD></TR>\n");
     thtm+=("<TR><TD ALIGN=\"right\">mols passed:</TD><TD BGCOLOR=\"white\">"+(mols.size()-n_fail)+"</TD></TR>\n");
     thtm+=("<TR><TD ALIGN=\"right\">mols failed:</TD><TD BGCOLOR=\"white\">"+n_fail+"</TD></TR>\n");
@@ -566,7 +568,7 @@ public class ro5_servlet extends HttpServlet
         boolean ok = dout.mkdir();
         System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
       }
-      fout = File.createTempFile(PREFIX, "_pass."+params.getVal("outfmt"), dout);
+      fout = File.createTempFile(TMPFILE_PREFIX, "_pass."+params.getVal("outfmt"), dout);
     }
     catch (IOException e) {
       errors.add("ERROR: cannot open file; check SCRATCHDIR: "+SCRATCHDIR);
@@ -761,20 +763,20 @@ public class ro5_servlet extends HttpServlet
   public void init(ServletConfig conf) throws ServletException
   {
     super.init(conf);
-    CONTEXT=getServletContext();
-    CONTEXTPATH=CONTEXT.getContextPath();
-    try { APPNAME=conf.getInitParameter("APPNAME"); }
-    catch (Exception e) { APPNAME=this.getServletName(); }
-    UPLOADDIR=conf.getInitParameter("UPLOADDIR");
+    CONTEXT = getServletContext();
+    CONTEXTPATH = CONTEXT.getContextPath();
+    try { APPNAME = conf.getInitParameter("APPNAME"); }
+    catch (Exception e) { APPNAME = this.getServletName(); }
+    UPLOADDIR = conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null)
       throw new ServletException("Please supply UPLOADDIR parameter (web.xml).");
-    SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
+    SCRATCHDIR = conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
+    try { N_MAX = Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=100; }
-    try { MAX_POST_SIZE=Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
+    try { MAX_POST_SIZE = Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
     catch (Exception e) { MAX_POST_SIZE=1*1024*1024; }
-    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
+    PROXY_PREFIX = ((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
   public void doGet(HttpServletRequest request,HttpServletResponse response)

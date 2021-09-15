@@ -74,7 +74,7 @@ public class sim2d_servlet extends HttpServlet
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
   private static String DATESTR=null;
-  private static String PREFIX=null;
+  private static String TMPFILE_PREFIX=null;
   private static String ofmt="";
   private static String MACCSFILE="mdl166.sma";
   private static String SUNSETFILE="sunsetkeys.sma";
@@ -109,34 +109,34 @@ public class sim2d_servlet extends HttpServlet
   public void doPost(HttpServletRequest request,HttpServletResponse response)
       throws IOException,ServletException
   {
-    SERVERNAME=request.getServerName();
-    if (SERVERNAME.equals("localhost")) SERVERNAME=InetAddress.getLocalHost().getHostAddress();
-    REMOTEHOST=request.getHeader("X-Forwarded-For"); // client (original)
+    SERVERNAME = request.getServerName();
+    if (SERVERNAME.equals("localhost")) SERVERNAME = InetAddress.getLocalHost().getHostAddress();
+    REMOTEHOST = request.getHeader("X-Forwarded-For"); // client (original)
     if (REMOTEHOST!=null)
     {
-      String[] addrs=Pattern.compile(",").split(REMOTEHOST);
-      if (addrs.length>0) REMOTEHOST=addrs[addrs.length-1];
+      String[] addrs = Pattern.compile(",").split(REMOTEHOST);
+      if (addrs.length>0) REMOTEHOST = addrs[addrs.length-1];
     }
     else
     {
-      REMOTEHOST=request.getRemoteAddr(); // client (may be proxy)
+      REMOTEHOST = request.getRemoteAddr(); // client (may be proxy)
     }
-    rb=ResourceBundle.getBundle("LocalStrings",request.getLocale());
+    rb = ResourceBundle.getBundle("LocalStrings",request.getLocale());
     MultipartRequest mrequest=null;
     if (request.getMethod().equalsIgnoreCase("POST"))
     {
-      try { mrequest=new MultipartRequest(request,UPLOADDIR,MAX_POST_SIZE,"ISO-8859-1",new DefaultFileRenamePolicy()); }
+      try { mrequest = new MultipartRequest(request,UPLOADDIR,MAX_POST_SIZE,"ISO-8859-1",new DefaultFileRenamePolicy()); }
       catch (IOException e) { CONTEXT.log("not a valid MultipartRequest",e); }
     }
 
     // main logic:
     ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js",PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
-    boolean ok=initialize(request,mrequest);
+    boolean ok = initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
-      out=response.getWriter();
+      out = response.getWriter();
       out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
@@ -146,17 +146,17 @@ public class sim2d_servlet extends HttpServlet
       if (mrequest.getParameter("changemode").equalsIgnoreCase("TRUE"))
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response,params.getVal("formmode")));
-        out.println("<SCRIPT>go_reset(window.document.mainform,'"+params.getVal("formmode")+"',true)</SCRIPT>");
+        out.println("<SCRIPT>go_init(window.document.mainform,'"+params.getVal("formmode")+"',true)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
       }
       else if (mrequest.getParameter("sim2d").equalsIgnoreCase("TRUE"))
       {
         //response.setBufferSize(0); //call before any content written; if content written or object committed, IllegalStateException. 
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response,params.getVal("formmode")));
         out.flush();
@@ -167,12 +167,12 @@ public class sim2d_servlet extends HttpServlet
           float [][] simatrix=null;
           if (params.getVal("molfmtDB").equals("bitstr"))
           {
-            simatrix=Sim2d_NxN_Bitstr_LaunchThread(mrequest,response,params);
+            simatrix = Sim2d_NxN_Bitstr_LaunchThread(mrequest,response,params);
             Sim2d_Matrix_Bitstr_Results(simatrix,params,response);
           }
           else
           {
-            simatrix=Sim2d_NxN_LaunchThread(mrequest,response,params);
+            simatrix = Sim2d_NxN_LaunchThread(mrequest,response,params);
             Sim2d_Matrix_Results(simatrix,params,response);
           }
         }
@@ -181,12 +181,12 @@ public class sim2d_servlet extends HttpServlet
           float [][] simatrix=null;
           if (params.getVal("molfmtDB").equals("bitstr"))
           {
-            simatrix=Sim2d_QxN_Bitstr_LaunchThread(mrequest,response,params);
+            simatrix = Sim2d_QxN_Bitstr_LaunchThread(mrequest,response,params);
             Sim2d_Matrix_Bitstr_Results(simatrix,params,response);
           }
           else
           {
-            simatrix=Sim2d_QxN_LaunchThread(mrequest,response,params);
+            simatrix = Sim2d_QxN_LaunchThread(mrequest,response,params);
             Sim2d_Matrix_Results(simatrix,params,response);
           }
         }
@@ -195,12 +195,12 @@ public class sim2d_servlet extends HttpServlet
           Vector<Sim2DHit> hits=null;
           if (params.getVal("molfmtDB").equals("bitstr"))
           {
-            hits=Sim2d_1xN_Bitstr_LaunchThread(mrequest,response,params);
+            hits = Sim2d_1xN_Bitstr_LaunchThread(mrequest,response,params);
             Sim2d_1xN_Bitstr_Results(hits,params,response);
           }
           else
           {
-            hits=Sim2d_1xN_LaunchThread(mrequest,response,params);
+            hits = Sim2d_1xN_LaunchThread(mrequest,response,params);
             if (hits==null)
               errors.add("DEBUG: hits==null (from Sim2d_1xN_LaunchThread)");
             else
@@ -219,12 +219,12 @@ public class sim2d_servlet extends HttpServlet
     }
     else
     {
-      String downloadtxt=request.getParameter("downloadtxt"); // POST param
-      String downloadfile=request.getParameter("downloadfile"); // POST param
+      String downloadtxt = request.getParameter("downloadtxt"); // POST param
+      String downloadfile = request.getParameter("downloadfile"); // POST param
       if (request.getParameter("help")!=null)	// GET method, help=TRUE
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.print(HelpHtm());
         out.print(HtmUtils.FooterHtm(errors,true));
@@ -232,28 +232,28 @@ public class sim2d_servlet extends HttpServlet
       else if (request.getParameter("test")!=null)	// GET method, test=TRUE
       {
         response.setContentType("text/plain");
-        out=response.getWriter();
+        out = response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
         t.put("JCHEM_LICENSE_OK", (LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
         out.print(HtmUtils.TestTxt(APPNAME,t));
       }
       else if (downloadfile!=null && downloadfile.length()>0) // POST param
       {
-        ServletOutputStream ostream=response.getOutputStream();
+        ServletOutputStream ostream = response.getOutputStream();
         HtmUtils.DownloadFile(response,ostream,downloadfile,request.getParameter("fname"));
       }
       else if (downloadtxt!=null && downloadtxt.length()>0) // POST param
       {
-        ServletOutputStream ostream=response.getOutputStream();
+        ServletOutputStream ostream = response.getOutputStream();
         HtmUtils.DownloadString(response,ostream,downloadtxt,request.getParameter("fname"));
       }
       else	// GET method, initial invocation of servlet
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response,request.getParameter("formmode")));
-        out.println("<SCRIPT>go_reset(window.document.mainform,'"+request.getParameter("formmode")+"',false)</SCRIPT>");
+        out.println("<SCRIPT>go_init(window.document.mainform,'"+request.getParameter("formmode")+"',false)</SCRIPT>");
         out.print(HtmUtils.FooterHtm(errors,true));
       }
     }
@@ -273,9 +273,9 @@ public class sim2d_servlet extends HttpServlet
     }
     else
     {
-      float delta=maxval-minval;
-      i=(int) Math.floor(((val-minval)/delta)*(float)HEATCOLORS.size());
-      i=Math.min(i,HEATCOLORS.size()-1);
+      float delta = maxval-minval;
+      i = (int) Math.floor(((val-minval)/delta)*(float)HEATCOLORS.size());
+      i = Math.min(i,HEATCOLORS.size()-1);
     }
     return HEATCOLORS.get(i);
   }
@@ -283,40 +283,40 @@ public class sim2d_servlet extends HttpServlet
   private boolean initialize(HttpServletRequest request,MultipartRequest mrequest)
       throws IOException,ServletException
   {
-    SERVLETNAME=this.getServletName();
-    PROGRESS_WIN_NAME=(SERVLETNAME+"_progress_win");
-    params=new HttpParams();
-    outputs=new ArrayList<String>();
-    errors=new ArrayList<String>();
-    SMI2IMG_SERVLETURL=(PROXY_PREFIX+CONTEXTPATH+"/mol2img");
+    SERVLETNAME = this.getServletName();
+    PROGRESS_WIN_NAME = (SERVLETNAME+"_progress_win");
+    params = new HttpParams();
+    outputs = new ArrayList<String>();
+    errors = new ArrayList<String>();
+    SMI2IMG_SERVLETURL = (PROXY_PREFIX+CONTEXTPATH+"/mol2img");
 
-    String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=\"0\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
-    String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
-    String href=("http://medicine.unm.edu/informatics/");
+    String logo_htm = "<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
+    String imghtm = ("<IMG BORDER=\"0\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
+    String href = ("https://datascience.unm.edu/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
-    tiphtm=("JChem and Marvin from ChemAxon Ltd.");
-    href=("http://www.chemaxon.com");
+    imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    tiphtm = ("JChem and Marvin from ChemAxon Ltd.");
+    href = ("https://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/cdk_logo.png\">");
+    imghtm = ("<IMG BORDER=\"0\" HEIGHT=\"60\" SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/cdk_logo.png\">");
     tiphtm=("CDK");
-    href=("http://sourceforge.net/projects/cdk/");
+    href = ("https://sourceforge.net/projects/cdk/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm,tiphtm,href,200,"white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
-    depsizes_h=new LinkedHashMap<String,Integer>();
-    depsizes_w=new LinkedHashMap<String,Integer>();
+    depsizes_h = new LinkedHashMap<String,Integer>();
+    depsizes_w = new LinkedHashMap<String,Integer>();
     depsizes_h.put("xs",64); depsizes_w.put("xs",64);
     depsizes_h.put("s",96); depsizes_w.put("s",96);
     depsizes_h.put("m",120); depsizes_w.put("m",140);
     depsizes_h.put("l",160); depsizes_w.put("l",200);
     depsizes_h.put("xl",220); depsizes_w.put("xl",280);
 
-    HEATCOLORS=new ArrayList<String>();
+    HEATCOLORS = new ArrayList<String>();
     HEATCOLORS.add("333333");
     HEATCOLORS.add("444444");
     HEATCOLORS.add("555555");
@@ -335,7 +335,7 @@ public class sim2d_servlet extends HttpServlet
     calendar.setTime(new Date());
     DATESTR = String.format("%04d%02d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
     Random rand = new Random();
-    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
+    TMPFILE_PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
     try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
     catch (Exception e) {
@@ -392,19 +392,19 @@ public class sim2d_servlet extends HttpServlet
       MAX_POST_SIZE=Integer.MAX_VALUE;
     }
 
-    String fnameQ="infileQ";
-    File fileQ=mrequest.getFile(fnameQ);
-    String intxtQ=params.getVal("intxtQ").replaceFirst("[\\s]+$","");
-    String fname="infile";
-    File fileDB=mrequest.getFile(fname);
-    String intxtDB=params.getVal("intxt").replaceFirst("[\\s]+$","");
+    String fnameQ = "infileQ";
+    File fileQ = mrequest.getFile(fnameQ);
+    String intxtQ = params.getVal("intxtQ").replaceFirst("[\\s]+$","");
+    String fname = "infile";
+    File fileDB = mrequest.getFile(fname);
+    String intxtDB = params.getVal("intxt").replaceFirst("[\\s]+$","");
     String line = null;
 
     if (fileQ!=null)
     {
       if (params.isChecked("file2txtQ"))
       {
-        BufferedReader br=new BufferedReader(new FileReader(fileQ));
+        BufferedReader br = new BufferedReader(new FileReader(fileQ));
         intxtQ="";
         for (int i=0;(line=br.readLine())!=null;++i)
         {
@@ -451,12 +451,12 @@ public class sim2d_servlet extends HttpServlet
         if (params.getVal("mode").equals("1xN"))
         {
           bitstrQ = new String(intxtQ);
-          bitstrQ=bitstrQ.trim().replaceFirst("\\s.*$","");
+          bitstrQ = bitstrQ.trim().replaceFirst("\\s.*$","");
           nameQ = new String(intxtQ);
           if (nameQ.matches("^\\S+\\s.*$"))
-            nameQ=nameQ.trim().replaceFirst("^\\S+\\s","");
+            nameQ = nameQ.trim().replaceFirst("^\\S+\\s","");
           else
-            nameQ="(unnamed query)";
+            nameQ = "(unnamed query)";
           if (params.isChecked("verbose"))
             errors.add("FP Bitstring query; length: "+bitstrQ.length());
         }
@@ -466,30 +466,30 @@ public class sim2d_servlet extends HttpServlet
         // Read query mol:
         if (params.getVal("molfmtQ").equals("automatic"))
         {
-          String ifmt_auto=MFileFormatUtil.getMostLikelyMolFormat(mrequest.getOriginalFileName(fnameQ));
+          String ifmt_auto = MFileFormatUtil.getMostLikelyMolFormat(mrequest.getOriginalFileName(fnameQ));
           if (ifmt_auto!=null)
           {
             if (fileQ!=null)
-              molReaderQ=new MolImporter(new FileInputStream(fileQ),ifmt_auto);
+              molReaderQ = new MolImporter(new FileInputStream(fileQ),ifmt_auto);
             else if (intxtQ.length()>0)
-              molReaderQ=new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()),ifmt_auto);
+              molReaderQ = new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()),ifmt_auto);
           }
           else
           {
             if (fileQ!=null)
-              molReaderQ=new MolImporter(new FileInputStream(fileQ));
+              molReaderQ = new MolImporter(new FileInputStream(fileQ));
             else if (intxtQ.length()>0)
-              molReaderQ=new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()));
+              molReaderQ = new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()));
           }
         }
         else
         {
-          String ifmt=params.getVal("molfmtQ");
-          molReaderQ=new MolImporter(fileQ,ifmt);
+          String ifmt = params.getVal("molfmtQ");
+          molReaderQ = new MolImporter(fileQ,ifmt);
         }
         if (params.getVal("mode").equals("1xN"))
         {
-          molQ=molReaderQ.read();
+          molQ = molReaderQ.read();
           if (arom!=null)
             molQ.aromatize(arom);
           else
@@ -500,22 +500,22 @@ public class sim2d_servlet extends HttpServlet
     }
     if (params.getVal("mode").equals("QxN"))
     {
-      molsQ=new ArrayList<Molecule>();
-      bitstrsQ=new ArrayList<String>();
-      namesQ=new ArrayList<String>();
+      molsQ = new ArrayList<Molecule>();
+      bitstrsQ = new ArrayList<String>();
+      namesQ = new ArrayList<String>();
     }
-    molsDB=new ArrayList<Molecule>();
-    bitstrsDB=new ArrayList<String>();
-    namesDB=new ArrayList<String>();
+    molsDB = new ArrayList<Molecule>();
+    bitstrsDB = new ArrayList<String>();
+    namesDB = new ArrayList<String>();
 
     if (params.getVal("molfmtDB").equals("bitstr"))
     {
       // NxN: read/store database bitstrs:
       // 1xN: pass buffReader for memory savings.
       if (fileDB!=null)
-        buffReaderDB=new BufferedReader(new FileReader(fileDB));
+        buffReaderDB = new BufferedReader(new FileReader(fileDB));
       else
-        buffReaderDB=new BufferedReader(new StringReader(intxtDB));
+        buffReaderDB = new BufferedReader(new StringReader(intxtDB));
       if (params.getVal("mode").equals("NxN") || params.getVal("mode").equals("QxN"))
       {
         for (int i=0;(line=buffReaderDB.readLine())!=null;++i)
@@ -527,30 +527,30 @@ public class sim2d_servlet extends HttpServlet
             errors.add("FP Bitstring "+(i+1)+". length: "+bitstr.length());
           String name;
           if (line.matches("^\\S+\\s.*$"))
-            name=line.replaceFirst("^\\S+\\s","");
+            name = line.replaceFirst("^\\S+\\s","");
           else
-            name=String.format("%d",(i+1));
+            name = String.format("%d",(i+1));
           namesDB.add(name);
         }
       }
       if (params.getVal("mode").equals("QxN"))
       {
         if (fileQ!=null)
-          buffReaderQ=new BufferedReader(new FileReader(fileQ));
+          buffReaderQ = new BufferedReader(new FileReader(fileQ));
         else
-          buffReaderQ=new BufferedReader(new StringReader(intxtQ));
+          buffReaderQ = new BufferedReader(new StringReader(intxtQ));
         for (int i=0;(line=buffReaderQ.readLine())!=null;++i)
         {
-          line=line.trim();
+          line = line.trim();
           String bitstr = line.replaceFirst("\\s.*$","");
           bitstrsQ.add(bitstr);
           if (params.isChecked("verbose"))
             errors.add("FP Bitstring "+(i+1)+". length: "+bitstr.length());
           String name;
           if (line.matches("^\\S+\\s.*$"))
-            name=line.replaceFirst("^\\S+\\s","");
+            name = line.replaceFirst("^\\S+\\s","");
           else
-            name=String.format("%d",(i+1));
+            name = String.format("%d",(i+1));
           namesQ.add(name);
         }
       }
@@ -562,25 +562,25 @@ public class sim2d_servlet extends HttpServlet
       // 1xN: pass molReader for memory savings.
       if (params.getVal("molfmtDB").equals("automatic"))
       {
-        String ifmt_auto=MFileFormatUtil.getMostLikelyMolFormat(mrequest.getOriginalFileName(fname));
+        String ifmt_auto = MFileFormatUtil.getMostLikelyMolFormat(mrequest.getOriginalFileName(fname));
         if (ifmt_auto!=null)
         {
           if (fileDB!=null)
-            molReaderDB=new MolImporter(fileDB,ifmt_auto);
+            molReaderDB = new MolImporter(fileDB,ifmt_auto);
           else if (intxtDB.length()>0)
-            molReaderDB=new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()),ifmt_auto);
+            molReaderDB = new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()),ifmt_auto);
         }
         else
         {
           if (fileDB!=null)
-            molReaderDB=new MolImporter(new FileInputStream(fileDB));
+            molReaderDB = new MolImporter(new FileInputStream(fileDB));
           else if (intxtDB.length()>0)
-            molReaderDB=new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()));
+            molReaderDB = new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()));
         }
       }
       else
       {
-        molReaderDB=new MolImporter(new FileInputStream(fileDB),params.getVal("molfmtDB"));
+        molReaderDB = new MolImporter(new FileInputStream(fileDB),params.getVal("molfmtDB"));
       }
       if (params.isChecked("verbose"))
         errors.add("input DB format:  "+molReaderDB.getFormat()+" ("+MFileFormatUtil.getFormat(molReaderDB.getFormat()).getDescription()+")");
@@ -588,25 +588,25 @@ public class sim2d_servlet extends HttpServlet
       {
         if (params.getVal("molfmtQ").equals("automatic"))
         {
-          String ifmt_auto=MFileFormatUtil.getMostLikelyMolFormat(mrequest.getOriginalFileName(fname));
+          String ifmt_auto = MFileFormatUtil.getMostLikelyMolFormat(mrequest.getOriginalFileName(fname));
           if (ifmt_auto!=null)
           {
             if (fileQ!=null)
-              molReaderQ=new MolImporter(fileQ,ifmt_auto);
+              molReaderQ = new MolImporter(fileQ,ifmt_auto);
             else if (intxtQ.length()>0)
-              molReaderQ=new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()),ifmt_auto);
+              molReaderQ = new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()),ifmt_auto);
           }
           else
           {
             if (fileQ!=null)
-              molReaderQ=new MolImporter(new FileInputStream(fileQ));
+              molReaderQ = new MolImporter(new FileInputStream(fileQ));
             else if (intxtQ.length()>0)
-              molReaderQ=new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()));
+              molReaderQ = new MolImporter(new ByteArrayInputStream(intxtQ.getBytes()));
           }
         }
         else
         {
-          molReaderQ=new MolImporter(new FileInputStream(fileQ),params.getVal("molfmtQ"));
+          molReaderQ = new MolImporter(new FileInputStream(fileQ),params.getVal("molfmtQ"));
         }
       }
       if (params.isChecked("verbose") && molReaderQ!=null)
@@ -618,7 +618,7 @@ public class sim2d_servlet extends HttpServlet
         while (true)
         {
           try {
-            m=molReaderQ.read();
+            m = molReaderQ.read();
           }
           catch (MolFormatException e)
           {
@@ -653,7 +653,7 @@ public class sim2d_servlet extends HttpServlet
         while (true)
         {
           try {
-            m=molReaderDB.read();
+            m = molReaderDB.read();
           }
           catch (MolFormatException e)
           {
@@ -724,17 +724,17 @@ public class sim2d_servlet extends HttpServlet
     }
     else if (params.getVal("fptype").equals("path"))
     {
-      try { pathfplen=Integer.parseInt(params.getVal("pathfplen")); }
+      try { pathfplen = Integer.parseInt(params.getVal("pathfplen")); }
       catch (NumberFormatException e) {
         pathfplen=CFParameters.DEFAULT_LENGTH;
         errors.add("ERROR: cannot parse pathfplength; using default: "+pathfplen);
       }
-      try { pathbcount=Integer.parseInt(params.getVal("pathbcount")); }
+      try { pathbcount = Integer.parseInt(params.getVal("pathbcount")); }
       catch (NumberFormatException e) {
         pathbcount=CFParameters.DEFAULT_BOND_COUNT;
         errors.add("ERROR: cannot parse fpbondcount; using default: "+pathbcount);
       }
-      try { pathbitsper=Integer.parseInt(params.getVal("pathbitsper")); }
+      try { pathbitsper = Integer.parseInt(params.getVal("pathbitsper")); }
       catch (NumberFormatException e) {
         pathbitsper=CFParameters.DEFAULT_BITS_SET;
         errors.add("ERROR: cannot parse pathbitsper; using default: "+pathbitsper);
@@ -754,70 +754,70 @@ public class sim2d_servlet extends HttpServlet
     else if (formmode.equals("normal")) formmode_normal="CHECKED";
     else formmode_normal="CHECKED";
 
-    String molfmt_menuQ="<SELECT NAME=\"molfmtQ\">\n";
+    String molfmt_menuQ = "<SELECT NAME=\"molfmtQ\">\n";
     molfmt_menuQ+=("<OPTION VALUE=\"automatic\">automatic\n");
     for (String fmt: MFileFormatUtil.getMolfileFormats())
     {
-      String desc=MFileFormatUtil.getFormat(fmt).getDescription();
+      String desc = MFileFormatUtil.getFormat(fmt).getDescription();
       molfmt_menuQ+=("<OPTION VALUE=\""+fmt+"\">"+desc+"\n");
     }
     if (formmode.equals("expert"))
       molfmt_menuQ+=("<OPTION VALUE=\"bitstr\">FP Bitstring\n");
     molfmt_menuQ+=("</SELECT>");
-    molfmt_menuQ=molfmt_menuQ.replace("\""+params.getVal("molfmtQ")+"\">",
+    molfmt_menuQ = molfmt_menuQ.replace("\""+params.getVal("molfmtQ")+"\">",
 				"\""+params.getVal("molfmtQ")+"\" SELECTED>");
 
-    String molfmt_menuDB="<SELECT NAME=\"molfmtDB\">\n";
+    String molfmt_menuDB = "<SELECT NAME=\"molfmtDB\">\n";
     molfmt_menuDB+=("<OPTION VALUE=\"automatic\">automatic\n");
     for (String fmt: MFileFormatUtil.getMolfileFormats())
     {
-      String desc=MFileFormatUtil.getFormat(fmt).getDescription();
+      String desc = MFileFormatUtil.getFormat(fmt).getDescription();
       molfmt_menuDB+=("<OPTION VALUE=\""+fmt+"\">"+desc+"\n");
     }
     if (formmode.equals("expert"))
       molfmt_menuDB+=("<OPTION VALUE=\"bitstr\">FP Bitstring\n");
     molfmt_menuDB+=("</SELECT>");
-    molfmt_menuDB=molfmt_menuDB.replace("\""+params.getVal("molfmtDB")+"\">",
+    molfmt_menuDB = molfmt_menuDB.replace("\""+params.getVal("molfmtDB")+"\">",
 				"\""+params.getVal("molfmtDB")+"\" SELECTED>");
 
-    String depsize_menu="<SELECT NAME=\"depsize\">\n";
+    String depsize_menu = "<SELECT NAME=\"depsize\">\n";
     for (String key:depsizes_h.keySet())
     {
       depsize_menu+=("<OPTION VALUE=\""+key+"\">"+key+" - ");
       depsize_menu+=(depsizes_h.get(key)+"x"+depsizes_w.get(key)+"\n");
     }
     depsize_menu+="</SELECT>\n";
-    depsize_menu=depsize_menu.replace("\""+params.getVal("depsize")+"\">","\""+params.getVal("depsize")+"\" SELECTED>");
+    depsize_menu = depsize_menu.replace("\""+params.getVal("depsize")+"\">","\""+params.getVal("depsize")+"\" SELECTED>");
 
     int[] pathfplens = {512,1024,2048,4096};
-    String pathfplen_menu="<SELECT NAME=\"pathfplen\">\n";
+    String pathfplen_menu = "<SELECT NAME=\"pathfplen\">\n";
     for (int i:pathfplens) pathfplen_menu+=("<OPTION VALUE=\""+i+"\">"+i);
     pathfplen_menu+="</SELECT>\n";
-    pathfplen_menu=pathfplen_menu.replace("\""+params.getVal("pathfplen")+"\">","\""+params.getVal("pathfplen")+"\" SELECTED>");
+    pathfplen_menu = pathfplen_menu.replace("\""+params.getVal("pathfplen")+"\">","\""+params.getVal("pathfplen")+"\" SELECTED>");
 
     int[] pathbcounts = {5,6,7,8,9};
-    String pathbcount_menu="<SELECT NAME=\"pathbcount\">\n";
+    String pathbcount_menu = "<SELECT NAME=\"pathbcount\">\n";
     for (int i:pathbcounts) pathbcount_menu+=("<OPTION VALUE=\""+i+"\">"+i);
     pathbcount_menu+="</SELECT>\n";
-    pathbcount_menu=pathbcount_menu.replace("\""+params.getVal("pathbcount")+"\">","\""+params.getVal("pathbcount")+"\" SELECTED>");
+    pathbcount_menu = pathbcount_menu.replace("\""+params.getVal("pathbcount")+"\">","\""+params.getVal("pathbcount")+"\" SELECTED>");
 
     int[] pathbitspers = {1,2,3};
-    String pathbitsper_menu="<SELECT NAME=\"pathbitsper\">\n";
+    String pathbitsper_menu = "<SELECT NAME=\"pathbitsper\">\n";
     for (int i:pathbitspers) pathbitsper_menu+=("<OPTION VALUE=\""+i+"\">"+i);
     pathbitsper_menu+="</SELECT>\n";
-    pathbitsper_menu=pathbitsper_menu.replace("\""+params.getVal("pathbitsper")+"\">","\""+params.getVal("pathbitsper")+"\" SELECTED>");
+    pathbitsper_menu = pathbitsper_menu.replace("\""+params.getVal("pathbitsper")+"\">","\""+params.getVal("pathbitsper")+"\" SELECTED>");
 
     int[] ecfpdiams = {2,4,6};
-    String ecfpdiam_menu="<SELECT NAME=\"ecfpdiam\">\n";
+    String ecfpdiam_menu = "<SELECT NAME=\"ecfpdiam\">\n";
     for (int i:ecfpdiams) ecfpdiam_menu+=("<OPTION VALUE=\""+i+"\">"+i);
     ecfpdiam_menu+="</SELECT>\n";
-    ecfpdiam_menu=ecfpdiam_menu.replace("\""+params.getVal("ecfpdiam")+"\">","\""+params.getVal("ecfpdiam")+"\" SELECTED>");
+    ecfpdiam_menu = ecfpdiam_menu.replace("\""+params.getVal("ecfpdiam")+"\">","\""+params.getVal("ecfpdiam")+"\" SELECTED>");
 
     int[] ecfplens = {512,1024,2048,4096};
-    String ecfplen_menu="<SELECT NAME=\"ecfplen\">\n";
+    String ecfplen_menu = "<SELECT NAME=\"ecfplen\">\n";
     for (int i:ecfplens) ecfplen_menu+=("<OPTION VALUE=\""+i+"\">"+i);
     ecfplen_menu+="</SELECT>\n";
-    ecfplen_menu=ecfplen_menu.replace("\""+params.getVal("ecfplen")+"\">","\""+params.getVal("ecfplen")+"\" SELECTED>");
+    ecfplen_menu = ecfplen_menu.replace("\""+params.getVal("ecfplen")+"\">","\""+params.getVal("ecfplen")+"\" SELECTED>");
 
     String arom_gen=""; String arom_bas=""; String arom_none="";
     if (params.getVal("arom").equals("gen")) arom_gen="CHECKED";
@@ -859,6 +859,7 @@ public class sim2d_servlet extends HttpServlet
     +("<INPUT TYPE=RADIO NAME=\"formmode\" VALUE=\"normal\" onClick=\"go_changemode(document.mainform)\" "+formmode_normal+">normal\n")
     +("<INPUT TYPE=RADIO NAME=\"formmode\" VALUE=\"expert\" onClick=\"go_changemode(document.mainform)\" "+formmode_expert+">expert\n")
     +("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+response.encodeURL(SERVLETNAME)+"?help=TRUE','helpwin','width=600,height=400,scrollbars=1,resizable=1')\"><B>Help</B></BUTTON>\n")
+    +("<BUTTON TYPE=BUTTON onClick=\"go_demo(this.form, 'normal')\"><B>Demo</B></BUTTON>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"window.location.replace('"+response.encodeURL(SERVLETNAME)+"?formmode="+formmode+"')\"><B>Reset</B></BUTTON>\n")
     +"</TD></TR></TABLE>\n"
     +"<HR>\n"
@@ -1074,7 +1075,7 @@ public class sim2d_servlet extends HttpServlet
       boolean ok=dout.mkdir();
       System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
     }
-    File fout=File.createTempFile(PREFIX,"_1xN_out.txt",dout);
+    File fout=File.createTempFile(TMPFILE_PREFIX,"_1xN_out.txt",dout);
     PrintWriter fout_writer=new PrintWriter(new BufferedWriter(new FileWriter(fout,true)));
     String thtm=("<TABLE BORDER>\n");
     thtm+="<TR>";
@@ -1246,7 +1247,7 @@ public class sim2d_servlet extends HttpServlet
      boolean ok=dout.mkdir();
      System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
    }
-    File fout=File.createTempFile(PREFIX,"_matrix_out.txt",dout);
+    File fout=File.createTempFile(TMPFILE_PREFIX,"_matrix_out.txt",dout);
     PrintWriter fout_writer=new PrintWriter(new BufferedWriter(new FileWriter(fout,true)));
     String thtm=("<TABLE BORDER>\n<TR>");
     String fptype=params.getVal("fptype");
@@ -1442,7 +1443,7 @@ public class sim2d_servlet extends HttpServlet
       boolean ok=dout.mkdir();
       System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
     }
-    File fout=File.createTempFile(PREFIX,"_1xN_out.txt",dout);
+    File fout=File.createTempFile(TMPFILE_PREFIX,"_1xN_out.txt",dout);
     PrintWriter fout_writer=new PrintWriter(new BufferedWriter(new FileWriter(fout,true)));
     String thtm=("<TABLE BORDER>\n");
     thtm+="<TR>";
@@ -1552,48 +1553,47 @@ public class sim2d_servlet extends HttpServlet
     return simatrix;
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static void Sim2d_Matrix_Bitstr_Results(float [][] simatrix,
-	HttpParams params,HttpServletResponse response)
+  private static void Sim2d_Matrix_Bitstr_Results(float [][] simatrix, HttpParams params,HttpServletResponse response)
       throws IOException,ServletException
   {
     if (params.getVal("mode").equals("QxN"))
       outputs.add("<B>RESULTS:</B> query bitstrs: "+bitstrsQ.size()+"  DB bitstrs: "+bitstrsDB.size());
     else
       outputs.add("<B>RESULTS:</B> DB bitstrs: "+bitstrsDB.size());
-    File dout=new File(SCRATCHDIR);
+    File dout = new File(SCRATCHDIR);
     if (!dout.exists())
     {
-      boolean ok=dout.mkdir();
+      boolean ok = dout.mkdir();
       System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
     }
-    File fout=File.createTempFile(PREFIX,"_matrix_out.txt",dout);
-    PrintWriter fout_writer=new PrintWriter(new BufferedWriter(new FileWriter(fout,true)));
+    File fout = File.createTempFile(TMPFILE_PREFIX,"_matrix_out.txt",dout);
+    PrintWriter fout_writer = new PrintWriter(new BufferedWriter(new FileWriter(fout,true)));
     String thtm="";
-    thtm=("<TABLE BORDER>\n<TR>");
+    thtm = ("<TABLE BORDER>\n<TR>");
     thtm+=("<TH>"+params.getVal("metric")+"</TH>");
     fout_writer.printf(params.getVal("metric"));
     for (int i=0;i<bitstrsDB.size();++i)
     {
-      String nameDB=namesDB.get(i);
+      String nameDB = namesDB.get(i);
       thtm+=("<TH>"+nameDB+"</TH>");
-      nameDB=nameDB.replace("\"","\"\"");
+      nameDB = nameDB.replace("\"","\"\"");
       fout_writer.printf(","+nameDB);
       //thtm+=("<TH>"+(i+1)+"</TH>");
       //fout_writer.printf(","+(i+1));
     }
     thtm+="</TR>\n";
     fout_writer.printf("\n");
-    int n_rows=(params.getVal("mode").equals("QxN")?bitstrsQ.size():bitstrsDB.size());
+    int n_rows = (params.getVal("mode").equals("QxN")?bitstrsQ.size():bitstrsDB.size());
     for (int i=0;i<n_rows;++i)
     {
-      String nameQ=(params.getVal("mode").equals("QxN")?namesQ.get(i):namesDB.get(i));
-      String rhtm=("<TR>\n<TD>"+nameQ+"</TD>\n");
-      nameQ=nameQ.replace("\"","\"\""); // quote name in case of commas.
+      String nameQ = (params.getVal("mode").equals("QxN")?namesQ.get(i):namesDB.get(i));
+      String rhtm = ("<TR>\n<TD>"+nameQ+"</TD>\n");
+      nameQ = nameQ.replace("\"","\"\""); // quote name in case of commas.
       fout_writer.printf("\""+nameQ+"\"");
       for (int j=0;j<bitstrsDB.size();++j)
       {
-        float maxsim=(params.getVal("fptype").equals("ecfp")?0.5f:1.0f);
-        String color=Val2HeatColor(simatrix[i][j],0.0f,maxsim);
+        float maxsim = (params.getVal("fptype").equals("ecfp")?0.5f:1.0f);
+        String color = Val2HeatColor(simatrix[i][j],0.0f,maxsim);
         rhtm+=("<TD BGCOLOR=\"#"+color+"\" ALIGN=CENTER>");
         rhtm+=(String.format("%.2f",simatrix[i][j]));
         rhtm+=("</TD>\n");
@@ -1610,9 +1610,9 @@ public class sim2d_servlet extends HttpServlet
     if (params.isChecked("out_batch"))
     {
       // Download output as CSV.
-      String fname=(SERVLETNAME+"_matrix_out_csv.txt");
-      long fsize=fout.length();
-      String bhtm=("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
+      String fname = (SERVLETNAME+"_matrix_out_csv.txt");
+      long fsize = fout.length();
+      String bhtm = ("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
       bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
       bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
       bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
@@ -1630,8 +1630,26 @@ public class sim2d_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   private static String JavaScript()
   {
+    String DEMO_DATASET = (
+"CN1C(=O)N(C)C(=O)C(N(C)C=N2)=C12 caffeine\n"+
+"COc1cc2c(ccnc2cc1)C(O)C4CC(CC3)C(C=C)CN34 quinine\n"+
+"CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(=O)O benzylpenicillin\n"+
+"CCC(=C(c1ccc(OCCN(C)C)cc1)c1ccccc1)c1ccccc1 Tamoxifen\n"+
+"CNCCC(c1ccccc1)Oc2ccc(cc2)C(F)(F)F.Cl Prozac\n"+
+"NC(C)Cc1ccccc1 adderall\n"+
+"CNC(=C[N+](=O)[O-])NCCSCC1=CC=C(O1)CN(C)C.Cl Zantac\n"+
+"Oc2cc(cc1OC(C3CCC(=CC3c12)C)(C)C)CCCCC THC\n"+
+"CC(=CCO)C=CC=C(C)C=CC1=C(C)CCC1(C)C Vitamin A\n"+
+"Oc1cccc(C=Cc2cc(O)cc(O)c2)c1 resveratrol\n"+
+"CCOC(=O)C1=CC(OC(CC)CC)C(NC(C)=O)C(N)C1 Tamiflu\n"+
+"OC(=O)CC(O)(CC(O)=O)C(O)=O.CCCc1nn(C)c2c1NC(=NC2=O)c1cc(ccc1OCC)S(=O)(=O)N1CCN(C)CC1 Viagra\n"+
+"COc1cc(C=CC(=O)CC(=O)C=Cc2ccc(O)c(OC)c2)ccc1O Curcumin\n"+
+"COC1CC(CCC1O)C=C(C)C1OC(=O)C2CCCCN2C(=O)C(=O)C2(O)OC(C(CC2C)OC)C(CC(C)CC(C)=CC(CC=C)C(=O)CC(O)C1C)OC Tacrolimus\n"+
+"CC12CC(=O)C3C(CCC4=CC(=O)CCC34C)C1CCC2(O)C(=O)CO Cortisone\n"+
+"CN1c2ccc(cc2C(=NCC1=O)c3ccccc3)Cl Valium\n");
     String js=(
-"function go_sim2d(form,formmode)\n"+
+"var DEMO_DATASET=`"+DEMO_DATASET+"`;\n"+
+"function go_sim2d(form, formmode)\n"+
 "{\n"+
 "  if (!checkform(form,formmode)) return;\n"+
 "  var x=300;\n"+
@@ -1661,7 +1679,18 @@ public class sim2d_servlet extends HttpServlet
 "  form.sim2d.value='TRUE';\n"+
 "  form.submit();\n"+
 "}\n"+
-"function go_reset(form,formmode,changemode)"+
+"function go_demo(form, formmode)\n"+
+"{\n"+
+"  go_init(form, formmode, false);\n"+
+"  form.intxt.value=DEMO_DATASET;\n"+
+"  for (i=0;i<form.mode.length;++i)\n"+ //radio
+"    if (form.mode[i].value=='NxN')\n"+
+"      form.mode[i].checked=true;\n"+
+"  form.out_view.checked=true;\n"+
+"  form.depict.checked=true;\n"+
+"  go_sim2d(form, formmode);\n"+
+"}\n"+
+"function go_init(form, formmode, changemode)"+
 "{\n"+
 "  var i;\n"+
 "  if (formmode=='expert')\n"+
@@ -1698,8 +1727,8 @@ public class sim2d_servlet extends HttpServlet
 "  form.intxtQ.value='';\n"+
 "  form.n_max_hits.value='400';\n"+
 "  form.sim_min.value='0.0';\n"+
-"  form.out_view.checked=false;\n"+
 "  form.out_batch.checked=true;\n"+
+"  form.out_view.checked=false;\n"+
 "  form.depict.checked=false;\n"+
 "  form.verbose.checked=false;\n"+
 "  for (i=0;i<form.molfmtDB.length;++i)\n"+
@@ -1798,7 +1827,7 @@ public class sim2d_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   private static String HelpHtm()
   {
-    String htm=
+    String htm = 
     ("<H2>"+APPNAME+" help</H2>\n"+
     "<P>\n"+
     "This web application computes 2D molecular similarity using the\n"+
@@ -1927,28 +1956,28 @@ public class sim2d_servlet extends HttpServlet
   public void init(ServletConfig conf) throws ServletException
   {
     super.init(conf);
-    CONTEXT=getServletContext();
-    CONTEXTPATH=CONTEXT.getContextPath();
+    CONTEXT = getServletContext();
+    CONTEXTPATH = CONTEXT.getContextPath();
     // read servlet parameters (from web.xml):
-    try { APPNAME=conf.getInitParameter("APPNAME"); }
-    catch (Exception e) { APPNAME=this.getServletName(); }
-    UPLOADDIR=conf.getInitParameter("UPLOADDIR");
+    try { APPNAME = conf.getInitParameter("APPNAME"); }
+    catch (Exception e) { APPNAME = this.getServletName(); }
+    UPLOADDIR = conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null) throw new ServletException("Please supply UPLOADDIR parameter");
-    DATADIR=CONTEXT.getRealPath("")+"/data";
-    try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
+    DATADIR = CONTEXT.getRealPath("")+"/data";
+    try { N_MAX = Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=10000; }
-    try { N_MAX_MATRIX=Integer.parseInt(conf.getInitParameter("N_MAX_MATRIX")); }
+    try { N_MAX_MATRIX = Integer.parseInt(conf.getInitParameter("N_MAX_MATRIX")); }
     catch (Exception e) { N_MAX_MATRIX=50; }
-    try { MAX_POST_SIZE=Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
+    try { MAX_POST_SIZE = Integer.parseInt(conf.getInitParameter("MAX_POST_SIZE")); }
     catch (Exception e) { MAX_POST_SIZE=10*1024*1024; }
-    try { ENABLE_NOLIMIT=Boolean.parseBoolean(conf.getInitParameter("ENABLE_NOLIMIT")); }
+    try { ENABLE_NOLIMIT = Boolean.parseBoolean(conf.getInitParameter("ENABLE_NOLIMIT")); }
     catch (Exception e) { ENABLE_NOLIMIT=false; }
-    SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
-    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
+    SCRATCHDIR = conf.getInitParameter("SCRATCHDIR");
+    PROXY_PREFIX = ((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
     // Parse all smarts files into SmartsFile objects.
     // By doing this here in init(), then it happens only
     // once for each servlet instance and not each submit.
-    String fpath=DATADIR+"/smarts/"+MACCSFILE;
+    String fpath = DATADIR+"/smarts/"+MACCSFILE;
     try {
       maccssf = new SmartsFile();
       maccssf.parseFile(new File(fpath),false,"maccs166");
@@ -1961,7 +1990,7 @@ public class sim2d_servlet extends HttpServlet
       +maccssf.getFailedsmarts().size()+" failed smarts)");
     for (String sma:maccssf.getFailedsmarts())
       CONTEXT.log("bad smarts: \""+sma+"\"");
-    fpath=DATADIR+"/smarts/"+SUNSETFILE;
+    fpath = DATADIR+"/smarts/"+SUNSETFILE;
     try {
       sunsetsf = new SmartsFile();
       sunsetsf.parseFile(new File(fpath),false,"sunset");
@@ -1974,7 +2003,7 @@ public class sim2d_servlet extends HttpServlet
       +sunsetsf.getFailedsmarts().size()+" failed smarts)");
     for (String sma:sunsetsf.getFailedsmarts())
       CONTEXT.log("bad smarts: \""+sma+"\"");
-    fpath=DATADIR+"/smarts/"+PUBCHEMFILE;
+    fpath = DATADIR+"/smarts/"+PUBCHEMFILE;
     try {
       pubchemsf = new SmartsFile();
       pubchemsf.parseFile(new File(fpath),false,"pubchem");

@@ -38,7 +38,7 @@ public class convert_servlet extends HttpServlet
   private static Integer N_MAX=null;	// configured in web.xml
   private static Integer N_MAX_LINES=null;	// configured in web.xml
   private static String PROXY_PREFIX=null; // configured in web.xml
-  private static String PREFIX=null;
+  private static String TMPFILE_PREFIX=null;
   private static int scratch_retire_sec=3600;
   private static MolImporter molReader=null;
   private static int MARKUSH_ENUM_LIMIT=1000;
@@ -59,25 +59,25 @@ public class convert_servlet extends HttpServlet
   public void doPost(HttpServletRequest request,HttpServletResponse response)
       throws IOException,ServletException
   {
-    SERVERNAME=request.getServerName();
-    if (SERVERNAME.equals("localhost")) SERVERNAME=InetAddress.getLocalHost().getHostAddress();
-    REMOTEHOST=request.getHeader("X-Forwarded-For"); // client (original)
+    SERVERNAME = request.getServerName();
+    if (SERVERNAME.equals("localhost")) SERVERNAME = InetAddress.getLocalHost().getHostAddress();
+    REMOTEHOST = request.getHeader("X-Forwarded-For"); // client (original)
     if (REMOTEHOST!=null)
     {
-      String[] addrs=Pattern.compile(",").split(REMOTEHOST);
-      if (addrs.length>0) REMOTEHOST=addrs[addrs.length-1];
+      String[] addrs = Pattern.compile(",").split(REMOTEHOST);
+      if (addrs.length>0) REMOTEHOST = addrs[addrs.length-1];
     }
     else
     {
-      REMOTEHOST=request.getRemoteAddr(); // client (may be proxy)
+      REMOTEHOST = request.getRemoteAddr(); // client (may be proxy)
     }
-    REMOTEAGENT=request.getHeader("User-Agent");
-    rb=ResourceBundle.getBundle("LocalStrings",request.getLocale());
+    REMOTEAGENT = request.getHeader("User-Agent");
+    rb = ResourceBundle.getBundle("LocalStrings",request.getLocale());
 
     MultipartRequest mrequest=null;
     if (request.getMethod().equalsIgnoreCase("POST"))
     {
-      try { mrequest=new MultipartRequest(request,UPLOADDIR,10*1024*1024,"ISO-8859-1",
+      try { mrequest = new MultipartRequest(request,UPLOADDIR,10*1024*1024,"ISO-8859-1",
                                     new DefaultFileRenamePolicy()); }
       catch (IOException e) {
         this.getServletContext().log("not a valid MultipartRequest",e); }
@@ -87,11 +87,11 @@ public class convert_servlet extends HttpServlet
     ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js", PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
 
-    boolean ok=initialize(request,mrequest);
+    boolean ok = initialize(request,mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
-      out=response.getWriter();
+      out = response.getWriter();
       out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
       out.print(HtmUtils.FooterHtm(errors,true));
       return;
@@ -101,13 +101,13 @@ public class convert_servlet extends HttpServlet
       if (mrequest.getParameter("convert").equals("TRUE"))
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest,response));
         Date t_i = new Date();
         Convert(mrequest,response);
         Date t_f = new Date();
-        long t_d=t_f.getTime()-t_i.getTime();
+        long t_d = t_f.getTime()-t_i.getTime();
         int t_d_min = (int)(t_d/60000L);
         int t_d_sec = (int)((t_d/1000L)%60L);
         errors.add(SERVLETNAME+": elapsed time: "+t_d_min+"m "+t_d_sec+"s");
@@ -118,12 +118,12 @@ public class convert_servlet extends HttpServlet
     }
     else
     {
-      String downloadtxt=request.getParameter("downloadtxt"); // POST param
-      String downloadfile=request.getParameter("downloadfile"); // POST param
+      String downloadtxt = request.getParameter("downloadtxt"); // POST param
+      String downloadfile = request.getParameter("downloadfile"); // POST param
       if (request.getParameter("help")!=null)	// GET method, help=TRUE
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(HelpHtm());
         out.println(HtmUtils.FooterHtm(errors,true));
@@ -131,27 +131,27 @@ public class convert_servlet extends HttpServlet
       else if (request.getParameter("test")!=null)	// GET method, test=TRUE
       {
         response.setContentType("text/plain");
-        out=response.getWriter();
+        out = response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
         t.put("JCHEM_LICENSE_OK", (LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
         out.print(HtmUtils.TestTxt(APPNAME, t));
       }
       else if (downloadtxt!=null && downloadtxt.length()>0) // POST param
       {
-        ServletOutputStream ostream=response.getOutputStream();
+        ServletOutputStream ostream = response.getOutputStream();
         HtmUtils.DownloadString(response,ostream,downloadtxt,
           request.getParameter("fname"));
       }
       else if (downloadfile!=null && downloadfile.length()>0) // POST param
       {
-        ServletOutputStream ostream=response.getOutputStream();
+        ServletOutputStream ostream = response.getOutputStream();
         HtmUtils.DownloadFile(response, ostream, downloadfile,
           request.getParameter("fname"));
       }
       else	// GET method, initial invocation of servlet w/ no params
       {
         response.setContentType("text/html");
-        out=response.getWriter();
+        out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(FormHtm(mrequest, response));
         out.println("<SCRIPT>go_init(window.document.mainform)</SCRIPT>");
@@ -168,21 +168,21 @@ public class convert_servlet extends HttpServlet
     errors = new ArrayList<String>();
     params = new HttpParams();
 
-    String logo_htm="<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
-    String imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
-    String tiphtm=(APPNAME+" web app from UNM Translational Informatics.");
-    String href=("http://medicine.unm.edu/informatics/");
+    String logo_htm = "<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
+    String imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
+    String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
+    String href = ("https://datascience.unm.edu/");
     logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD><TD>";
-    imghtm=("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
-    tiphtm=("JChem from ChemAxon Ltd.");
-    href=("http://www.chemaxon.com");
+    imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
+    tiphtm = ("JChem from ChemAxon Ltd.");
+    href = ("https://www.chemaxon.com");
     logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
     Random rand = new Random();
-    PREFIX=SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
+    TMPFILE_PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
     try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
     catch (Exception e) {
@@ -200,9 +200,9 @@ public class convert_servlet extends HttpServlet
 
     /// Stuff for a run:
 
-    for (Enumeration e=mrequest.getParameterNames(); e.hasMoreElements(); )
+    for (Enumeration e = mrequest.getParameterNames(); e.hasMoreElements(); )
     {
-      String key=(String)e.nextElement();
+      String key = (String)e.nextElement();
       if (mrequest.getParameter(key)!=null)
         params.setVal(key,mrequest.getParameter(key));
     }
@@ -217,7 +217,7 @@ public class convert_servlet extends HttpServlet
     }
 
     String fname="infile";
-    File fileDB=mrequest.getFile(fname);
+    File fileDB = mrequest.getFile(fname);
 
     //Part filePart = request.getPart(fname);
     //errors.add("DEBUG: filePart.getName() = "+filePart.getName());
@@ -225,7 +225,7 @@ public class convert_servlet extends HttpServlet
     //errors.add("DEBUG: filePart.getContentType() = "+filePart.getContentType());
     //errors.add("DEBUG: filePart.getSize() = "+filePart.getSize());
 
-    String intxtDB=params.getVal("intxt").replaceFirst("[\\s]+$","");
+    String intxtDB = params.getVal("intxt").replaceFirst("[\\s]+$","");
     String line = null;
     if (fileDB!=null)
     {
@@ -235,8 +235,8 @@ public class convert_servlet extends HttpServlet
         if (params.getVal("ifmt").equals("cdx")) // inbytes binary?:
         {
           int maxbytes=400*1024;
-          byte[] inbytes=new byte[maxbytes];
-          FileInputStream fis=new FileInputStream(fileDB);
+          byte[] inbytes = new byte[maxbytes];
+          FileInputStream fis = new FileInputStream(fileDB);
           int b;
           int size=0;
           while ((b=fis.read())>=0)
@@ -246,17 +246,17 @@ public class convert_servlet extends HttpServlet
               errors.add("ERROR: max bytes copied to input: "+maxbytes);
               break;
             }
-            inbytes[size++]=(byte)b;
+            inbytes[size++] = (byte)b;
           }
-          byte[] tmp=new byte[size];
+          byte[] tmp = new byte[size];
           System.arraycopy(inbytes,0,tmp,0,size);
           inbytes=tmp;
-          //intxtDB=Base64Encoder.encode(inbytes);
-          intxtDB=Base64.encodeBase64String(inbytes);
+          //intxtDB = Base64Encoder.encode(inbytes);
+          intxtDB = Base64.encodeBase64String(inbytes);
         }
         else
         {
-          BufferedReader br=new BufferedReader(new FileReader(fileDB));
+          BufferedReader br = new BufferedReader(new FileReader(fileDB));
           intxtDB="";
           for (int i=0;(line=br.readLine())!=null;++i)
           {
@@ -277,39 +277,39 @@ public class convert_servlet extends HttpServlet
     }
     if (params.getVal("ifmt").equals("automatic"))
     {
-      String orig_fname=mrequest.getOriginalFileName(fname);
-      String ifmt_auto=MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
+      String orig_fname = mrequest.getOriginalFileName(fname);
+      String ifmt_auto = MFileFormatUtil.getMostLikelyMolFormat(orig_fname);
       if (orig_fname!=null && ifmt_auto!=null)
       {
         if (fileDB!=null)
-          molReader=new MolImporter(fileDB,ifmt_auto);
+          molReader = new MolImporter(fileDB,ifmt_auto);
         else if (intxtDB.length()>0)
-          molReader=new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()),ifmt_auto);
+          molReader = new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()),ifmt_auto);
       }
       else
       {
         if (fileDB!=null)
-          molReader=new MolImporter(new FileInputStream(fileDB));
+          molReader = new MolImporter(new FileInputStream(fileDB));
         else if (intxtDB.length()>0)
-          molReader=new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()));
+          molReader = new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()));
       }
     }
     else
     {
-      String ifmt=params.getVal("ifmt");
+      String ifmt = params.getVal("ifmt");
       if (fileDB!=null)
-        molReader=new MolImporter(new FileInputStream(fileDB),ifmt);
+        molReader = new MolImporter(new FileInputStream(fileDB),ifmt);
       else if (intxtDB.length()>0)
       if (params.getVal("ifmt").equals("cdx")) // inbytes binary?:
       {
-        //byte[] inbytes=Base64Decoder.decodeToBytes(intxtDB);
-        byte[] inbytes=Base64.decodeBase64(intxtDB);
-        molReader=new MolImporter(new ByteArrayInputStream(inbytes),"cdx");
+        //byte[] inbytes = Base64Decoder.decodeToBytes(intxtDB);
+        byte[] inbytes = Base64.decodeBase64(intxtDB);
+        molReader = new MolImporter(new ByteArrayInputStream(inbytes),"cdx");
       }
       else
-        molReader=new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()),ifmt);
+        molReader = new MolImporter(new ByteArrayInputStream(intxtDB.getBytes()),ifmt);
     }
-    String fmtdesc=MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
+    String fmtdesc = MFileFormatUtil.getFormat(molReader.getFormat()).getDescription();
     if (params.isChecked("verbose"))
     {
       errors.add("input format:  "+molReader.getFormat()+" ("+fmtdesc+")");
@@ -320,7 +320,7 @@ public class convert_servlet extends HttpServlet
   private static String FormHtm(MultipartRequest mrequest,HttpServletResponse response)
 	throws IOException
   {
-    String fmt_menu_opts=("<OPTION VALUE=\"automatic\">automatic\n");
+    String fmt_menu_opts = ("<OPTION VALUE=\"automatic\">automatic\n");
     for (String fmt: MFileFormatUtil.getMolfileFormats())
     {
       if (fmt.equals("gzip")) continue;
@@ -328,14 +328,14 @@ public class convert_servlet extends HttpServlet
       fmt_menu_opts+=("<OPTION VALUE=\""+fmt+"\">");
       fmt_menu_opts+=(fmt+" - "+MFileFormatUtil.getFormat(fmt).getDescription());
     }
-    String ifmt_menu="<SELECT NAME=\"ifmt\">"+fmt_menu_opts+"</SELECT>";
-    ifmt_menu=ifmt_menu.replace("\""+params.getVal("ifmt")+"\">",
+    String ifmt_menu = "<SELECT NAME=\"ifmt\">"+fmt_menu_opts+"</SELECT>";
+    ifmt_menu = ifmt_menu.replace("\""+params.getVal("ifmt")+"\">",
 				"\""+params.getVal("ifmt")+"\" SELECTED>");
 
-    fmt_menu_opts=("<OPTION VALUE=\"automatic\">automatic\n");
+    fmt_menu_opts = ("<OPTION VALUE=\"automatic\">automatic\n");
     for (String fmt: MFileFormatUtil.getMolfileFormats())
     {
-      try { MolExporter test=new MolExporter(new PrintStream("/dev/null"),fmt); }
+      try { MolExporter test = new MolExporter(new PrintStream("/dev/null"),fmt); }
       catch (Exception e) { continue; } // non-exportable; may be missing JARs
       catch (Error e) { // chemaxon.marvin.io.formats.inchi.InchiExport NoClassDefFound Error.
         errors.add("NOTE: output format \""+fmt+"\" not available: "+e.toString());
@@ -346,16 +346,17 @@ public class convert_servlet extends HttpServlet
       fmt_menu_opts+=("<OPTION VALUE=\""+fmt+"\">");
       fmt_menu_opts+=(fmt+" - "+MFileFormatUtil.getFormat(fmt).getDescription());
     }
-    String ofmt_menu="<SELECT NAME=\"ofmt\">"+fmt_menu_opts+"</SELECT>";
-    ofmt_menu=ofmt_menu.replace("\""+params.getVal("ofmt")+"\">",
+    String ofmt_menu = "<SELECT NAME=\"ofmt\">"+fmt_menu_opts+"</SELECT>";
+    ofmt_menu = ofmt_menu.replace("\""+params.getVal("ofmt")+"\">",
 				"\""+params.getVal("ofmt")+"\" SELECTED>");
 
-    String htm=
+    String htm = 
      ("<FORM NAME=\"mainform\" METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\" ENCTYPE=\"multipart/form-data\">\n")
     +("<TABLE WIDTH=\"100%\"><TR><TD><H2>"+APPNAME+"</H2></TD>\n")
     +("<TD>- molecule file format conversion (via ChemAxon JChem)</TD>\n")
     +("<TD ALIGN=RIGHT>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"void window.open('"+response.encodeURL(SERVLETNAME)+"?help=TRUE','helpwin','width=600,height=400,scrollbars=1,resizable=1')\"><B>Help</B></BUTTON>\n")
+    +("<BUTTON TYPE=BUTTON onClick=\"go_demo(this.form)\"><B>Demo</B></BUTTON>\n")
     +("<BUTTON TYPE=BUTTON onClick=\"window.location.replace('"+response.encodeURL(SERVLETNAME)+"')\"><B>Reset</B></BUTTON>\n")
     +("</TD></TR></TABLE>\n")
     +("<HR>\n")
@@ -409,25 +410,25 @@ public class convert_servlet extends HttpServlet
   private static void Convert(MultipartRequest mrequest,HttpServletResponse response)
       throws IOException
   {
-    String ifmt=molReader.getFormat();
-    MFileFormat imffmt=MFileFormatUtil.getFormat(ifmt);
-    String ofmt=params.getVal("ofmt");
-    MFileFormat omffmt=MFileFormatUtil.getFormat(ofmt);
+    String ifmt = molReader.getFormat();
+    MFileFormat imffmt = MFileFormatUtil.getFormat(ifmt);
+    String ofmt = params.getVal("ofmt");
+    MFileFormat omffmt = MFileFormatUtil.getFormat(ofmt);
 
     File fout=null;
     MolExporter molWriter=null;
     String oext=null;
     //kludge - why does this fail for smi?
-    try { oext=MFileFormatUtil.getFormat(ofmt).getExtensions()[0]; }
-    catch (Exception e) { oext=params.getVal("ofmt"); }
+    try { oext = MFileFormatUtil.getFormat(ofmt).getExtensions()[0]; }
+    catch (Exception e) { oext = params.getVal("ofmt"); }
     try {
-      File dout=new File(SCRATCHDIR);
+      File dout = new File(SCRATCHDIR);
       if (!dout.exists())
       {
-        boolean ok=dout.mkdir();
+        boolean ok = dout.mkdir();
         System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
       }
-      fout=File.createTempFile(PREFIX,"_out."+oext,dout);
+      fout = File.createTempFile(TMPFILE_PREFIX,"_out."+oext,dout);
     }
     catch (IOException e) {
       errors.add("ERROR: could not open temp file; check SCRATCHDIR: "+SCRATCHDIR);
@@ -445,7 +446,7 @@ public class convert_servlet extends HttpServlet
         errors.add("Limit reached: N_MAX mols: "+N_MAX);
         break;
       }
-      try { mol=molReader.read(); }
+      try { mol = molReader.read(); }
       catch (MolFormatException e)
       {
         outputs.add("MolImporter failed: "+e.getMessage());
@@ -491,18 +492,18 @@ public class convert_servlet extends HttpServlet
           ofmt_full=ofmt;
         }
         if (params.isChecked("gzip"))
-          molWriter=new MolExporter(new FileOutputStream(fout),"gzip:"+ofmt_full);
+          molWriter = new MolExporter(new FileOutputStream(fout),"gzip:"+ofmt_full);
         else
-          molWriter=new MolExporter(new FileOutputStream(fout),ofmt_full);
+          molWriter = new MolExporter(new FileOutputStream(fout),ofmt_full);
 
         outputs.add("input format:  "+ifmt+" ("+imffmt.getDescription()+")");
-        String desc=omffmt.getDescription();
+        String desc = omffmt.getDescription();
         if (params.isChecked("gzip")) desc+=", GZIPped";
         outputs.add("output format: "+ofmt_full+" ("+desc+")");
 
         if (params.isChecked("verbose"))
         {
-          ByteArrayOutputStream obuff=new ByteArrayOutputStream();
+          ByteArrayOutputStream obuff = new ByteArrayOutputStream();
           MolExporter molWriter2 = new MolExporter(obuff,ofmt_full);
           WriteMol(mol,molWriter2,params);
           molWriter2.close();
@@ -517,7 +518,7 @@ public class convert_servlet extends HttpServlet
     outputs.add("&nbsp;mols out: "+n_mols_out);
     outputs.add("&nbsp;errors: "+n_failed);
 
-    String fname=(SERVLETNAME+"_out."+oext);
+    String fname = (SERVLETNAME+"_out."+oext);
     if (params.isChecked("gzip")) fname+=".gz";
     long fsize = fout.length();
     outputs.add("&nbsp;"+
@@ -536,7 +537,7 @@ public class convert_servlet extends HttpServlet
     {
       if (params.isChecked("parts2mols"))
       {
-        Molecule[] partmols=mol.cloneMolecule().convertToFrags();
+        Molecule[] partmols = mol.cloneMolecule().convertToFrags();
         if (params.isChecked("verbose"))
           errors.add("n_parts: "+partmols.length);
         int i_part=0;
@@ -556,7 +557,7 @@ public class convert_servlet extends HttpServlet
         MarkushEnumerationPlugin plugin = new MarkushEnumerationPlugin();
         plugin.setMolecule(mol);
         plugin.run();
-        Molecule markemol=plugin.getNextStructure();
+        Molecule markemol = plugin.getNextStructure();
         int i_marke=0;
         while (markemol!=null)
         {
@@ -572,7 +573,7 @@ public class convert_servlet extends HttpServlet
             errors.add("MARKUSH_ENUM_LIMIT ("+MARKUSH_ENUM_LIMIT+") reached; output truncated.");
             break;
           }
-          markemol=plugin.getNextStructure();
+          markemol = plugin.getNextStructure();
         }
       }
       else
@@ -612,7 +613,37 @@ public class convert_servlet extends HttpServlet
   /////////////////////////////////////////////////////////////////////////////
   private static String JavaScript() throws IOException
   {
-    return(
+    String DEMO_DATASET = (
+"DOPAMINE\n"+
+"  Mrv0540 04201114042D          \n"+
+"\n"+
+" 11 11  0  0  0  0            999 V2000\n"+
+"    3.5724   -0.4125    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    2.8579   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    2.1434   -0.4125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    1.4289   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    0.7145   -0.4125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    0.0000   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    0.0000    0.8250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"   -0.7145    1.2375    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    0.7145    1.2375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    0.7145    2.0625    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"    1.4289    0.8250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n"+
+"  1  2  1  0  0  0  0\n"+
+"  2  3  1  0  0  0  0\n"+
+"  3  4  1  0  0  0  0\n"+
+"  4  5  4  0  0  0  0\n"+
+"  5  6  4  0  0  0  0\n"+
+"  6  7  4  0  0  0  0\n"+
+"  7  8  1  0  0  0  0\n"+
+"  7  9  4  0  0  0  0\n"+
+"  9 10  1  0  0  0  0\n"+
+"  9 11  4  0  0  0  0\n"+
+"  4 11  4  0  0  0  0\n"+
+"M  END\n"+
+"$$$$\n");
+    String js = (
+"var DEMO_DATASET=`"+DEMO_DATASET+"`;\n"+
 "function go_init(form)"+
 "{\n"+
 "  form.file2txt.checked=false;\n"+
@@ -651,15 +682,23 @@ public class convert_servlet extends HttpServlet
 "  if (!checkform(form)) return;\n"+
 "  form.convert.value='TRUE';\n"+
 "  form.submit()\n"+
+"}\n"+
+"function go_demo(form)\n"+
+"{\n"+
+"  go_init(form);\n"+
+"  form.intxt.value=DEMO_DATASET;\n"+
+"  form.verbose.checked=true;\n"+
+"  go_convert(form);\n"+
 "}\n"
     );
+    return js;
   }
   /////////////////////////////////////////////////////////////////////////////
   private static String HelpHtm()
 	throws java.io.FileNotFoundException,java.io.IOException
   {
-    String htm=
-    ("<B>"+APPNAME+" help</B><P>\n"+
+    String htm = (
+    "<B>"+APPNAME+" help</B><P>\n"+
     "<P>\n"+
     "Converts between molecular formats.\n"+
     "<P>\n"+
@@ -698,7 +737,7 @@ public class convert_servlet extends HttpServlet
       if (fmt.equals("base64")) continue;
       htm+=("<LI>"+fmt+" - ");
       htm+=(MFileFormatUtil.getFormat(fmt).getDescription()+"\n");
-      try { MolExporter test=new MolExporter(new PrintStream("/dev/null"),fmt); }
+      try { MolExporter test = new MolExporter(new PrintStream("/dev/null"),fmt); }
       catch (MolExportException e) { htm+=(" (read-only)"); }
     }
     htm+=(
@@ -715,20 +754,20 @@ public class convert_servlet extends HttpServlet
   {
     super.init(conf);
     //CONFIG=conf;
-    CONTEXT=getServletContext();
-    CONTEXTPATH=CONTEXT.getContextPath();
-    try { APPNAME=conf.getInitParameter("APPNAME"); }
-    catch (Exception e) { APPNAME=this.getServletName(); }
-    UPLOADDIR=conf.getInitParameter("UPLOADDIR");
+    CONTEXT = getServletContext();
+    CONTEXTPATH = CONTEXT.getContextPath();
+    try { APPNAME = conf.getInitParameter("APPNAME"); }
+    catch (Exception e) { APPNAME = this.getServletName(); }
+    UPLOADDIR = conf.getInitParameter("UPLOADDIR");
     if (UPLOADDIR==null)
       throw new ServletException("Please supply UPLOADDIR parameter");
-    SCRATCHDIR=conf.getInitParameter("SCRATCHDIR");
+    SCRATCHDIR = conf.getInitParameter("SCRATCHDIR");
     if (SCRATCHDIR==null) SCRATCHDIR="/tmp";
-    try { N_MAX=Integer.parseInt(conf.getInitParameter("N_MAX")); }
+    try { N_MAX = Integer.parseInt(conf.getInitParameter("N_MAX")); }
     catch (Exception e) { N_MAX=1000; }
-    try { N_MAX_LINES=Integer.parseInt(conf.getInitParameter("N_MAX_LINES")); }
+    try { N_MAX_LINES = Integer.parseInt(conf.getInitParameter("N_MAX_LINES")); }
     catch (Exception e) { N_MAX_LINES=10000; }
-    PROXY_PREFIX=((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
+    PROXY_PREFIX = ((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
   public void doGet(HttpServletRequest request,HttpServletResponse response)
