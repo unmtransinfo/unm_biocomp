@@ -60,7 +60,6 @@ public class mcs_servlet extends HttpServlet
   private static int serverport=0;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static String DATESTR=null;
   private static String ofmt="";
   private static String color1="#EEEEEE";
   private static Integer arom=null;
@@ -193,14 +192,15 @@ ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     sizes_h.put("l",200); sizes_w.put("l",240);
     sizes_h.put("xl",300); sizes_w.put("xl",400);
 
-    Calendar calendar=Calendar.getInstance();
-    calendar.setTime(new Date());
-    DATESTR=String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-
-    try {
-      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-    } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
     }
     LicenseManager.refresh();
 

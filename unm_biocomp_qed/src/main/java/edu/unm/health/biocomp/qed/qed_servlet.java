@@ -205,6 +205,18 @@ public class qed_servlet extends HttpServlet
       }
     }
 
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
+    }
+    LicenseManager.refresh();
+
     if (mrequest==null) return true;
 
     /// Stuff for a run:

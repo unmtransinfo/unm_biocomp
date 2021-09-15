@@ -153,8 +153,8 @@ public class molcloud_servlet extends HttpServlet
         response.setContentType("text/plain");
         out=response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
-        t.put("JCHEM_LICENSE_OK",(LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
-        out.print(HtmUtils.TestTxt(APPNAME,t));
+        t.put("JCHEM_LICENSE_OK", (LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
+        out.print(HtmUtils.TestTxt(APPNAME, t));
       }
       else if (downloadtxt!=null && downloadtxt.length()>0) // POST param
       {
@@ -218,13 +218,6 @@ public class molcloud_servlet extends HttpServlet
     Random rand = new Random();
     PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
-    //In fact, a valid license is not required.
-    //LicenseManager.refresh();
-    //if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
-    //{
-    //  errors.add("ERROR: ChemAxon license error; JCHEM is required.");
-    //}
-
     File dout = new File(SCRATCHDIR);
     if (!dout.exists())
     {
@@ -236,6 +229,18 @@ public class molcloud_servlet extends HttpServlet
         return false;
       }
     }
+
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
+    }
+    LicenseManager.refresh();
 
     if (mrequest==null) return true;
 

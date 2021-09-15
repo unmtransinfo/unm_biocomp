@@ -74,7 +74,7 @@ mvn clean install
 
 Ok for Tomcat v8/v9 also, apparently.
 
-Copy your ChemAxon license to `/biocomp_war/src/main/webapp/.chemaxon/license.cxl` 
+Copy ChemAxon license to `/biocomp_war/src/main/webapp/.chemaxon/license.cxl` 
 for inclusion in the WAR.
 
 ```

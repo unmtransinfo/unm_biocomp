@@ -21,7 +21,7 @@ import chemaxon.util.MolHandler;
 import chemaxon.struc.*;
 import chemaxon.marvin.calculations.TautomerizationPlugin;
 import chemaxon.marvin.plugin.PluginException;
-import chemaxon.license.*;
+import chemaxon.license.*; //LicenseManager
 
 import edu.unm.health.biocomp.util.*;
 import edu.unm.health.biocomp.util.http.*;
@@ -50,7 +50,6 @@ public class tautomers_servlet extends HttpServlet
   private static HttpParams params=null;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static String DATESTR=null;
   private static String color1="#EEEEEE";
   private static String MOL2IMG_SERVLETURL=null;
   private static String PROXY_PREFIX=null; // configured in web.xml
@@ -163,16 +162,15 @@ public class tautomers_servlet extends HttpServlet
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(new Date());
-    DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-    Random rand = new Random();
-    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
-
-    try {
-      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-    } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage());
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
     }
     LicenseManager.refresh();
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM) || !LicenseManager.isLicensed(LicenseManager.ISOMERS_PLUGIN_GROUP))

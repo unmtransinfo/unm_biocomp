@@ -234,7 +234,7 @@ public class sim2d_servlet extends HttpServlet
         response.setContentType("text/plain");
         out=response.getWriter();
         HashMap<String,String> t = new HashMap<String,String>();
-        t.put("JCHEM_LICENSE_OK",(LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
+        t.put("JCHEM_LICENSE_OK", (LicenseManager.isLicensed(LicenseManager.JCHEM)?"True":"False"));
         out.print(HtmUtils.TestTxt(APPNAME,t));
       }
       else if (downloadfile!=null && downloadfile.length()>0) // POST param
@@ -337,9 +337,16 @@ public class sim2d_servlet extends HttpServlet
     Random rand = new Random();
     PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
-    String cxlic = (new File(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl")).exists() ? (CONTEXT.getRealPath("")+"/.chemaxon/license.cxl") : (System.getenv("HOME")+"/.chemaxon/license.cxl");
-    try { LicenseManager.setLicenseFile(cxlic); }
-    catch (Exception e) { errors.add("ERROR: "+e.getMessage()); }
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
+    }
     LicenseManager.refresh();
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
     {

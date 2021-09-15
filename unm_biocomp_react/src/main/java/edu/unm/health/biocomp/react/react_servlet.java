@@ -14,7 +14,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import chemaxon.formats.*; //MolExporter
 import chemaxon.struc.*;
-import chemaxon.license.*;
+import chemaxon.license.*; //LicenseManager
 import chemaxon.util.MolHandler;
 import chemaxon.reaction.*;
 
@@ -152,9 +152,17 @@ public class react_servlet extends HttpServlet
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(new Date());
-    DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
+    }
+    LicenseManager.refresh();
 
     if (!LicenseManager.isLicensed(LicenseManager.JCHEM) || !LicenseManager.isLicensed(LicenseManager.REACTOR))
     {

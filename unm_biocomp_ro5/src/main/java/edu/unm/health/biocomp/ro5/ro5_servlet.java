@@ -46,7 +46,6 @@ public class ro5_servlet extends HttpServlet
   private static byte[] inbytes=null;
   private static String SERVERNAME=null;
   private static String REMOTEHOST=null;
-  private static String DATESTR=null;
   private static String PREFIX=null;
   private static String ofmt="";
   private static String color1="#EEEEEE";
@@ -201,17 +200,16 @@ public class ro5_servlet extends HttpServlet
 
     inbytes = new byte[1024];
 
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(new Date());
-    DATESTR = String.format("%04d%02d%02d%02d%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-    Random rand = new Random();
-    PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
-
     //License required for "Structure Search".
-    try {
-      LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
-    } catch (Exception e) {
-      errors.add("ERROR: ChemAxon LicenseManager error: "+e.getMessage()+"; not found at: "+CONTEXT.getRealPath("")+"/.chemaxon/license.cxl");
+    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+    catch (Exception e) {
+      errors.add("ERROR: "+e.getMessage());
+      if (System.getenv("HOME") !=null) {
+        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+        catch (Exception e2) {
+          errors.add("ERROR: "+e2.getMessage());
+        }
+      }
     }
     LicenseManager.refresh();
 
