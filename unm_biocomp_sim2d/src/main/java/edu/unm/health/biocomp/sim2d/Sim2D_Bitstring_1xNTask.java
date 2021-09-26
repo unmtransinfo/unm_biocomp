@@ -66,8 +66,8 @@ public class Sim2D_Bitstring_1xNTask
     this.n_max=n_max;
     this.n_max_hits=n_max_hits;
     this.sorthits=sorthits;
-    this.taskstatus=new Status(this);
-    if (bitstrs!=null) this.n_total=bitstrs.size();
+    this.taskstatus = new Status(this);
+    if (bitstrs!=null) this.n_total = bitstrs.size();
     else this.n_total=0;
     this.n_done=0;
     this.t0 = new Date();
@@ -89,24 +89,24 @@ public class Sim2D_Bitstring_1xNTask
       if (bitstrs!=null)
       {
         if (i==bitstrs.size()) break;
-        bitstr=bitstrs.get(i);
-        hit.name=String.format("%d",i);
+        bitstr = bitstrs.get(i);
+        hit.name = String.format("%d",i);
       }
       else if (buffReader!=null)
       {
         String line=null;
-        try { line=buffReader.readLine(); }
+        try { line = buffReader.readLine(); }
         catch (IOException e)
         {
           hit.sim=0.0f;
           continue;
         }
         if (line==null) break;
-        bitstr=line.replaceFirst("\\s.*$","");
+        bitstr = line.replaceFirst("\\s.*$","");
         if (line.matches("^\\S+\\s.*$"))
-          hit.name=line.replaceFirst("^\\S+\\s","");
+          hit.name = line.replaceFirst("^\\S+\\s","");
         else
-          hit.name=String.format("%d",i);
+          hit.name = String.format("%d",i);
       }
       BinaryFP fp = new BinaryFP();
       try { fp.fromBitString(bitstr); }
@@ -119,13 +119,13 @@ public class Sim2D_Bitstring_1xNTask
       }
       try
       {
-        hit.subset=fpQ.isSubsetOf(fp);
-        hit.commonbitcount=fpQ.getCommonBitCount(fp);
-        hit.brightness=fp.bitCount();
+        hit.subset = fpQ.isSubsetOf(fp);
+        hit.commonbitcount = fpQ.getCommonBitCount(fp);
+        hit.brightness = fp.bitCount();
         if (alpha!=null && beta!=null)
-          hit.sim=fpQ.tversky(fp,alpha,beta);
+          hit.sim = fpQ.tversky(fp,alpha,beta);
         else
-          hit.sim=fpQ.tanimoto(fp);
+          hit.sim = fpQ.tanimoto(fp);
       }
       catch (Exception e)
       {
@@ -144,10 +144,10 @@ public class Sim2D_Bitstring_1xNTask
     public Status(Sim2D_Bitstring_1xNTask task) { this.task=task; }
     public String status()
     {
-      long t=(new Date()).getTime()-t0.getTime();
-      int m=(int)(t/60000L);
-      int s=(int)((t/1000L)%60L);
-      String statstr=("["+String.format("%02d:%02d",m,s)+"]");
+      long t = (new Date()).getTime()-t0.getTime();
+      int m = (int)(t/60000L);
+      int s = (int)((t/1000L)%60L);
+      String statstr = ("["+String.format("%02d:%02d",m,s)+"]");
       statstr+=(String.format(" %5d;",task.n_done));
       if (task.n_total>0)
         statstr+=(String.format(" %.0f%%",100.0f*task.n_done/task.n_total));

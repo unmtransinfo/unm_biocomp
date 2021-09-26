@@ -52,14 +52,14 @@ public class Sim2D_Path_1xNTask
   {
     this.molQ=molQ;
     this.mols=mols;
-    this.molReader=molReader;
+    this.molReader = molReader;
     if (fplen!=null) this.fplen=fplen;
-    else this.fplen=chemaxon.descriptors.CFParameters.DEFAULT_LENGTH;
+    else this.fplen = chemaxon.descriptors.CFParameters.DEFAULT_LENGTH;
     if (bondcount!=null) this.bondcount=bondcount;
-    else this.bondcount=chemaxon.descriptors.CFParameters.DEFAULT_BOND_COUNT;
+    else this.bondcount = chemaxon.descriptors.CFParameters.DEFAULT_BOND_COUNT;
     if (bitsper!=null) this.bitsper=bitsper;
-    else this.bitsper=chemaxon.descriptors.CFParameters.DEFAULT_BITS_SET;
-    cfparams=new CFParameters();
+    else this.bitsper = chemaxon.descriptors.CFParameters.DEFAULT_BITS_SET;
+    cfparams = new CFParameters();
     cfparams.setLength(this.fplen);
     cfparams.setBondCount(this.bondcount);
     cfparams.setBitCount(this.bitsper);
@@ -75,7 +75,7 @@ public class Sim2D_Path_1xNTask
     this.n_max=n_max;
     this.n_max_hits=n_max_hits;
     this.sorthits=sorthits;
-    this.taskstatus=new Status(this);
+    this.taskstatus = new Status(this);
     this.n_total = (mols!=null) ? mols.size():0;
     this.n_done=0;
     this.t0 = new Date();
@@ -94,29 +94,26 @@ public class Sim2D_Path_1xNTask
       if (mols!=null)
       {
         if (i==mols.size()) break;
-        mol=mols.get(i);
+        mol = mols.get(i);
       }
       else if (molReader!=null)
       {
-        try { mol=molReader.read(); }
-        catch (MolFormatException e)
-        {
+        try {
+          mol = molReader.read();
+        }
+        catch (Exception e) {
           hit.sim=0.0f;
+          System.err.println(e.getMessage());
           continue;
         }
-        catch (IOException e)
-        {
-          hit.sim=0.0f;
-          continue;
-        }
+        if (mol==null) break;
         if (arom!=null)
           mol.aromatize(arom);
         else
           mol.dearomatize();
-        try { hit.smiles=MolExporter.exportToFormat(mol,"smiles:u"); }
+        try { hit.smiles = MolExporter.exportToFormat(mol,"smiles:u"); }
         catch (Exception e) { hit.smiles=""; }
-        hit.name=mol.getName();
-        if (mol==null) break;
+        hit.name = mol.getName();
       }
       else { return false; } //ERROR
 
@@ -124,19 +121,19 @@ public class Sim2D_Path_1xNTask
       try {
         fp.generate(mol);
         if (alpha!=null && beta!=null)
-          hit.sim=1.0f-this.fpQ.getTversky(fp);	// No alpha or beta!
+          hit.sim = 1.0f-this.fpQ.getTversky(fp);	// No alpha or beta!
         else
-          hit.sim=1.0f-this.fpQ.getTanimoto(fp);
-        hit.subset=fpQ.isSubSetOf(fp);
-        hit.commonbitcount=fpQ.getCommonBitCount(fp);
-        hit.brightness=fp.getBrightness();
+          hit.sim = 1.0f-this.fpQ.getTanimoto(fp);
+        hit.subset = fpQ.isSubSetOf(fp);
+        hit.commonbitcount = fpQ.getCommonBitCount(fp);
+        hit.brightness = fp.getBrightness();
       }
       catch (MDGeneratorException e) {
         System.err.println("bad FP: "+e.getMessage());
         hit.sim=0.0f;
       }
       if (hit.sim>=sim_min) { hits.add(hit); }
-      if (molReader!=null) n_total=molReader.estimateNumRecords();
+      if (molReader!=null) n_total = molReader.estimateNumRecords();
     }
     if (sorthits) Collections.sort(hits);
     while (hits.size()>n_max_hits) hits.remove(hits.size()-1);

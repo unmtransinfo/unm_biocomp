@@ -70,7 +70,7 @@ public class Sim2D_ECFP_1xNTask
     this.n_max=n_max;
     this.n_max_hits=n_max_hits;
     this.sorthits=sorthits;
-    this.taskstatus=new Status(this);
+    this.taskstatus = new Status(this);
     this.n_total = (mols!=null) ?  mols.size():0;
     this.n_done=0;
     this.t0 = new Date();
@@ -89,46 +89,41 @@ public class Sim2D_ECFP_1xNTask
       if (mols!=null)
       {
         if (i==mols.size()) break;
-        mol=mols.get(i);
+        mol = mols.get(i);
       }
       else if (molReader!=null)
       {
-        try { mol=molReader.read(); }
-        catch (MolFormatException e)
+        try { mol = molReader.read(); }
+        catch (Exception e)
         {
           hit.sim=0.0f;
           continue;
         }
-        catch (IOException e)
-        {
-          hit.sim=0.0f;
-          continue;
-        }
+        if (mol==null) break;
         if (arom!=null)
           mol.aromatize(arom);
         else
           mol.dearomatize();
-        try { hit.smiles=MolExporter.exportToFormat(mol,"smiles:u"); }
+        try { hit.smiles = MolExporter.exportToFormat(mol,"smiles:u"); }
         catch (Exception e) { hit.smiles=""; }
-        hit.name=mol.getName();
-        if (mol==null) break;
+        hit.name = mol.getName();
       }
       else { return false; } //ERROR
 
-      ECFP fp=new ECFP(this.fpparams);
+      ECFP fp = new ECFP(this.fpparams);
       try {
         this.fper.generate(mol,fp);
         if (this.fpQ!=null && fp!=null)
         {
           if (alpha!=null && beta!=null)
-            hit.sim=(1.0f-this.fpQ.getWeightedAsymmetricEuclidean(fp));//Tversky not available!
+            hit.sim = (1.0f-this.fpQ.getWeightedAsymmetricEuclidean(fp));//Tversky not available!
             // YES IT IS!! See chemaxon.descriptors.MolecularDescriptor.getDissimilarity(MolecularDescriptor other, int parametrizedMetricIndex)
           else
-            hit.sim=1.0f-this.fpQ.getTanimoto(fp);
+            hit.sim = 1.0f-this.fpQ.getTanimoto(fp);
         }
         else
           hit.sim=0.0f;
-        hit.brightness=fp.getBrightness();
+        hit.brightness = fp.getBrightness();
         hit.commonbitcount=0;	//undefined
         hit.subset=false;	//undefined
       }
@@ -137,7 +132,7 @@ public class Sim2D_ECFP_1xNTask
         hit.sim=0.0f;
       }
       if (hit.sim>=sim_min) { hits.add(hit); }
-      if (molReader!=null) n_total=molReader.estimateNumRecords();
+      if (molReader!=null) n_total = molReader.estimateNumRecords();
     }
     if (sorthits) Collections.sort(hits);
     while (hits.size()>n_max_hits) hits.remove(hits.size()-1);
@@ -149,10 +144,10 @@ public class Sim2D_ECFP_1xNTask
     public Status(Sim2D_ECFP_1xNTask task) { this.task=task; }
     public String status()
     {
-      long t=(new Date()).getTime()-t0.getTime();
-      int m=(int)(t/60000L);
-      int s=(int)((t/1000L)%60L);
-      String statstr=("["+String.format("%02d:%02d", m, s)+"]");
+      long t = (new Date()).getTime()-t0.getTime();
+      int m = (int)(t/60000L);
+      int s = (int)((t/1000L)%60L);
+      String statstr = ("["+String.format("%02d:%02d", m, s)+"]");
       statstr+=(String.format(" %6d", task.n_done));
       if (task.n_total>0)
         statstr+=(String.format(" (%.0f%%)", 100.0f*task.n_done/task.n_total));

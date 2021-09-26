@@ -269,7 +269,7 @@ public class sim2d_servlet extends HttpServlet
     }
     else if (val>=maxval)
     {
-      i=HEATCOLORS.size()-1;
+      i = HEATCOLORS.size()-1;
     }
     else
     {
@@ -361,9 +361,9 @@ public class sim2d_servlet extends HttpServlet
 
     if (mrequest==null) { return true; }
 
-    for (Enumeration e=mrequest.getParameterNames(); e.hasMoreElements(); )
+    for (Enumeration e = mrequest.getParameterNames(); e.hasMoreElements(); )
     {
-      String key=(String)e.nextElement();
+      String key = (String)e.nextElement();
       if (mrequest.getParameter(key)!=null)
         params.setVal(key,mrequest.getParameter(key));
     }
@@ -379,9 +379,9 @@ public class sim2d_servlet extends HttpServlet
     /// Stuff for a run:
 
     if (params.getVal("arom").equals("gen"))
-      arom=MoleculeGraph.AROM_GENERAL;
+      arom = MoleculeGraph.AROM_GENERAL;
     else if (params.getVal("arom").equals("bas"))
-      arom=MoleculeGraph.AROM_BASIC;
+      arom = MoleculeGraph.AROM_BASIC;
     else if (params.getVal("arom").equals("none"))
       arom=null;
 
@@ -389,7 +389,7 @@ public class sim2d_servlet extends HttpServlet
     {
       N_MAX=0;
       N_MAX_MATRIX=0;
-      MAX_POST_SIZE=Integer.MAX_VALUE;
+      MAX_POST_SIZE = Integer.MAX_VALUE;
     }
 
     String fnameQ = "infileQ";
@@ -426,7 +426,7 @@ public class sim2d_servlet extends HttpServlet
     {
       if (params.isChecked("file2txt") && fileDB!=null)
       {
-        BufferedReader br=new BufferedReader(new FileReader(fileDB));
+        BufferedReader br = new BufferedReader(new FileReader(fileDB));
         intxtDB="";
         for (int i=0;(line=br.readLine())!=null;++i)
         {
@@ -684,12 +684,12 @@ public class sim2d_servlet extends HttpServlet
     }
     if (params.getVal("mode").equals("1xN"))
     {
-      try { sim_min=Float.parseFloat(params.getVal("sim_min")); }
+      try { sim_min = Float.parseFloat(params.getVal("sim_min")); }
       catch (NumberFormatException e) {
         sim_min=0.0f;
         errors.add("ERROR: cannot parse sim_min; using default:"+sim_min);
       }
-      try { n_max_hits=Integer.parseInt(params.getVal("n_max_hits")); }
+      try { n_max_hits = Integer.parseInt(params.getVal("n_max_hits")); }
       catch (NumberFormatException e) {
         n_max_hits=400;
         errors.add("ERROR: cannot parse n_max_hits; using default: "+n_max_hits);
@@ -698,12 +698,12 @@ public class sim2d_servlet extends HttpServlet
 
     if (params.getVal("metric").equals("tversky"))
     {
-      try { alpha=Float.parseFloat(params.getVal("alpha")); }
+      try { alpha = Float.parseFloat(params.getVal("alpha")); }
       catch (NumberFormatException e) {
         errors.add("ERROR: cannot parse alpha.");
         return false;
       }
-      try { beta=Float.parseFloat(params.getVal("beta")); }
+      try { beta = Float.parseFloat(params.getVal("beta")); }
       catch (NumberFormatException e) {
         errors.add("ERROR: cannot parse beta.");
         return false;
@@ -711,12 +711,12 @@ public class sim2d_servlet extends HttpServlet
     }
     if (params.getVal("fptype").equals("ecfp"))
     {
-      try { ecfpdiam=Integer.parseInt(params.getVal("ecfpdiam")); }
+      try { ecfpdiam = Integer.parseInt(params.getVal("ecfpdiam")); }
       catch (NumberFormatException e) {
         ecfpdiam=ECFPDIAM_DEFAULT;
         errors.add("ERROR: cannot parse ecfpdiam; using default: "+ecfpdiam);
       }
-      try { ecfplen=Integer.parseInt(params.getVal("ecfplen")); }
+      try { ecfplen = Integer.parseInt(params.getVal("ecfplen")); }
       catch (NumberFormatException e) {
         ecfplen=ECFPLEN_DEFAULT;
         errors.add("ERROR: cannot parse ecfplen; using default: "+ecfplen);
@@ -726,17 +726,17 @@ public class sim2d_servlet extends HttpServlet
     {
       try { pathfplen = Integer.parseInt(params.getVal("pathfplen")); }
       catch (NumberFormatException e) {
-        pathfplen=CFParameters.DEFAULT_LENGTH;
+        pathfplen = CFParameters.DEFAULT_LENGTH;
         errors.add("ERROR: cannot parse pathfplength; using default: "+pathfplen);
       }
       try { pathbcount = Integer.parseInt(params.getVal("pathbcount")); }
       catch (NumberFormatException e) {
-        pathbcount=CFParameters.DEFAULT_BOND_COUNT;
+        pathbcount = CFParameters.DEFAULT_BOND_COUNT;
         errors.add("ERROR: cannot parse fpbondcount; using default: "+pathbcount);
       }
       try { pathbitsper = Integer.parseInt(params.getVal("pathbitsper")); }
       catch (NumberFormatException e) {
-        pathbitsper=CFParameters.DEFAULT_BITS_SET;
+        pathbitsper = CFParameters.DEFAULT_BITS_SET;
         errors.add("ERROR: cannot parse pathbitsper; using default: "+pathbitsper);
       }
     }
@@ -881,89 +881,73 @@ public class sim2d_servlet extends HttpServlet
     +("maxhits:<INPUT TYPE=TEXT SIZE=4 NAME=\"n_max_hits\" VALUE=\""+params.getVal("n_max_hits")+"\">\n")
     +("sim_min:<INPUT TYPE=TEXT SIZE=4 NAME=\"sim_min\" VALUE=\""+params.getVal("sim_min")+"\">\n");
     if (formmode.equals("expert"))
-    {
       outhtm+=("<INPUT TYPE=CHECKBOX NAME=\"sorthits\" VALUE=\"CHECKED\" "+params.getVal("sorthits")+">sort hits<BR>");
-    }
     else
-    {
       outhtm+=("<INPUT TYPE=HIDDEN NAME=\"sorthits\" VALUE=\"TRUE\">\n<BR>\n");
-    }
-    outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"mode\" VALUE=\"QxN\" "+mode_QxN+">matrix (QxN)<BR>\n");
-    outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"mode\" VALUE=\"NxN\" "+mode_NxN+">matrix (NxN)\n");
-    outhtm+=("<HR>\n");
-    outhtm+=("<B>fingerprint method:</B><BR>\n");
+    outhtm+=(
+      ("&nbsp;<INPUT TYPE=RADIO NAME=\"mode\" VALUE=\"QxN\" "+mode_QxN+">matrix (QxN)<BR>\n")
+      +("&nbsp;<INPUT TYPE=RADIO NAME=\"mode\" VALUE=\"NxN\" "+mode_NxN+">matrix (NxN)\n")
+      +("<HR>\n")
+      +("<B>fingerprint method:</B><BR>\n"));
 
     outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"ecfp\" "+fptype_ecfp+">ECFP\n");
     if (formmode.equals("expert"))
-    {
-      outhtm+=("fplen:"+ecfplen_menu+"\n");
-      outhtm+=("diameter:"+ecfpdiam_menu+"\n");
-    }
+      outhtm+=("fplen:"+ecfplen_menu+"\ndiameter:"+ecfpdiam_menu+"\n");
     else
     {
       outhtm+=("<INPUT TYPE=HIDDEN NAME=\"ecfpdiam\" VALUE=\""+ecfpdiam+"\">\n");
       outhtm+=("<INPUT TYPE=HIDDEN NAME=\"ecfplen\" VALUE=\""+ecfplen+"\">\n");
     }
     outhtm+=("<BR>\n");
-
     outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"maccs\" "+fptype_maccs+">MACCS<BR>\n");
     outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"sunset\" "+fptype_sunset+">Sunset<BR>\n");
     if (formmode.equals("expert"))
     {
-      outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"pubchem\" "+fptype_pubchem+">PubChem<BR>\n");
-      outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"path\" "+fptype_path+">JChemPath\n");
-      outhtm+=("fplen:"+pathfplen_menu+"\n");
-      outhtm+=("pathbonds:"+pathbcount_menu+"\n");
-      outhtm+=("pathbits:"+pathbitsper_menu+"<BR>\n");
-      outhtm+=("<HR>\n");
-      outhtm+=("<B>metric:</B><BR>\n");
-      outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"metric\" VALUE=\"tanimoto\" "+metric_tanimoto+">Tanimoto<BR>\n");
-      outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"metric\" VALUE=\"tversky\" "+metric_tversky+">Tversky\n");
-      outhtm+=("&alpha;:<INPUT TYPE=TEXT SIZE=4 NAME=\"alpha\" VALUE=\""+params.getVal("alpha")+"\">\n");
-      outhtm+=("&beta;:<INPUT TYPE=TEXT SIZE=4 NAME=\"beta\" VALUE=\""+params.getVal("beta")+"\"><BR>\n");
+      outhtm+=(
+        ("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"pubchem\" "+fptype_pubchem+">PubChem<BR>\n")
+        +("&nbsp;<INPUT TYPE=RADIO NAME=\"fptype\" VALUE=\"path\" "+fptype_path+">JChemPath\n")
+        +("fplen:"+pathfplen_menu+"\n")
+        +("pathbonds:"+pathbcount_menu+"\n")
+        +("pathbits:"+pathbitsper_menu+"<BR>\n")
+        +("<HR>\n")
+        +("<B>metric:</B><BR>\n")
+        +("&nbsp;<INPUT TYPE=RADIO NAME=\"metric\" VALUE=\"tanimoto\" "+metric_tanimoto+">Tanimoto<BR>\n")
+        +("&nbsp;<INPUT TYPE=RADIO NAME=\"metric\" VALUE=\"tversky\" "+metric_tversky+">Tversky\n")
+        +("&alpha;:<INPUT TYPE=TEXT SIZE=4 NAME=\"alpha\" VALUE=\""+params.getVal("alpha")+"\">\n")
+        +("&beta;:<INPUT TYPE=TEXT SIZE=4 NAME=\"beta\" VALUE=\""+params.getVal("beta")+"\"><BR>\n"));
     }
     else
-    {
       outhtm+=("<INPUT TYPE=HIDDEN NAME=\"metric\" VALUE=\"tanimoto\">\n");
-    }
-    outhtm+=("<HR>\n");
-    outhtm+=("<B>output:</B><BR>\n");
-    outhtm+=("<INPUT TYPE=CHECKBOX NAME=\"out_batch\" VALUE=\"CHECKED\" "+params.getVal("out_batch")+">batch<BR>");
-    outhtm+=("<INPUT TYPE=CHECKBOX NAME=\"out_view\" VALUE=\"CHECKED\" "+params.getVal("out_view")+">view");
-    outhtm+=("&nbsp;<INPUT TYPE=CHECKBOX NAME=\"depict\" VALUE=\"CHECKED\" "+params.getVal("depict")+">depict\n");
+    outhtm+=(
+      ("<HR>\n")
+      +("<B>output:</B><BR>\n")
+      +("<INPUT TYPE=CHECKBOX NAME=\"out_view\" VALUE=\"CHECKED\" "+params.getVal("out_view")+">view")
+      +("&nbsp;<INPUT TYPE=CHECKBOX NAME=\"depict\" VALUE=\"CHECKED\" "+params.getVal("depict")+">depict\n"));
+    if (formmode.equals("expert")) outhtm+=("size:"+depsize_menu+"<BR>\n");
+    else outhtm+=("<INPUT TYPE=HIDDEN NAME=\"depsize\" VALUE=\"s\"><BR>\n");
+    outhtm+=(
+      ("<INPUT TYPE=CHECKBOX NAME=\"full_output\" VALUE=\"CHECKED\" "+params.getVal("full_output")+">full_output")
+      +("<BR>")
+      +("<HR>\n")
+      +("<B>misc:</B><BR>\n"));
     if (formmode.equals("expert"))
     {
-      outhtm+=("size:"+depsize_menu+"\n");
-    }
-    else
-    {
-      outhtm+=("<INPUT TYPE=HIDDEN NAME=\"depsize\" VALUE=\"s\">\n");
-    }
-    outhtm+=("<BR>");
-
-    outhtm+=("<HR>\n");
-    outhtm+=("<B>misc:</B><BR>\n");
-    if (formmode.equals("expert"))
-    {
-      outhtm+=("aromaticity:<INPUT TYPE=RADIO NAME=\"arom\" VALUE=\"gen\" "+arom_gen+">gen\n");
-      outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"arom\" VALUE=\"bas\" "+arom_bas+">bas\n");
-      outhtm+=("&nbsp;<INPUT TYPE=RADIO NAME=\"arom\" VALUE=\"none\" "+arom_none+">none<BR>\n");
+      outhtm+=(("aromaticity:<INPUT TYPE=RADIO NAME=\"arom\" VALUE=\"gen\" "+arom_gen+">gen\n")
+        +("&nbsp;<INPUT TYPE=RADIO NAME=\"arom\" VALUE=\"bas\" "+arom_bas+">bas\n")
+        +("&nbsp;<INPUT TYPE=RADIO NAME=\"arom\" VALUE=\"none\" "+arom_none+">none<BR>\n"));
     }
     if (formmode.equals("expert") && ENABLE_NOLIMIT)
-    {
       outhtm+=("<INPUT TYPE=CHECKBOX NAME=\"nolimit\" VALUE=\"CHECKED\" "+params.getVal("nolimit")+">no-limit, input size <I>(defaults: N_MAX="+N_MAX+", N_MAX_MATRIX="+N_MAX_MATRIX+")</I><BR>\n");
-    }
     else
-    {
       outhtm+=("<INPUT TYPE=HIDDEN NAME=\"nolimit\" VALUE=\"\">\n");
-    }
-    outhtm+=("<INPUT TYPE=CHECKBOX NAME=\"verbose\" VALUE=\"CHECKED\" "+params.getVal("verbose")+">verbose<BR>\n");
-    outhtm+=("</TD></TR></TABLE>\n");
-    outhtm+=("<P>\n");
-    outhtm+=("<CENTER>\n");
-    outhtm+=("<BUTTON TYPE=BUTTON onClick=\"go_sim2d(this.form,'"+formmode+"')\"><B>Go "+APPNAME+"</B></BUTTON>\n");
-    outhtm+=("</CENTER>\n");
-    outhtm+=("</FORM>\n");
+    outhtm+=(
+      ("<INPUT TYPE=CHECKBOX NAME=\"verbose\" VALUE=\"CHECKED\" "+params.getVal("verbose")+">verbose<BR>\n")
+      +("</TD></TR></TABLE>\n")
+      +("<P>\n")
+      +("<CENTER>\n")
+      +("<BUTTON TYPE=BUTTON onClick=\"go_sim2d(this.form,'"+formmode+"')\"><B>Go "+APPNAME+"</B></BUTTON>\n")
+      +("</CENTER>\n")
+      +("</FORM>\n"));
     return outhtm;
   }
   /////////////////////////////////////////////////////////////////////////////
@@ -1077,15 +1061,17 @@ public class sim2d_servlet extends HttpServlet
     }
     File fout=File.createTempFile(TMPFILE_PREFIX,"_1xN_out.txt",dout);
     PrintWriter fout_writer=new PrintWriter(new BufferedWriter(new FileWriter(fout,true)));
+    if (params.isChecked("full_output"))
+      fout_writer.printf("queryMolName\t");
+    fout_writer.printf("molName");
+    fout_writer.printf("\t"+params.getVal("metric")+"-"+params.getVal("fptype"));
+    fout_writer.printf("\n");
     String thtm=("<TABLE BORDER>\n");
     thtm+="<TR>";
     thtm+="<TH>&nbsp;</TH>";
     thtm+="<TH>mol</TH>";
-    fout_writer.printf("mol");
     thtm+="<TH>"+params.getVal("metric")+"-"+params.getVal("fptype")+"</TH>";
-    fout_writer.printf(","+params.getVal("metric")+"-"+params.getVal("fptype"));
     thtm+="</TR>\n";
-    fout_writer.printf("\n");
 
     for (int i=0;i<hits.size();++i)
     {
@@ -1105,9 +1091,11 @@ public class sim2d_servlet extends HttpServlet
         rhtm+=(imghtm+"<BR>\n");
       }
       rhtm+="<TT>"+molname+"</TT></TD>\n";
-      // Must quote name in case of commas.
-      molname=molname.replace("\"","\"\"");
-      fout_writer.printf("\""+molname+"\"");
+      
+      // Must replace tabs.
+      if (params.isChecked("full_output"))
+        fout_writer.printf(molQ.getName().replace("\t", " ")+"\t");
+      fout_writer.printf(molname.replace("\t", " "));
 
       float maxsim=(params.getVal("fptype").equals("ecfp")?0.5f:1.0f);
       if (params.getVal("fptype").equals("sunset") ||
@@ -1118,7 +1106,7 @@ public class sim2d_servlet extends HttpServlet
         String color=Val2HeatColor(hits.get(i).sim,0.0f,maxsim);
         rhtm+=("<TD BGCOLOR=\"#"+color+"\" ALIGN=CENTER>");
         rhtm+=(String.format("%.2f",hits.get(i).sim));
-        fout_writer.printf(String.format(",%.2f",hits.get(i).sim));
+        fout_writer.printf(String.format("\t%.2f",hits.get(i).sim));
         if (hits.get(i).subset) rhtm+=("*");
         rhtm+=("</TD>\n");
         if (params.isChecked("verbose") && i<n_max_display)
@@ -1134,7 +1122,7 @@ public class sim2d_servlet extends HttpServlet
         String color=Val2HeatColor(hits.get(i).sim,0.0f,maxsim);
         rhtm+=("<TD BGCOLOR=\"#"+color+"\" ALIGN=CENTER>");
         rhtm+=(String.format("%.2f",hits.get(i).sim));
-        fout_writer.printf(String.format(",%.2f",hits.get(i).sim));
+        fout_writer.printf(String.format("\t%.2f",hits.get(i).sim));
         if (hits.get(i).subset) rhtm+=("*");
         rhtm+=("</TD>\n");
         if (params.isChecked("verbose") && i<n_max_display)
@@ -1153,21 +1141,17 @@ public class sim2d_servlet extends HttpServlet
     if (params.isChecked("out_view"))
     {
       outputs.add(thtm);
-      if (n_max_hits>n_max_display)
-        outputs.add("Display truncated; n_max_display = "+n_max_display);
+      if (n_max_hits>n_max_display) outputs.add("Display truncated; n_max_display = "+n_max_display);
     }
-    if (params.isChecked("out_batch"))
-    {
-      String fname=(SERVLETNAME+"_1xN_out_csv.txt");
-      long fsize = fout.length();
-      String bhtm=("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
-      bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
-      bhtm+=("download "+fname+" (N="+n_hits+"; ");
-      bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
-      outputs.add(bhtm);
-    }
+    String fname=(SERVLETNAME+"_1xN_out_csv.txt");
+    long fsize = fout.length();
+    String bhtm= (("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">")
+      +("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">")
+      +("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">")
+      +("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">")
+      +("download "+fname+" (N="+n_hits+"; ")
+      +(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>"));
+    outputs.add(bhtm);
     errors.add(SERVLETNAME+": n_hits = "+hits.size());
   }
   /////////////////////////////////////////////////////////////////////////////
@@ -1324,22 +1308,20 @@ public class sim2d_servlet extends HttpServlet
     histotxt+="\n";
     outputs.add("<PRE>"+histotxt+"</PRE>");
 
-    if (params.isChecked("out_batch"))
-    {
-      // Download output as CSV.
-      String fname=(SERVLETNAME+"_matrix_out_csv.txt");
-      long fsize = fout.length();
-      String bhtm=("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
-      bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
-      if (params.getVal("mode").equals("QxN"))
-        bhtm+=("download "+fname+" ("+molsQ.size()+"x"+molsDB.size()+"; ");
-      else
-        bhtm+=("download "+fname+" (N="+molsDB.size()+"; ");
-      bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
-      outputs.add(bhtm);
-    }
+    // Download output as CSV.
+    String fname=(SERVLETNAME+"_matrix_out_csv.txt");
+    long fsize = fout.length();
+    String bhtm=("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
+    bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
+    bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
+    bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
+    if (params.getVal("mode").equals("QxN"))
+      bhtm+=("download "+fname+" ("+molsQ.size()+"x"+molsDB.size()+"; ");
+    else
+      bhtm+=("download "+fname+" (N="+molsDB.size()+"; ");
+    bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
+    outputs.add(bhtm);
+
     if (params.getVal("mode").equals("QxN"))
       errors.add(SERVLETNAME+": query mols processed: "+molsQ.size());
     errors.add(SERVLETNAME+": DB mols processed: "+molsDB.size());
@@ -1494,18 +1476,16 @@ public class sim2d_servlet extends HttpServlet
       if (n_max_hits>n_max_display)
         outputs.add("Display truncated at N = "+n_max_display);
     }
-    if (params.isChecked("out_batch"))
-    {
-      String fname=(SERVLETNAME+"_1xN_out_csv.txt");
-      long fsize = fout.length();
-      String bhtm=("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
-      bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
-      bhtm+=("download "+fname+" (N="+n_hits+"; ");
-      bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
-      outputs.add(bhtm);
-    }
+    String fname=(SERVLETNAME+"_1xN_out_csv.txt");
+    long fsize = fout.length();
+    String bhtm=("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
+    bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
+    bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
+    bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
+    bhtm+=("download "+fname+" (N="+n_hits+"; ");
+    bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
+    outputs.add(bhtm);
+
     errors.add(SERVLETNAME+": hit count: "+hits.size());
   }
   /////////////////////////////////////////////////////////////////////////////
@@ -1607,22 +1587,21 @@ public class sim2d_servlet extends HttpServlet
     thtm+="</TABLE>\n";
     if (params.isChecked("out_view"))
       outputs.add(thtm);
-    if (params.isChecked("out_batch"))
-    {
-      // Download output as CSV.
-      String fname = (SERVLETNAME+"_matrix_out_csv.txt");
-      long fsize = fout.length();
-      String bhtm = ("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
-      bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
-      bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
-      if (params.getVal("mode").equals("QxN"))
-        bhtm+=("download "+fname+" ("+bitstrsQ.size()+"x"+bitstrsDB.size()+"; ");
-      else
-        bhtm+=("download "+fname+" (N="+bitstrsDB.size()+"; ");
-      bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
-      outputs.add(bhtm);
-    }
+
+    // Download output as CSV.
+    String fname = (SERVLETNAME+"_matrix_out_csv.txt");
+    long fsize = fout.length();
+    String bhtm = ("<FORM METHOD=\"POST\" ACTION=\""+response.encodeURL(SERVLETNAME)+"\">");
+    bhtm+=("<INPUT TYPE=HIDDEN NAME=\"downloadfile\" VALUE=\""+fout.getAbsolutePath()+"\">");
+    bhtm+=("<INPUT TYPE=HIDDEN NAME=\"fname\" VALUE=\""+fname+"\">");
+    bhtm+=("<BUTTON TYPE=BUTTON onClick=\"this.form.submit()\">");
+    if (params.getVal("mode").equals("QxN"))
+      bhtm+=("download "+fname+" ("+bitstrsQ.size()+"x"+bitstrsDB.size()+"; ");
+    else
+      bhtm+=("download "+fname+" (N="+bitstrsDB.size()+"; ");
+    bhtm+=(file_utils.NiceBytes(fsize)+")</BUTTON></FORM>");
+    outputs.add(bhtm);
+
     if (params.getVal("mode").equals("QxN"))
       errors.add(SERVLETNAME+": query FPs processed: "+bitstrsQ.size());
     errors.add(SERVLETNAME+": DB FPs processed: "+bitstrsDB.size());
@@ -1727,7 +1706,7 @@ public class sim2d_servlet extends HttpServlet
 "  form.intxtQ.value='';\n"+
 "  form.n_max_hits.value='400';\n"+
 "  form.sim_min.value='0.0';\n"+
-"  form.out_batch.checked=true;\n"+
+"  form.full_output.checked=true;\n"+
 "  form.out_view.checked=false;\n"+
 "  form.depict.checked=false;\n"+
 "  form.verbose.checked=false;\n"+
@@ -1756,10 +1735,6 @@ public class sim2d_servlet extends HttpServlet
 "      mode=form.mode[i].value;\n"+
 "  if (!form.intxt.value && !form.infile.value) {\n"+
 "    alert('ERROR: No input molecules specified');\n"+
-"    return false;\n"+
-"  }\n"+
-"  if (!form.out_view.checked && !form.out_batch.checked) {\n"+
-"    alert('ERROR: No output specified (view and/or batch).');\n"+
 "    return false;\n"+
 "  }\n"+
 "  if (mode=='1xN' && !form.intxtQ.value && !form.infileQ.value) {\n"+

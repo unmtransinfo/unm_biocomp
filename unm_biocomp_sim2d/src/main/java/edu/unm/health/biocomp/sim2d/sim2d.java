@@ -166,9 +166,9 @@ public class sim2d
     opts.addOption(Option.builder("qfile").hasArg().argName("QFILE").desc("Query molecule file").build());
     opts.addOption(Option.builder("fptype").hasArg().argName("FPTYPE").desc("FP type (path|ecfp|smarts)").build());
     opts.addOption(Option.builder("smartsfile").hasArg().argName("SMARTSFILE").desc("SMARTS file, for -fptype smarts").build());
-    opts.addOption(Option.builder("min_sim").type(Float.class).hasArg().argName("MIN_SIM").desc("Min similarity").build());
-    opts.addOption(Option.builder("n_max").type(Integer.class).hasArg().argName("N_MAX").desc("Max mols processed").build());
-    opts.addOption(Option.builder("n_max_hits").type(Integer.class).hasArg().argName("N_MAX_HITS").desc("Max hits returned").build());
+    opts.addOption(Option.builder("min_sim").hasArg().argName("MIN_SIM").desc("Min similarity").build());
+    opts.addOption(Option.builder("n_max").hasArg().argName("N_MAX").desc("Max mols processed").build());
+    opts.addOption(Option.builder("n_max_hits").hasArg().argName("N_MAX_HITS").desc("Max hits returned").build());
     opts.addOption("v", "verbose", false, "Verbose.");
     opts.addOption("h", "help", false, "Show this help.");
     HelpFormatter helper = new HelpFormatter();
@@ -184,10 +184,11 @@ public class sim2d
     if (clic.hasOption("o")) ofile = clic.getOptionValue("o");
     if (clic.hasOption("qsmi")) qsmi = clic.getOptionValue("qsmi");
     if (clic.hasOption("qfile")) qfile = clic.getOptionValue("qfile");
+    if (clic.hasOption("fptype")) { fptype = clic.getOptionValue("fptype"); }
     if (clic.hasOption("smartsfile")) { smartsfile = clic.getOptionValue("smartsfile"); }
-    if (clic.hasOption("n_max")) { n_max = (Integer)(clic.getParsedOptionValue("n_max")); }
-    if (clic.hasOption("n_max_hits")) { n_max_hits = (Integer)(clic.getParsedOptionValue("n_max_hits")); }
-    if (clic.hasOption("min_sim")) { min_sim = (Float)(clic.getParsedOptionValue("min_sim")); }
+    if (clic.hasOption("n_max")) { n_max = Integer.parseInt(clic.getOptionValue("n_max")); }
+    if (clic.hasOption("n_max_hits")) { n_max_hits = Integer.parseInt(clic.getOptionValue("n_max_hits")); }
+    if (clic.hasOption("min_sim")) { min_sim = Float.parseFloat(clic.getOptionValue("min_sim")); }
     if (clic.hasOption("v")) { verbose = 1; }
     if (clic.hasOption("h")) {
       helper.printHelp(APPNAME, HELPHEADER, opts, "", true);
@@ -227,7 +228,6 @@ public class sim2d
     }
     else if (fptype.equalsIgnoreCase("smartsfile")) {
       if (smartsfile==null) {
-       
         helper.printHelp(APPNAME, HELPHEADER, opts, "SMARTS file required.", true);
         System.exit(0);
       }
@@ -239,8 +239,8 @@ public class sim2d
       fptype = (new File(smartsfile)).getName();
     }
     else {
-        helper.printHelp(APPNAME, HELPHEADER, opts, ("Invalid fptype: "+fptype), true);
-        System.exit(0);
+      helper.printHelp(APPNAME, HELPHEADER, opts, ("Invalid fptype: "+fptype), true);
+      System.exit(0);
     }
     WriteHits(hits, fptype, n_max_hits, fout_writer, verbose);
     fout_writer.close();

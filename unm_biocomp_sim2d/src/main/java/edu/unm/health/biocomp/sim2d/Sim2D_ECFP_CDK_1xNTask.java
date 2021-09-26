@@ -88,7 +88,7 @@ public class Sim2D_ECFP_CDK_1xNTask
     }
     catch (Exception e) { }
 
-    this.taskstatus=new Status(this);
+    this.taskstatus = new Status(this);
     this.n_total = (mols!=null) ?  mols.size():0;
     this.n_done=0;
     this.t0 = new Date();
@@ -107,24 +107,24 @@ public class Sim2D_ECFP_CDK_1xNTask
       if (mols!=null)
       {
         if (i==mols.size()) break;
-        mol=mols.get(i);
+        mol = mols.get(i);
       }
       else if (molReader!=null)
       {
-        try { mol=molReader.read(); }
+        try { mol = molReader.read(); }
         catch (Exception e)
         {
           hit.sim=0.0f;
           continue;
         }
+        if (mol==null) break;
         if (arom!=null)
           mol.aromatize(arom);
         else
           mol.dearomatize();
-        try { hit.smiles=MolExporter.exportToFormat(mol, "smiles:-a"); }
+        try { hit.smiles = MolExporter.exportToFormat(mol, "smiles:-a"); }
         catch (Exception e) { hit.smiles=""; }
-        hit.name=mol.getName();
-        if (mol==null) break;
+        hit.name = mol.getName();
       }
       else { return false; } //ERROR
 
@@ -139,12 +139,12 @@ public class Sim2D_ECFP_CDK_1xNTask
         hit.commonbitcount = fpX.cardinality();
         hit.subset = fpQ.equals(fpX);
         if (alpha!=null && beta!=null)
-          //hit.sim=Metrics.tversky((int[])fpQ.toLongArray(), (int[])fp.toLongArray(), alpha, beta);
-          hit.sim=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
+          //hit.sim = Metrics.tversky((int[])fpQ.toLongArray(), (int[])fp.toLongArray(), alpha, beta);
+          hit.sim = org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
         else
         {
-          //hit.sim=Metrics.tanimoto((int[])fpQ.toLongArray(), (int[])fp.toLongArray());
-          hit.sim=org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
+          //hit.sim = Metrics.tanimoto((int[])fpQ.toLongArray(), (int[])fp.toLongArray());
+          hit.sim = org.openscience.cdk.similarity.Tanimoto.calculate(fpQ, fp);
         }
       }
       catch (Exception e) {
@@ -152,7 +152,7 @@ public class Sim2D_ECFP_CDK_1xNTask
         hit.sim=0.0f;
       }
       if (hit.sim>=sim_min) { hits.add(hit); }
-      if (molReader!=null) n_total=molReader.estimateNumRecords();
+      if (molReader!=null) n_total = molReader.estimateNumRecords();
     }
     if (sorthits) Collections.sort(hits);
     while (hits.size()>n_max_hits) hits.remove(hits.size()-1);
@@ -164,10 +164,10 @@ public class Sim2D_ECFP_CDK_1xNTask
     public Status(Sim2D_ECFP_CDK_1xNTask task) { this.task=task; }
     public String status()
     {
-      long t=(new Date()).getTime()-t0.getTime();
-      int m=(int)(t/60000L);
-      int s=(int)((t/1000L)%60L);
-      String statstr=("["+String.format("%02d:%02d", m, s)+"]");
+      long t = (new Date()).getTime()-t0.getTime();
+      int m = (int)(t/60000L);
+      int s = (int)((t/1000L)%60L);
+      String statstr = ("["+String.format("%02d:%02d", m, s)+"]");
       statstr+=(String.format(" %6d;", task.n_done));
       if (task.n_total>0)
         statstr+=(String.format(" (%.0f%%)", 100.0f*task.n_done/task.n_total));
