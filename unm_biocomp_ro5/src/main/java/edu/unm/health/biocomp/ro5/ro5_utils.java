@@ -30,9 +30,7 @@ import edu.unm.health.biocomp.cdk.*; //cdk_utils
 */
 public class ro5_utils
 {
-  public static final String DEMO_DATAFILE_URL="http://unmtid-shinyapps.net/download/structures.smiles";
-  public static String ReadFileUrl2String(String fileurl)
-      throws Exception
+  public static String ReadFileUrl2String(String fileurl) throws Exception
   {
     HttpClient client = HttpClientBuilder.create().build();
     HttpGet request = new HttpGet(fileurl);     
@@ -54,8 +52,7 @@ public class ro5_utils
   /////////////////////////////////////////////////////////////////////////////
   /**	Generate Ro5 calculations.
   */
-  public static Ro5Results Ro5_Calculate(List<Molecule> mols)
-      throws Exception
+  public static Ro5Results Ro5_Calculate(List<Molecule> mols) throws Exception
   {
     List<String> smis = new ArrayList<String>();
     for (Molecule mol: mols)
@@ -103,8 +100,7 @@ public class ro5_utils
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private static void Test(MolImporter molReader, int vmax, int verbose)
-	throws Exception
+  private static void Test(MolImporter molReader, int vmax, int verbose) throws Exception
   {
     ArrayList<Molecule> mols = new ArrayList<Molecule>();
     while (true)
@@ -124,13 +120,10 @@ public class ro5_utils
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  private static String Ro5_ResultsTxt(Ro5Results results,ArrayList<Molecule> mols,int vmax)
-      throws IOException
+  private static String Ro5_ResultsTxt(Ro5Results results, ArrayList<Molecule> mols, int vmax) throws IOException
   {
     String txt="";
-
     String[] dataFields={ "mwt","hbd","hba","logp" };
-
     Integer[] vdist = {0,0,0,0,0};
     int n_fail=0;
     for (Ro5Result result: results)
@@ -142,19 +135,15 @@ public class ro5_utils
     }
     for (int i=0;i<=4;++i)
       txt+=("  "+i+" Ro5-violation mols: "+vdist[i]+"\n");
-
     txt+=("Results:\n");
     txt+=("mols processed: "+mols.size()+"\n");
     txt+=("mols passed: "+(mols.size()-n_fail)+"\n");
     txt+=("mols failed: "+n_fail+"\n");
     txt+=("(Where failure defined as violations > "+vmax+".)\n");
     txt+="\n";
-
     txt+=(Ro5_ResultsSummaryTxt(results)+"\n");
-
     for (String field:dataFields) { txt+=(field+","); }
     txt+="\n";
-
     for (int i_mol=0;i_mol<mols.size();++i_mol)
     {
       Molecule mol=mols.get(i_mol);
@@ -174,12 +163,10 @@ public class ro5_utils
   {
     Integer[] vdist = {0,0,0,0,0};
     for (Ro5Result result: results) ++vdist[result.violations()];
-
     String txt="";
     txt+=("Ro5 violations,#mols\n");
     for (int i=0;i<=4;++i)
       txt+=(""+i+","+vdist[i]+"\n");
-
     txt+=("property,min,max,mean,median,std,violations\n");
     txt+=("MWT,");
     txt+=(String.format("%.1f",results.getMinMwt())+",");
@@ -209,7 +196,6 @@ public class ro5_utils
     txt+=(String.format("%.1f",results.getPercentileLogp(50))+",");
     txt+=(String.format("%.1f",results.getStdLogp())+",");
     txt+=(""+results.getViolationsLogp()+"\n");
-  
     return txt;
   }
 
@@ -255,16 +241,12 @@ public class ro5_utils
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  public static void main(String[] args)
-    throws IOException,Exception
+  public static void main(String[] args) throws IOException,Exception
   {
     ParseCommand(args);
     if (ifile.length()==0) Help("Input file required.");
-
     Molecule mol = null;
-
     MolImporter molReader = new MolImporter(ifile);
-
     if (test)
     {
       Test(molReader, vmax, verbose);
@@ -273,7 +255,6 @@ public class ro5_utils
     {
       Help("No operation specified.");
     }
-
     System.exit(0);
   }
 }

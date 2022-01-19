@@ -37,6 +37,7 @@ public class ro5_servlet extends HttpServlet
   private static String SCRATCHDIR=null; // configured in web.xml
   private static Integer N_MAX=1000;	// configured in web.xml
   private static Integer MAX_POST_SIZE=null;	// configured in web.xml
+  private static String DEMO_DATAFILE_URL=null; // configured in web.xml
   private static int scratch_retire_sec=3600;
   private static PrintWriter out=null;
   private static ArrayList<String> outputs=null;
@@ -647,8 +648,8 @@ public class ro5_servlet extends HttpServlet
   private static String JavaScript()
   {
     String DEMO_DATASET="";
-    try { DEMO_DATASET = ro5_utils.ReadFileUrl2String(ro5_utils.DEMO_DATAFILE_URL); }
-    catch (Exception e) { errors.add("ERROR: failed to read: "+ro5_utils.DEMO_DATAFILE_URL+"; "+e.toString()); }
+    try { DEMO_DATASET = ro5_utils.ReadFileUrl2String(DEMO_DATAFILE_URL); }
+    catch (Exception e) { errors.add("ERROR: failed to read: "+DEMO_DATAFILE_URL+"; "+e.toString()); }
     String js = (
 "var DEMO_DATASET=`"+DEMO_DATASET+"`;\n"+
 "function go_init(form)\n"+
@@ -768,6 +769,7 @@ public class ro5_servlet extends HttpServlet
     try { APPNAME = conf.getInitParameter("APPNAME"); }
     catch (Exception e) { APPNAME = this.getServletName(); }
     UPLOADDIR = conf.getInitParameter("UPLOADDIR");
+    DEMO_DATAFILE_URL = conf.getInitParameter("DEMO_DATAFILE_URL");
     if (UPLOADDIR==null)
       throw new ServletException("Please supply UPLOADDIR parameter (web.xml).");
     SCRATCHDIR = conf.getInitParameter("SCRATCHDIR");
