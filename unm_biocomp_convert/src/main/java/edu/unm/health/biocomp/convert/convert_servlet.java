@@ -56,8 +56,8 @@ public class convert_servlet extends HttpServlet
   private static String color1="#EEEEEE";
 
   /////////////////////////////////////////////////////////////////////////////
-  public void doPost(HttpServletRequest request,HttpServletResponse response)
-      throws IOException,ServletException
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException
   {
     SERVERNAME = request.getServerName();
     if (SERVERNAME.equals("localhost")) SERVERNAME = InetAddress.getLocalHost().getHostAddress();
@@ -72,28 +72,28 @@ public class convert_servlet extends HttpServlet
       REMOTEHOST = request.getRemoteAddr(); // client (may be proxy)
     }
     REMOTEAGENT = request.getHeader("User-Agent");
-    rb = ResourceBundle.getBundle("LocalStrings",request.getLocale());
+    rb = ResourceBundle.getBundle("LocalStrings", request.getLocale());
 
     MultipartRequest mrequest=null;
     if (request.getMethod().equalsIgnoreCase("POST"))
     {
-      try { mrequest = new MultipartRequest(request,UPLOADDIR,10*1024*1024,"ISO-8859-1",
+      try { mrequest = new MultipartRequest(request, UPLOADDIR, 10*1024*1024, "ISO-8859-1",
                                     new DefaultFileRenamePolicy()); }
       catch (IOException e) {
-        this.getServletContext().log("not a valid MultipartRequest",e); }
+        this.getServletContext().log("not a valid MultipartRequest", e); }
     }
 
     // main logic:
     ArrayList<String> cssincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/css/biocomp.css"));
     ArrayList<String> jsincludes = new ArrayList<String>(Arrays.asList(PROXY_PREFIX+CONTEXTPATH+"/js/biocomp.js", PROXY_PREFIX+CONTEXTPATH+"/js/ddtip.js"));
 
-    boolean ok = initialize(request,mrequest);
+    boolean ok = initialize(request, mrequest);
     if (!ok)
     {
       response.setContentType("text/html");
       out = response.getWriter();
       out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
-      out.print(HtmUtils.FooterHtm(errors,true));
+      out.print(HtmUtils.FooterHtm(errors, true));
       return;
     }
     else if (mrequest!=null)		//method=POST, normal operation
@@ -103,17 +103,17 @@ public class convert_servlet extends HttpServlet
         response.setContentType("text/html");
         out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
-        out.println(FormHtm(mrequest,response));
+        out.println(FormHtm(mrequest, response));
         Date t_i = new Date();
-        Convert(mrequest,response);
+        Convert(mrequest, response);
         Date t_f = new Date();
         long t_d = t_f.getTime()-t_i.getTime();
         int t_d_min = (int)(t_d/60000L);
         int t_d_sec = (int)((t_d/1000L)%60L);
         errors.add(SERVLETNAME+": elapsed time: "+t_d_min+"m "+t_d_sec+"s");
         out.println(HtmUtils.OutputHtm(outputs));
-        out.println(HtmUtils.FooterHtm(errors,true));
-        HtmUtils.PurgeScratchDirs(Arrays.asList(SCRATCHDIR),scratch_retire_sec,false,".",(HttpServlet) this);
+        out.println(HtmUtils.FooterHtm(errors, true));
+        HtmUtils.PurgeScratchDirs(Arrays.asList(SCRATCHDIR), scratch_retire_sec, false, ".", (HttpServlet) this);
       }
     }
     else
@@ -126,7 +126,7 @@ public class convert_servlet extends HttpServlet
         out = response.getWriter();
         out.print(HtmUtils.HeaderHtm(APPNAME, jsincludes, cssincludes, JavaScript(), "", color1, request));
         out.println(HelpHtm());
-        out.println(HtmUtils.FooterHtm(errors,true));
+        out.println(HtmUtils.FooterHtm(errors, true));
       }
       else if (request.getParameter("test")!=null)	// GET method, test=TRUE
       {
@@ -163,7 +163,7 @@ public class convert_servlet extends HttpServlet
   private boolean initialize(HttpServletRequest request, MultipartRequest mrequest)
       throws IOException, ServletException
   {
-    SERVLETNAME=this.getServletName();
+    SERVLETNAME = this.getServletName();
     outputs = new ArrayList<String>();
     errors = new ArrayList<String>();
     params = new HttpParams();
@@ -171,29 +171,28 @@ public class convert_servlet extends HttpServlet
     String logo_htm = "<TABLE CELLSPACING=5 CELLPADDING=5><TR><TD>";
     String imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/biocomp_logo_only.gif\">");
     String tiphtm = (APPNAME+" web app from UNM Translational Informatics.");
-    String href = ("https://datascience.unm.edu/");
-    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, "https://datascience.unm.edu/", 200, "white"));
     logo_htm+="</TD><TD>";
     imghtm = ("<IMG BORDER=0 SRC=\""+PROXY_PREFIX+CONTEXTPATH+"/images/chemaxon_powered_100px.png\">");
-    tiphtm = ("JChem from ChemAxon Ltd.");
-    href = ("https://www.chemaxon.com");
-    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, href, 200, "white"));
+    tiphtm = "JChem from ChemAxon Ltd.";
+    logo_htm+=(HtmUtils.HtmTipper(imghtm, tiphtm, "https://www.chemaxon.com", 200, "white"));
     logo_htm+="</TD></TR></TABLE>";
     errors.add(logo_htm);
 
     Random rand = new Random();
     TMPFILE_PREFIX = SERVLETNAME+"."+DATESTR+"."+String.format("%03d",rand.nextInt(1000));
 
-    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
-    catch (Exception e) {
-      errors.add("ERROR: "+e.getMessage());
-      if (System.getenv("HOME") !=null) {
-        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
-        catch (Exception e2) {
-          errors.add("ERROR: "+e2.getMessage());
-        }
-      }
-    }
+    // License may not be necessary.
+//    try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
+//    catch (Exception e) {
+//      errors.add("ERROR: "+e.getMessage());
+//      if (System.getenv("HOME") !=null) {
+//        try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
+//        catch (Exception e2) {
+//          errors.add("ERROR: "+e2.getMessage());
+//        }
+//      }
+//    }
     LicenseManager.refresh();
 
     if (mrequest==null) return true;
@@ -317,7 +316,7 @@ public class convert_servlet extends HttpServlet
     return true;
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static String FormHtm(MultipartRequest mrequest,HttpServletResponse response)
+  private static String FormHtm(MultipartRequest mrequest, HttpServletResponse response)
 	throws IOException
   {
     String fmt_menu_opts = ("<OPTION VALUE=\"automatic\">automatic\n");
@@ -335,7 +334,7 @@ public class convert_servlet extends HttpServlet
     fmt_menu_opts = ("<OPTION VALUE=\"automatic\">automatic\n");
     for (String fmt: MFileFormatUtil.getMolfileFormats())
     {
-      try { MolExporter test = new MolExporter(new PrintStream("/dev/null"),fmt); }
+      try { MolExporter test = new MolExporter(new PrintStream("/dev/null"), fmt); }
       catch (Exception e) { continue; } // non-exportable; may be missing JARs
       catch (Error e) { // chemaxon.marvin.io.formats.inchi.InchiExport NoClassDefFound Error.
         errors.add("NOTE: output format \""+fmt+"\" not available: "+e.toString());
@@ -407,7 +406,7 @@ public class convert_servlet extends HttpServlet
     return htm;
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static void Convert(MultipartRequest mrequest,HttpServletResponse response)
+  private static void Convert(MultipartRequest mrequest, HttpServletResponse response)
       throws IOException
   {
     String ifmt = molReader.getFormat();
@@ -428,7 +427,7 @@ public class convert_servlet extends HttpServlet
         boolean ok = dout.mkdir();
         System.err.println("SCRATCHDIR creation "+(ok?"succeeded":"failed")+": "+SCRATCHDIR);
       }
-      fout = File.createTempFile(TMPFILE_PREFIX,"_out."+oext,dout);
+      fout = File.createTempFile(TMPFILE_PREFIX, "_out."+oext, dout);
     }
     catch (IOException e) {
       errors.add("ERROR: could not open temp file; check SCRATCHDIR: "+SCRATCHDIR);
@@ -492,9 +491,9 @@ public class convert_servlet extends HttpServlet
           ofmt_full=ofmt;
         }
         if (params.isChecked("gzip"))
-          molWriter = new MolExporter(new FileOutputStream(fout),"gzip:"+ofmt_full);
+          molWriter = new MolExporter(new FileOutputStream(fout), "gzip:"+ofmt_full);
         else
-          molWriter = new MolExporter(new FileOutputStream(fout),ofmt_full);
+          molWriter = new MolExporter(new FileOutputStream(fout), ofmt_full);
 
         outputs.add("input format:  "+ifmt+" ("+imffmt.getDescription()+")");
         String desc = omffmt.getDescription();
@@ -504,13 +503,13 @@ public class convert_servlet extends HttpServlet
         if (params.isChecked("verbose"))
         {
           ByteArrayOutputStream obuff = new ByteArrayOutputStream();
-          MolExporter molWriter2 = new MolExporter(obuff,ofmt_full);
-          WriteMol(mol,molWriter2,params);
+          MolExporter molWriter2 = new MolExporter(obuff, ofmt_full);
+          WriteMol(mol, molWriter2, params);
           molWriter2.close();
-          errors.add("mol 1:<PRE>"+(new String(obuff.toByteArray(),"utf-8"))+"</PRE>");
+          errors.add("mol 1:<PRE>"+(new String(obuff.toByteArray(), "utf-8"))+"</PRE>");
         }
       }
-      n_mols_out+=WriteMol(mol,molWriter,params);
+      n_mols_out+=WriteMol(mol, molWriter, params);
     }
     molReader.close();
     outputs.add("<H2>Results:</H2>");
@@ -529,7 +528,7 @@ public class convert_servlet extends HttpServlet
       "download "+fname+" ("+file_utils.NiceBytes(fsize)+")</BUTTON></FORM>\n");
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static int WriteMol(Molecule mol,MolExporter molWriter,HttpParams params)
+  private static int WriteMol(Molecule mol, MolExporter molWriter, HttpParams params)
       throws IOException
   {
     int n_mols_out=0;
@@ -548,7 +547,7 @@ public class convert_servlet extends HttpServlet
             partmol.setName(partmol.exportToFormat("name"));
           else
             partmol.setName(mol.getName()+" ("+i_part+")");
-          WriteOneMol(partmol,molWriter,params);
+          WriteOneMol(partmol, molWriter, params);
           ++n_mols_out;
         }
       }
@@ -566,7 +565,7 @@ public class convert_servlet extends HttpServlet
             markemol.setName(markemol.exportToFormat("name"));
           else
             markemol.setName(mol.getName()+" ("+i_marke+")");
-          WriteOneMol(markemol,molWriter,params);
+          WriteOneMol(markemol, molWriter, params);
           ++n_mols_out;
           if (i_marke==MARKUSH_ENUM_LIMIT)
           {
@@ -578,7 +577,7 @@ public class convert_servlet extends HttpServlet
       }
       else
       {
-        WriteOneMol(mol,molWriter,params);
+        WriteOneMol(mol, molWriter, params);
         ++n_mols_out;
       }
     }
@@ -597,14 +596,14 @@ public class convert_servlet extends HttpServlet
     return n_mols_out;
   }
   /////////////////////////////////////////////////////////////////////////////
-  private static void WriteOneMol(Molecule mol,MolExporter molWriter,HttpParams params)
+  private static void WriteOneMol(Molecule mol, MolExporter molWriter, HttpParams params)
       throws IOException
   {
     if (params.isChecked("add_2d"))
-      mol.clean(2,null,null);	// calculate 2D coords
+      mol.clean(2, null, null);	// calculate 2D coords
     else if (params.isChecked("add_3d"))
     {
-      mol.clean(3,"S{fine}",null);	// calculate 3D coords
+      mol.clean(3, "S{fine}", null);	// calculate 3D coords
     }
     else if (params.isChecked("add_name"))
       mol.setName(mol.exportToFormat("name"));
@@ -695,7 +694,7 @@ public class convert_servlet extends HttpServlet
   }
   /////////////////////////////////////////////////////////////////////////////
   private static String HelpHtm()
-	throws java.io.FileNotFoundException,java.io.IOException
+	throws java.io.FileNotFoundException, java.io.IOException
   {
     String htm = (
     "<B>"+APPNAME+" help</B><P>\n"+
@@ -770,9 +769,9 @@ public class convert_servlet extends HttpServlet
     PROXY_PREFIX = ((conf.getInitParameter("PROXY_PREFIX")!=null)?conf.getInitParameter("PROXY_PREFIX"):"");
   }
   /////////////////////////////////////////////////////////////////////////////
-  public void doGet(HttpServletRequest request,HttpServletResponse response)
-      throws IOException,ServletException
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException
   {
-    doPost(request,response);
+    doPost(request, response);
   }
 }
