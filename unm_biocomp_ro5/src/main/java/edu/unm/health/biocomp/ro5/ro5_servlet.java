@@ -211,7 +211,7 @@ public class ro5_servlet extends HttpServlet
     try { LicenseManager.setLicenseFile(CONTEXT.getRealPath("")+"/.chemaxon/license.cxl"); }
     catch (Exception e) {
       errors.add("ERROR: "+e.getMessage());
-      if (System.getenv("HOME") !=null) {
+      if (System.getenv("HOME")!=null) {
         try { LicenseManager.setLicenseFile(System.getenv("HOME")+"/.chemaxon/license.cxl"); }
         catch (Exception e2) {
           errors.add("ERROR: "+e2.getMessage());
@@ -219,6 +219,11 @@ public class ro5_servlet extends HttpServlet
       }
     }
     LicenseManager.refresh();
+    if (!LicenseManager.isLicensed(LicenseManager.JCHEM))
+    {
+      errors.add("ERROR: ChemAxon license error; JCHEM is required.");
+      return false;
+    }
 
     if (mrequest==null) return true;
 
