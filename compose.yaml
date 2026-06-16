@@ -1,22 +1,16 @@
-# Production compose file for biocomp on the Habanero server.
+# Production compose file for the public biocomp image.
 #
 # Single Tomcat container exposing only the selected J2EE apps:
 #   Convert, Depict (ChemAxon), MolCloud, JSME (static).
 #
-# Host prerequisites (Habanero):
-#   /var/lib/biocomp/chemaxon/license.cxl  ChemAxon license (read-only, owner: root)
-#   /var/log/biocomp                       Writable directory for Tomcat logs
-#
-# Build & run:
-#   sudo docker compose build
-#   sudo docker compose up -d
-#
-# Reverse-proxy on Habanero should forward to 127.0.0.1:9095.
+# Reverse-proxy on the host should forward to 127.0.0.1:9095.
 
 name: biocomp
 
 services:
   biocomp:
+    # On a pull-only production host the build section is ignored; it is here
+    # for the maintainer who builds and pushes the public image.
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,18 +18,18 @@ services:
     container_name: biocomp
     restart: unless-stopped
 
+    # The legacy stack (Tomcat9, ChemAxon native x86 libs) is x86-only.
+    # Run on an amd64 host, or under emulation on other architectures.
+    platform: linux/amd64
+
     # Bind to loopback only; expose to the world via the host reverse proxy.
     ports:
       - "127.0.0.1:9095:8080"
 
     volumes:
       # ChemAxon license is supplied by the host, never committed or baked in.
+      # This is the ONLY secret the container needs at runtime.
       - /var/lib/biocomp/chemaxon/license.cxl:/usr/share/tomcat9/webapps/biocomp/.chemaxon/license.cxl:ro
-
-      # Production overrides: restrict the deployed WAR to Convert, Depict,
-      # MolCloud, JSME (and their supporting image servlets).
-      - ./conf/production/web.xml:/usr/share/tomcat9/webapps/biocomp/WEB-INF/web.xml:ro
-      - ./conf/production/index.html:/usr/share/tomcat9/webapps/biocomp/index.html:ro
 
       # Persisted Tomcat access / catalina logs.
       - /var/log/biocomp:/usr/share/tomcat9/logs
