@@ -22,7 +22,8 @@ RUN echo "=== Done installing Java."
 #
 ###
 RUN apt-get install -y software-properties-common
-RUN apt-add-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ bionic universe"
+RUN apt-add-repository -y universe
+RUN apt-get update
 RUN apt-get install -y tomcat9 tomcat9-admin
 RUN apt-cache policy tomcat9
 RUN cp -r /etc/tomcat9 /usr/share/tomcat9/conf
@@ -42,11 +43,14 @@ RUN ls -laR /usr/share/tomcat9/webapps
 RUN echo "=== Done installing application BIOCOMP."
 #
 ###
-# web.xml has db access credentials.
-RUN mkdir -p /home/app/conf/biocomp
-COPY conf/biocomp/web.xml /home/app/conf/biocomp
-RUN cp /home/app/conf/biocomp/web.xml /usr/share/tomcat9/webapps/biocomp/WEB-INF
-RUN chown tomcat /usr/share/tomcat9/webapps/biocomp/WEB-INF/web.xml
+# Use the selected-app production subset by default:
+# Convert, Depict, MolCloud, and static JSME.
+RUN mkdir -p /home/app/conf/production
+COPY conf/production/web.xml /home/app/conf/production/
+COPY conf/production/index.html /home/app/conf/production/
+RUN cp /home/app/conf/production/web.xml /usr/share/tomcat9/webapps/biocomp/WEB-INF
+RUN cp /home/app/conf/production/index.html /usr/share/tomcat9/webapps/biocomp/index.html
+RUN chown tomcat /usr/share/tomcat9/webapps/biocomp/WEB-INF/web.xml /usr/share/tomcat9/webapps/biocomp/index.html
 RUN echo "=== Done configuring application BIOCOMP."
 #
 ###
