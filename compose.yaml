@@ -1,0 +1,63 @@
+# Production compose file for biocomp on the Habanero server.
+#
+# Single Tomcat container exposing only the selected J2EE apps:
+#   Convert, Depict (ChemAxon), MolCloud, JSME (static).
+#
+# Host prerequisites (Habanero):
+#   /var/lib/biocomp/chemaxon/license.cxl  ChemAxon license (read-only, owner: root)
+#   /var/log/biocomp                       Writable directory for Tomcat logs
+#
+# Build & run:
+#   sudo docker compose build
+#   sudo docker compose up -d
+#
+# Reverse-proxy on Habanero should forward to 127.0.0.1:9095.
+
+name: biocomp
+
+services:
+  biocomp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: unmtransinfo/biocomp:latest
+    container_name: biocomp
+    restart: unless-stopped
+
+    # Bind to loopback only; expose to the world via the host reverse proxy.
+    ports:
+      - "127.0.0.1:9095:8080"
+
+    volumes:
+      # ChemAxon license is supplied by the host, never committed or baked in.
+      - /var/lib/biocomp/chemaxon/license.cxl:/usr/share/tomcat9/webapps/biocomp/.chemaxon/license.cxl:ro
+
+      # Production overrides: restrict the deployed WAR to Convert, Depict,
+      # MolCloud, JSME (and their supporting image servlets).
+      - ./conf/production/web.xml:/usr/share/tomcat9/webapps/biocomp/WEB-INF/web.xml:ro
+      - ./conf/production/index.html:/usr/share/tomcat9/webapps/biocomp/index.html:ro
+
+      # Persisted Tomcat access / catalina logs.
+      - /var/log/biocomp:/usr/share/tomcat9/logs
+
+    environment:
+      TZ: America/Denver
+      JAVA_OPTS: "-Xms512m -Xmx2g -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/biocomp/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    deploy:
+      resources:
+        limits:
+          memory: 3g
