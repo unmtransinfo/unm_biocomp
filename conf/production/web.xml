@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Production web.xml for Habanero deployment.
+     Restricts the BIOCOMP WAR to: Convert, Depict (ChemAxon), MolCloud, JSME.
+     JSME is served as static files (jsme.html, JSME/) and needs no servlet. -->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4">
+
+  <display-name>UNM TID Web Apps (Production)</display-name>
+  <description>UNM Translational Informatics Division Web Apps - Production subset</description>
+
+  <!-- ChemAxon image servlet used by Depict and other ChemAxon-based pages. -->
+  <servlet>
+    <servlet-name>mol2img</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.depict.mol2img_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>mol2img</servlet-name>
+    <url-pattern>/mol2img</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>convert</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.convert.convert_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Convert</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>2000</param-value></init-param>
+    <init-param> <param-name>N_MAX_LINES</param-name>
+      <param-value>10000</param-value></init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>convert</servlet-name>
+    <url-pattern>/convert</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>depict</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.depict.depict_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>Depict</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>100</param-value> </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>depict</servlet-name>
+    <url-pattern>/depict</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>molcloud</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.molcloud.molcloud_servlet</servlet-class>
+    <init-param> <param-name>APPNAME</param-name>
+      <param-value>MolCloud</param-value> </init-param>
+    <init-param> <param-name>UPLOADDIR</param-name>
+      <param-value>/tmp</param-value> </init-param>
+    <init-param><param-name>MAX_POST_SIZE</param-name>
+      <param-value>10485760</param-value></init-param>
+    <init-param> <param-name>SCRATCHDIR</param-name>
+      <param-value>/tmp/scratch</param-value></init-param>
+    <init-param> <param-name>N_MAX</param-name>
+      <param-value>1000</param-value> </init-param>
+    <init-param> <param-name>DEMOSMIFILE</param-name>
+      <param-value>molcloud_demo.smi</param-value></init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>molcloud</servlet-name>
+    <url-pattern>/molcloud</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>showimg</servlet-name>
+    <servlet-class>edu.unm.health.biocomp.molcloud.showimg_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>showimg</servlet-name>
+    <url-pattern>/showimg</url-pattern>
+  </servlet-mapping>
+
+</web-app>
