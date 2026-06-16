@@ -27,7 +27,9 @@ RUN apt-get update
 RUN apt-get install -y tomcat9 tomcat9-admin
 RUN apt-cache policy tomcat9
 RUN cp -r /etc/tomcat9 /usr/share/tomcat9/conf
-COPY conf/tomcat/tomcat-users.xml /usr/share/tomcat9/conf/
+# SECURITY: tomcat-users.xml is NOT baked into the image (it holds admin
+# passwords). Tomcat keeps its default empty users file, so the manager app
+# stays locked. Mount a real tomcat-users.xml at runtime only if you need it.
 COPY conf/tomcat/server.xml /usr/share/tomcat9/conf/
 RUN mkdir /usr/share/tomcat9/temp
 RUN mkdir /usr/share/tomcat9/logs
@@ -36,8 +38,15 @@ RUN echo "=== Done installing Tomcat."
 ###
 # WAR should auto-deploy, but seems we must manually unzip.
 COPY biocomp_war/target/biocomp_war-0.0.1-SNAPSHOT.war /usr/share/tomcat9/webapps/biocomp.war
+# SECURITY: never ship the ChemAxon license inside the image. If the WAR was
+# built with a license under src/main/webapp/.chemaxon/, strip it from BOTH the
+# .war archive and the unpacked app. The license is provided at runtime via a
+# read-only bind mount (see compose.yaml). The "|| true" tolerates a WAR that
+# was already built without a license.
+RUN zip -d /usr/share/tomcat9/webapps/biocomp.war .chemaxon/license.cxl || true
 #RUN i=0; while [ ! -d /usr/share/tomcat9/webapps/biocomp ]; do sleep 1; i=$(($i+1)); printf "%d. Waiting for auto-deploy...\n" "$i"; done
 RUN cd /usr/share/tomcat9/webapps; mkdir biocomp; cd biocomp; unzip ../biocomp.war
+RUN rm -f /usr/share/tomcat9/webapps/biocomp/.chemaxon/license.cxl
 RUN chown -R tomcat /usr/share/tomcat9/webapps/biocomp
 RUN ls -laR /usr/share/tomcat9/webapps
 RUN echo "=== Done installing application BIOCOMP."
@@ -59,10 +68,11 @@ RUN /usr/share/tomcat9/bin/catalina.sh start
 RUN echo "=== Done starting Tomcat."
 #
 ###
-# psql useful for testing.
+# psql client kept for debugging only. SECURITY: the .pgpass secret is NOT
+# baked into the image. The selected apps (Convert, Depict, MolCloud, JSME)
+# need no database; if you need psql auth, mount a .pgpass at runtime to
+# /home/app/.pgpass (chmod 600 on the host file).
 RUN apt-get install -y postgresql-client-12
-COPY conf/postgresql/.pgpass /home/app
-RUN chmod 600 /home/app/.pgpass
 RUN echo "=== Done installing Postgresql (client)."
 #
 ###
