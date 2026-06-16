@@ -15,20 +15,11 @@
   <description>Maven sub-module to generate WAR-file.</description>
 
   <dependencies>
-    <!-- From THIS unmbiocomputing repo: -->
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_freechart</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
+    <!-- Default WAR: selected public/container apps only.
+         JSME is static content in src/main/webapp. -->
     <dependency>
       <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_convert</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_smarts</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -38,42 +29,7 @@
     </dependency>
     <dependency>
       <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_fp</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_react</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_ro5</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_sim2d</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
       <artifactId>unm_biocomp_molcloud</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_tautomer</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_mcs</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_jchemdb</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
@@ -88,12 +44,6 @@
       <artifactId>unm_biocomp_depict</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
-
-    <dependency>
-      <groupId>unmbiocomputing</groupId>
-      <artifactId>unm_biocomp_descriptors</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
   </dependencies>
   
   <build>
@@ -102,6 +52,24 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.2</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>${project.basedir}/../conf/production</directory>
+              <includes>
+                <include>index.html</include>
+              </includes>
+              <targetPath>/</targetPath>
+            </resource>
+            <resource>
+              <directory>${project.basedir}/../conf/production</directory>
+              <includes>
+                <include>web.xml</include>
+              </includes>
+              <targetPath>WEB-INF</targetPath>
+            </resource>
+          </webResources>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -149,5 +117,63 @@
 
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>legacy-all</id>
+      <dependencies>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_freechart</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_smarts</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_fp</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_react</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_ro5</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_sim2d</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_tautomer</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_mcs</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_jchemdb</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>unmbiocomputing</groupId>
+          <artifactId>unm_biocomp_descriptors</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>
