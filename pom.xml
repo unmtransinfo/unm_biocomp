@@ -28,18 +28,28 @@
   </dependencies>
 
   <modules>
-  	<module>biocomp_war</module>
-  	<module>unm_biocomp_freechart</module>
-  	<module>unm_biocomp_convert</module>
-  	<module>unm_biocomp_qed</module>
-  	<module>unm_biocomp_fp</module>
-  	<module>unm_biocomp_react</module>
-  	<module>unm_biocomp_ro5</module>
-  	<module>unm_biocomp_sim2d</module>
-  	<module>unm_biocomp_molcloud</module>
-  	<module>unm_biocomp_tautomer</module>
-  	<module>unm_biocomp_mcs</module>
-  	<module>unm_biocomp_jchemdb</module>
+    <!-- Default build: selected public/container apps only.
+         JSME is static content in biocomp_war/src/main/webapp. -->
+    <module>unm_biocomp_convert</module>
+    <module>unm_biocomp_qed</module>
+    <module>unm_biocomp_molcloud</module>
+    <module>biocomp_war</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>legacy-all</id>
+      <modules>
+        <module>unm_biocomp_freechart</module>
+        <module>unm_biocomp_fp</module>
+        <module>unm_biocomp_react</module>
+        <module>unm_biocomp_ro5</module>
+        <module>unm_biocomp_sim2d</module>
+        <module>unm_biocomp_tautomer</module>
+        <module>unm_biocomp_mcs</module>
+        <module>unm_biocomp_jchemdb</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>
