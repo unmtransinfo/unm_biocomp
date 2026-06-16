@@ -3,4 +3,9 @@
 .settings
 .project
 .classpath
-**/.chemaxon/license.cxl
+# ChemAxon dirs (license + local files) — never commit
+**/.chemaxon/
+
+# Secret-bearing config — keep local copies, never commit
+conf/postgresql/.pgpass
+conf/tomcat/tomcat-users.xml
