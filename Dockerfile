@@ -1,7 +1,7 @@
 #
 FROM ubuntu:20.04
 WORKDIR /home/app
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install -y sudo
 RUN apt-get install -y zip
