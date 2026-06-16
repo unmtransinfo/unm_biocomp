@@ -1,0 +1,58 @@
+# Development compose file for local BIOCOMP testing on localhost.
+#
+# Usage:
+#   docker compose -f compose.dev.yaml up --build
+#
+# App URL:
+#   http://localhost:9095/biocomp/
+#
+# Notes:
+# - This file avoids production-only host mounts.
+# - It uses the selected-app subset: Convert, Depict, MolCloud, JSME.
+# - For local ChemAxon features, place the license at:
+#     ./.chemaxon/license.cxl
+#   This path is ignored by git and mounted read-only into the container.
+
+name: biocomp-dev
+
+services:
+  biocomp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: unmtransinfo/biocomp:dev
+    container_name: biocomp-dev
+    restart: unless-stopped
+
+    # The legacy stack (Tomcat9 from bionic, ChemAxon 19.3.0 native x86 libs)
+    # is x86-only. On Apple Silicon, build/run under amd64 emulation.
+    platform: linux/amd64
+
+    ports:
+      - "127.0.0.1:9095:8080"
+
+    volumes:
+      - ./.chemaxon/license.cxl:/usr/share/tomcat9/webapps/biocomp/.chemaxon/license.cxl:ro
+      - ./conf/production/web.xml:/usr/share/tomcat9/webapps/biocomp/WEB-INF/web.xml:ro
+      - ./conf/production/index.html:/usr/share/tomcat9/webapps/biocomp/index.html:ro
+      - tomcat-logs:/usr/share/tomcat9/logs
+
+    environment:
+      TZ: America/Denver
+      JAVA_OPTS: "-Xms256m -Xmx1g -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/biocomp/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  tomcat-logs:
